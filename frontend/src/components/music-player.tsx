@@ -1,5 +1,5 @@
 export default function MusicPlayer() {
   return (
-    <div>Music Player</div>
+    <div className="">Music Player</div>
   )
 }

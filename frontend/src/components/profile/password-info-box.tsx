@@ -147,8 +147,6 @@ const PasswordInfoBox: React.FC = () => {
                                         className="top-10 p-2"
                                     />
                                 </div>
-
-                                <Button type="submit" className="w-fit">Submit</Button>
                             </form>
                         </Form>
                     </>

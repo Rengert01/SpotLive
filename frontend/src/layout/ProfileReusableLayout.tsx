@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import CountUp from "react-countup";
-import MyDoughnutChart from "@/components/profile/progress-chart";
+import { ProgressChart } from "@/components/profile/progress-chart";
 import { Pencil } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 
@@ -32,7 +31,7 @@ interface ProfileReusableLayoutProps {
   };
 }
 
-const ProfileReusableLayout = ({  children, user, profile }: ProfileReusableLayoutProps) => {
+const ProfileReusableLayout = ({ children, user, profile }: ProfileReusableLayoutProps) => {
   const [profileImg, setProfileImg] = useState<File | null>(null);
 
   const listToComplete = [
@@ -95,12 +94,8 @@ const ProfileReusableLayout = ({  children, user, profile }: ProfileReusableLayo
 
       {/* Right Section */}
       <div className="lg:w-1/3 bg-white rounded-lg shadow-md p-6">
-        <h2 className="text-xl font-semibold mb-4">Complete Your Profile</h2>
         <div className="flex flex-col items-center mb-6">
-          <div className="text-4xl font-bold text-primary-600">
-            <CountUp end={profile.profileCompletion.completionPercentage || 0} />%
-          </div>
-          <MyDoughnutChart totalVal={profile.profileCompletion.completionPercentage || 0} />
+          <ProgressChart totalVal={profile.profileCompletion.completionPercentage || 0} />
         </div>
         <ul className="space-y-2">
           {listToComplete.map((item, index) => (

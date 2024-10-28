@@ -32,6 +32,12 @@ const router = createBrowserRouter([
 
 export default function App() {
   return (
-    <RouterProvider router={router} />
+    <html lang="en">
+      <body>
+        <main className="flex min-h-screen flex-col items-center justify-center bg-background">
+          <RouterProvider router={router} />
+        </main>
+      </body>
+    </html>
   )
 }

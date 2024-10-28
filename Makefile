@@ -17,3 +17,7 @@ logs:
 	@echo "Showing logs..."
 	@docker compose logs -f $(container)
 	
+rebuild:
+	@echo "Rebuilding containers..."
+	@docker compose down
+	@docker compose up --build -d

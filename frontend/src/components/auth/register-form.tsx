@@ -12,8 +12,11 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Eye, EyeOff } from "lucide-react"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
+import { Link, useNavigate } from "react-router-dom"
+import axios from "@/config/axios"
 
 import { z } from "zod"
+import { toast } from "@/hooks/use-toast"
 
 const registerSchema = z.object({
   email: z.string().email(),
@@ -30,6 +33,7 @@ const registerSchema = z.object({
 })
 
 export function RegisterForm() {
+  const navigate = useNavigate()
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordConfirmation, setShowPasswordConfirmation] = useState(false);
 
@@ -42,8 +46,16 @@ export function RegisterForm() {
     }
   });
 
-  function onSubmit(data: z.infer<typeof registerSchema>) {
-    console.log(data)
+  async function onSubmit(data: z.infer<typeof registerSchema>) {
+    const res = await axios.post("/api/auth/signUp", data)
+
+    if (res.status === 200) {
+      toast({
+        title: "Registration Successful",
+        description: "You have successfully registered! You can now login to your account."
+      })
+      return navigate("/login")
+    }
   }
 
   return (
@@ -157,9 +169,9 @@ export function RegisterForm() {
             </div>
             <div className="mt-4 text-center text-sm">
               Already have an account?{" "}
-              <a href="/login" className="underline">
+              <Link to="/login" className="underline">
                 Sign In
-              </a>
+              </Link>
             </div>
           </CardContent>
         </Card >

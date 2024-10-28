@@ -9,11 +9,14 @@ import {
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { zodResolver } from "@hookform/resolvers/zod"
+import axios from "@/config/axios"
 import { Eye, EyeOff } from "lucide-react"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
+import { Link, redirect, useNavigate } from "react-router-dom"
 
 import { z } from "zod"
+import { useToast } from "@/hooks/use-toast"
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -26,6 +29,8 @@ const loginSchema = z.object({
 })
 
 export function LoginForm() {
+  const navigate = useNavigate()
+  const { toast } = useToast()
   const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<z.infer<typeof loginSchema>>({
@@ -36,8 +41,17 @@ export function LoginForm() {
     }
   });
 
-  function onSubmit(data: z.infer<typeof loginSchema>) {
-    console.log(data)
+  async function onSubmit(data: z.infer<typeof loginSchema>) {
+    const res = await axios.post("/api/auth/signIn", data)
+
+    if (res.status === 200) {
+      toast({
+        title: "Login Successful",
+        description: "You have successfully logged in!"
+      })
+
+      return navigate("/")
+    }
   }
 
   return (
@@ -80,9 +94,9 @@ export function LoginForm() {
                     <FormItem>
                       <div className="flex items-center">
                         <FormLabel htmlFor="password">Password</FormLabel>
-                        <a href="#" className="ml-auto inline-block text-sm underline">
+                        <Link to="#" className="ml-auto inline-block text-sm underline">
                           Forgot your password?
-                        </a>
+                        </Link>
                       </div>
                       <FormControl>
                         <div className="relative">
@@ -119,9 +133,9 @@ export function LoginForm() {
             </div>
             <div className="mt-4 text-center text-sm">
               Don&apos;t have an account?{" "}
-              <a href="/register" className="underline">
+              <Link to="/register" className="underline">
                 Sign up
-              </a>
+              </Link>
             </div>
           </CardContent>
         </Card >

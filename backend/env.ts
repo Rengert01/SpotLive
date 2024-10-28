@@ -3,8 +3,6 @@ import { z } from 'zod';
 
 dotenv.config();
 
-console.log(process.env.POSTGRES_DB);
-
 const envSchema = z.object({
   BACKEND_API_PORT: z.string(),
   POSTGRES_DB: z.string(),
@@ -13,6 +11,8 @@ const envSchema = z.object({
   POSTGRES_PORT: z.string(),
   POSTGRES_HOST: z.string(),
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
+  DB_LOGGING: z.enum(['true', 'false']).default('true'),
+  SESSION_SECRET: z.string(),
 });
 
 export type Env = z.infer<typeof envSchema>;

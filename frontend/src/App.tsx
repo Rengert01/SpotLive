@@ -4,6 +4,7 @@ import Layout from "@/layout/layout";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import LoginPage from "@/pages/auth/login";
 import RegisterPage from "@/pages/auth/register";
+import { Toaster } from "@/components/ui/toaster";
 
 const router = createBrowserRouter([
   {
@@ -36,6 +37,7 @@ export default function App() {
       <body>
         <main className="flex min-h-screen flex-col items-center justify-center bg-background">
           <RouterProvider router={router} />
+          <Toaster />
         </main>
       </body>
     </html>

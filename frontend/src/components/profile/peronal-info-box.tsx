@@ -1,20 +1,31 @@
-import { editIcon } from "@/assets/edit";
-import CustomDateInput from "@/components/custom-date-input";
+import { Pencil } from 'lucide-react';
 import CustomSelect from "@/components/custom-select";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import React, { useEffect, useState } from "react";
+import { Calendar } from "@/components/ui/calendar"
+import React, { useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod"
+import { CalendarIcon } from "lucide-react"
+import { format } from "date-fns"
+import { cn } from "@/lib/utils";
+import { Controller } from "react-hook-form";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
+import { useForm } from "react-hook-form"
+import { formSchema } from '@/lib/profile-schema';
+import { z } from "zod"
 
-interface PersonalInfo {
-  first_name: string;
-  last_name: string;
-  maiden_name: string;
-  middle_name: string;
-  date_of_birth: string;
-  work_email: string;
-  gender: string;
-  phone_number: string;
-}
 
 const PersonalInfoBox: React.FC = () => {
   const [editState, setEditState] = useState<boolean>(false);
@@ -24,40 +35,32 @@ const PersonalInfoBox: React.FC = () => {
     last_name: "Doe",
     maiden_name: "---",
     middle_name: "---",
-    date_of_birth: "1990-01-01",
+    date_of_birth: new Date("1990-01-01"),
     work_email: "joeDoe@mailinator.com",
     gender: "Male",
     phone_number: "1234567890",
   };
 
-  const [details, setDetails] = useState<PersonalInfo>({
-    first_name: "",
-    last_name: "",
-    maiden_name: "",
-    middle_name: "",
-    date_of_birth: "",
-    work_email: "",
-    gender: "",
-    phone_number: "",
-  });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setDetails((prev) => ({ ...prev, [name]: value }));
-  };
 
-  const handleSubmit = async () => {
-    console.log("Submitting data:", details);
-  };
+  // Declare form
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: dummyData,
+  })
+
+  const { defaultValues } = form?.formState
+
+  // Declare Handle sumbit
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    console.log(values)
+  }
 
   const handleEdit = () => {
-    setDetails(dummyData);
     setEditState(true);
   };
 
-  useEffect(() => {
-    setDetails(dummyData);
-  },)
+
 
   const genderList = [
     { label: "Male", value: "male" },
@@ -74,21 +77,16 @@ const PersonalInfoBox: React.FC = () => {
           <div className="flex space-x-4">
             <button
               onClick={() => setEditState(false)}
-              className="text-blue-600 text-sm font-medium"
+              className="text-primary text-sm font-medium"
             >
               View Mode
             </button>
-            <Button
-              onClick={handleSubmit}
-              className="bg-blue-600 text-white px-4 py-2 rounded-md"
-            >
-              Save Changes
-            </Button>
+
           </div>
         ) : (
-          <button onClick={handleEdit} className="flex items-center text-blue-600">
+          <button onClick={handleEdit} className="flex items-center text-primary">
             <span className="text-sm font-medium mr-2">Edit</span>
-            <figure>{editIcon}</figure>
+            <figure><Pencil className='w-[1rem]' /></figure>
           </button>
         )}
       </div>
@@ -96,116 +94,182 @@ const PersonalInfoBox: React.FC = () => {
       {/* Content Section */}
       <div className="space-y-4">
         {editState ? (
-          <div className="grid grid-cols-1 gap-4">
-            <Input
-              label="First Name"
-              type="text"
-              placeholder="E.g Hassan"
-              name="first_name"
-              onChange={handleChange}
-              value={details.first_name}
-              className="w-full p-2 border border-gray-300 rounded-md"
-            />
-            <Input
-              label="Last Name"
-              type="text"
-              placeholder="E.g Lamidi"
-              name="last_name"
-              onChange={handleChange}
-              value={details.last_name}
-              className="w-full p-2 border border-gray-300 rounded-md"
-            />
-            <Input
-              label="Maiden Name"
-              type="text"
-              placeholder="E.g Maiden Name"
-              name="maiden_name"
-              onChange={handleChange}
-              value={details.maiden_name}
-              className="w-full p-2 border border-gray-300 rounded-md"
-            />
-            <Input
-              label="Middle Name"
-              type="text"
-              placeholder="E.g Middle Name"
-              name="middle_name"
-              onChange={handleChange}
-              value={details.middle_name}
-              className="w-full p-2 border border-gray-300 rounded-md"
-            />
-            <CustomDateInput
-              label="Date of Birth"
-              id="date_of_birth"
-              name="date_of_birth"
-              handleChange={(date) =>
-                setDetails((prev) => ({ ...prev, date_of_birth: date }))
-              }
-              selected={new Date(details?.date_of_birth)}
-              placeholder="YYYY/MM/DD"
-              className="w-full p-2"
-            />
-            <CustomSelect
-              label="Gender"
-              options={genderList}
-              selected={details.gender}
-              setSelected={(value) =>
-                setDetails((prev) => ({ ...prev, gender: value }))
-              }
-              placeholder="Select gender"
-              className="w-full p-2 border border-gray-300 rounded-md"
-            />
-            <Input
-              label="Work Email"
-              type="email"
-              placeholder="E.g JoeDoe@mailinator.com"
-              name="work_email"
-              onChange={handleChange}
-              value={details.work_email}
-              className="w-full p-2 border border-gray-300 rounded-md"
-            />
-            <Input
-              label="Phone Number"
-              type="tel"
-              placeholder="E.g 0816263...."
-              name="phone_number"
-              onChange={handleChange}
-              value={details.phone_number}
-              className="w-full p-2 border border-gray-300 rounded-md"
-            />
-          </div>
+          <>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                <FormField
+                  control={form.control}
+                  name="first_name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>First Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter First Name" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="last_name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Last Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter Last Name" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="maiden_name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Maiden Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter Maiden Name" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="middle_name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Middle Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter Middle Name" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Controller
+                  control={form.control}
+                  name="gender"
+                  render={({ field }) => (
+                    <CustomSelect
+                      label="Gender"
+                      options={genderList}
+                      selected={field.value} // use form value for controlled state
+                      setSelected={(value) => field.onChange(value)} // call field.onChange on selection
+                      placeholder="Select gender"
+                      className="w-full p-2 border border-gray-300 rounded-md"
+                    />
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="date_of_birth"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col w-full">
+                      <FormLabel>Date of birth</FormLabel>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl >
+                            <Button
+                              variant={"outline"}
+                              className={cn(
+                                "w-full pl-3 text-left font-normal",
+                                !field.value && "text-muted-foreground"
+                              )}
+                            >
+                              {field.value ? (
+                                format(field.value, "PPP")
+                              ) : (
+                                <span>Pick a date</span>
+                              )}
+                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={field.value}
+                            onSelect={field.onChange}
+                            disabled={(date) =>
+                              date > new Date() || date < new Date("1900-01-01")
+                            }
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="work_email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Work Email</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter Work Email" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="phone_number"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Phone Number</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter Phone Number" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Button type="submit">Submit</Button>
+              </form>
+            </Form>
+          </>
         ) : (
           <div className="space-y-4 text-gray-600">
             <div className="flex justify-between">
-              <p>First Name</p>
-              <p>{details.first_name || "---"}</p>
+              <p className='text-primary '>First Name</p>
+              <p>{defaultValues?.first_name || "---"}</p>
             </div>
             <div className="flex justify-between">
-              <p>Last Name</p>
-              <p>{details.last_name || "---"}</p>
+              <p className='text-primary '>Last Name</p>
+              <p>{defaultValues?.last_name || "---"}</p>
             </div>
             <div className="flex justify-between">
-              <p>Maiden Name</p>
-              <p>{details.maiden_name || "---"}</p>
+              <p className='text-primary '>Maiden Name</p>
+              <p>{defaultValues?.maiden_name || "---"}</p>
             </div>
             <div className="flex justify-between">
-              <p>Middle Name</p>
-              <p>{details.middle_name || "---"}</p>
+              <p className='text-primary '>Middle Name</p>
+              <p>{defaultValues?.middle_name || "---"}</p>
             </div>
             <div className="flex justify-between">
-              <p>Gender</p>
-              <p>{details.gender || "---"}</p>
+              <p className='text-primary '>Gender</p>
+              <p>{defaultValues?.gender || "---"}</p>
             </div>
             <div className="flex justify-between">
-              <p>DOB</p>
-              <p>{details.date_of_birth || "---"}</p>
+              <p className='text-primary '>DOB</p>
+              <p>{defaultValues?.date_of_birth ? new Date(defaultValues.date_of_birth).toLocaleDateString() : "---"}</p>
             </div>
             <div className="flex justify-between">
-              <p>Email</p>
-              <p>{details.work_email || "---"}</p>
+              <p className='text-primary '>Email</p>
+              <p>{defaultValues?.work_email || "---"}</p>
             </div>
             <div className="flex justify-between">
-              <p>Phone Number</p>
-              <p>{details.phone_number || "---"}</p>
+              <p className='text-primary '>Phone Number</p>
+              <p>{defaultValues?.phone_number || "---"}</p>
             </div>
           </div>
         )}

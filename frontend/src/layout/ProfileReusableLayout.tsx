@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import unknownImg from "@/assets/Unknown_person.png";
 import { Button } from "@/components/ui/button";
 import CountUp from "react-countup";
 import MyDoughnutChart from "@/components/profile/progress-chart";
-import { editIcon } from "@/assets/edit";
+import { Pencil } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 
 
 interface ProfileReusableLayoutProps {
@@ -32,7 +32,7 @@ interface ProfileReusableLayoutProps {
   };
 }
 
-const ProfileReusableLayout = ({ pageTitle, children, user, profile }: ProfileReusableLayoutProps) => {
+const ProfileReusableLayout = ({  children, user, profile }: ProfileReusableLayoutProps) => {
   const [profileImg, setProfileImg] = useState<File | null>(null);
 
   const listToComplete = [
@@ -64,21 +64,10 @@ const ProfileReusableLayout = ({ pageTitle, children, user, profile }: ProfileRe
           />
           <label htmlFor="profile-user-image" className="cursor-pointer">
             <div className="w-24 h-24 rounded-full overflow-hidden border border-gray-300">
-              {profileImg ? (
-                <img
-                  alt="profile-img"
-                  src={URL.createObjectURL(profileImg)}
-                  width={96}
-                  height={96}
-                />
-              ) : (
-                <img
-                  alt="profile-img"
-                  src={profile.personalInformation.profilePicture || unknownImg}
-                  width={96}
-                  height={96}
-                />
-              )}
+              <Avatar className="flex text-center m-auto items-center justify-center w-full h-full">
+                <AvatarImage src={profile?.personalInformation?.profilePicture} />
+                <AvatarFallback className="text-center ">NO</AvatarFallback>
+              </Avatar>
             </div>
           </label>
           <div>
@@ -95,7 +84,7 @@ const ProfileReusableLayout = ({ pageTitle, children, user, profile }: ProfileRe
           </div>
         ) : (
           <label htmlFor="profile-user-image" className="btn-primary cursor-pointer flex gap-3 items-center">
-            <span>Upload Picture</span> <figure>{editIcon}</figure>
+            <span>Upload Picture</span> <figure><Pencil className='w-[1rem]' /></figure>
           </label>
         )}
         <p className="text-sm text-gray-500 mt-2">

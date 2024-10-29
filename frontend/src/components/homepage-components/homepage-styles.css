@@ -1,0 +1,25 @@
+.made-for-you {
+    padding: 20px;
+    border: 2px solid #ccc; /* Add border around the whole section */
+    margin-bottom: 20px; /* Add margin to create space between sections */
+}
+
+.recently-released {
+    padding: 20px;
+    border: 2px solid #ccc; /* Add border around the whole section */
+}
+
+.thumbnails {
+    display: flex;
+    gap: 10px;
+}
+
+.thumbnail {
+    width: 100px;
+    height: 100px;
+    background-size: cover;
+    background-position: center;
+    border: 1px solid #ccc; /* Add border around each cover */
+    padding: 5px; /* Add padding to create space between the border and the image */
+    box-sizing: border-box; /* Ensure padding is included in the width and height */
+}

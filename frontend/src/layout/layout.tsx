@@ -1,5 +1,5 @@
 import MusicPlayer from "@/components/music-player";
-import Sidebar from "@/components/sidebar";
+import { Sidebar } from "@/components/sidebar";
 import { Outlet } from "react-router-dom";
 
 export default function Layout() {

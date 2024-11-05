@@ -47,15 +47,19 @@ export function RegisterForm() {
   });
 
   async function onSubmit(data: z.infer<typeof registerSchema>) {
-    const res = await axios.post("/api/auth/signUp", data)
-
-    if (res.status === 200) {
+    axios.post("/api/auth/signUp", data).then(() => {
       toast({
         title: "Registration Successful",
         description: "You have successfully registered! You can now login to your account."
       })
+
       return navigate("/login")
-    }
+    }).catch((error) => {
+      toast({
+        title: "Registration Failed",
+        description: error.response.data.message
+      })
+    })
   }
 
   return (

@@ -13,7 +13,7 @@ import axios from "@/config/axios"
 import { Eye, EyeOff } from "lucide-react"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
-import { Link, redirect, useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 
 import { z } from "zod"
 import { useToast } from "@/hooks/use-toast"
@@ -42,16 +42,19 @@ export function LoginForm() {
   });
 
   async function onSubmit(data: z.infer<typeof loginSchema>) {
-    const res = await axios.post("/api/auth/signIn", data)
-
-    if (res.status === 200) {
+    axios.post("/api/auth/signIn", data).then(() => {
       toast({
         title: "Login Successful",
         description: "You have successfully logged in!"
       })
 
       return navigate("/")
-    }
+    }).catch((error) => {
+      toast({
+        title: "Login Failed",
+        description: error.response.data.message
+      })
+    })
   }
 
   return (

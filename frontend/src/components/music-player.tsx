@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Pause, Play, SkipBack, SkipForward, Volume1, Volume2 } from "lucide-react";
@@ -26,10 +26,22 @@ export default function MusicPlayer() {
     console.log("Skipped to next song");
   };
 
-  const handleProgressChange = (value: number[]) => {
-    setProgress(value[0]);
-    console.log(`Seek to ${value}%`);
+  const updateDuration = () => {
+    if (audioRef.current) {
+      setProgress((audioRef.current.currentTime / audioRef.current.duration) * 100);
+    }
   };
+  
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.addEventListener("timeupdate", updateDuration);
+    }
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.removeEventListener("timeupdate", updateDuration);
+      }
+    };
+  }, []);
 
   const handleVolumeChange = (value: number[]) => {
     const newVolume = value[0];

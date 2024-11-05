@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Pause, Play, SkipBack, SkipForward, Volume1, Volume2 } from "lucide-react";
@@ -7,8 +7,16 @@ export default function MusicPlayer() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [volume, setVolume] = useState(50);
+  const audioRef = useRef<HTMLAudioElement>(null);
 
-  const togglePlayPause = () => setIsPlaying(!isPlaying);
+  const togglePlayPause = () => {
+    if (isPlaying) {
+      audioRef.current?.pause();
+    } else {
+      audioRef.current?.play();
+    }
+    setIsPlaying(!isPlaying);
+  };
 
   const handleSkipBack = () => {
     console.log("Skipped to previous song");
@@ -30,6 +38,9 @@ export default function MusicPlayer() {
 
   return (
     <div className="flex items-center justify-between p-4 text-white">
+
+      <audio ref={audioRef} src="/public/test.mp3" />
+
       <Button variant="ghost" onClick={handleSkipBack}>
         <SkipBack className="stroke-black"/>
       </Button>

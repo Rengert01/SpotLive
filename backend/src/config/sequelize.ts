@@ -8,4 +8,16 @@ const sequelize = new Sequelize(env.POSTGRES_DB, env.POSTGRES_USER, env.POSTGRES
   port: parseInt(env.POSTGRES_PORT),
 });
 
+async function testConnection() {
+  try {
+    await sequelize.authenticate();
+    await sequelize.sync();
+    console.log('Connection to sequelize has been established successfully.');
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+testConnection();
+
 export default sequelize;

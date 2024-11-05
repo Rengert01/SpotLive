@@ -33,6 +33,8 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?}
       POSTGRES_PORT: ${POSTGRES_PORT:?}
       POSTGRES_HOST: ${POSTGRES_HOST:?}
+      DB_LOGGING: ${DB_LOGGING:?}
+      SESSION_SECRET: ${SESSION_SECRET:?}
     expose:
       - "${BACKEND_API_PORT}"
     ports:

@@ -26,14 +26,19 @@ export default function MusicPlayer() {
     console.log("Skipped to next song");
   };
 
-  const handleProgressChange = (value: number) => {
-    setProgress(value);
+  const handleProgressChange = (value: number[]) => {
+    setProgress(value[0]);
     console.log(`Seek to ${value}%`);
   };
 
-  const handleVolumeChange = (value: number) => {
-    setVolume(value);
-    console.log(`Volume set to ${value}`);
+  const handleVolumeChange = (value: number[]) => {
+    const newVolume = value[0];
+    const volumeValue = newVolume / 100;
+    if (audioRef.current) {
+      audioRef.current.volume = volumeValue;
+    }
+    setVolume(newVolume);
+    console.log(`Volume set to ${newVolume}%`);
   };
 
   return (
@@ -57,6 +62,7 @@ export default function MusicPlayer() {
         <Slider
           max={100}
           step={1}
+          value={[progress]}
           aria-label="Seek"
         />
       </div>
@@ -66,6 +72,8 @@ export default function MusicPlayer() {
         <Slider
           max={100}
           step={1}
+          value={[volume]}
+          onValueChange={handleVolumeChange}
           aria-label="Volume"
           className="w-24"
         />

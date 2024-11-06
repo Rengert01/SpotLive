@@ -62,7 +62,7 @@ const AddressInfoBox: React.FC = () => {
 
 
     return (
-        <div className="bg-white p-6  shadow-md space-y-6 ">
+        <div className="bg-white p-6 space-y-6 ">
             {/* Title and action buttons */}
             <div className="flex justify-between items-center border-b pb-4">
                 <p className="text-lg font-semibold">Address Information</p>

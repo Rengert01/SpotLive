@@ -49,7 +49,7 @@ const ProfileReusableLayout = ({ children, user, profile }: ProfileReusableLayou
 
   return (
 
-    <div className="flex flex-col lg:flex-row gap-6 p-4 bg-gray-50">
+    <div className="flex flex-col lg:flex-row gap-6 p-4">
       {/* Left Section */}
       <div className="lg:w-2/3 bg-white rounded-lg shadow-md p-6">
         <h2 className="text-xl font-semibold mb-4">Your Profile Picture</h2>

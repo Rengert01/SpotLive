@@ -69,7 +69,7 @@ const PersonalInfoBox: React.FC = () => {
   ];
 
   return (
-    <div className="p-6 bg-white shadow-md rounded-t-lg w-full mx-auto mt-8">
+    <div className="p-6 bg-white w-full mx-auto mt-8">
       {/* Title and Edit Button */}
       <div className="flex justify-between items-center mb-4">
         <p className="text-lg font-semibold text-gray-800">Personal Information</p>

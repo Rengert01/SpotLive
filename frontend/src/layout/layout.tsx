@@ -6,12 +6,12 @@ export default function Layout() {
   return (
     <div className="w-full h-screen grid grid-cols-[15rem,1fr]">
       <Sidebar className="col-span-1" />
-      <div className="col-span-1 lg:col-span-1 lg:border-l">
+      <div className="col-span-1 lg:col-span-1 lg:border-l h-[100%] overflow-hidden">
         <div className="h-full grid grid-rows-[1fr,4rem]">
-          <div className="px-4 py-6 lg:px-8 row-span-1">
+          <div className="px-4 py-6 lg:px-8 row-span-1 h-[90%] overflow-x-hidden overflow-y-scroll">
             <Outlet />
           </div>
-          <div className="row-span-1 border-t px-4 lg:px-8">
+          <div className="row-span-1 border-t px-4 lg:px-8 h-[10%]">
             <MusicPlayer />
           </div>
         </div>

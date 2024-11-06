@@ -41,10 +41,10 @@ export default function RecentlyReleased() {
     }
 
     return (
-        <section className="p-6 bg-gradient-to-br from-gray-900 to-gray-800">
+        <section className="p-6">
             <h2 className="text-3xl font-bold mb-6 text-white">Recently Released</h2>
             <div className="flex items-center">
-                <button onClick={prevTracks} className="text-white p-4 text-2xl">&lt;</button>
+                <button onClick={prevTracks} className="text-black p-4 text-2xl">&lt;</button>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     {tracks.slice(currentIndex, currentIndex + tracksPerPage).map((track) => (
                         <div key={track.id} className="group relative">
@@ -56,11 +56,11 @@ export default function RecentlyReleased() {
                                         className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-110"
                                     />
                                 )}
-                                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-60 transition-opacity duration-300 flex items-center justify-center">
+                                <div className="absolute inset-0 flex items-center justify-center border-0 group-hover:border-4 group-hover:border-black transition-all duration-300">
                                     <Button
                                         size="icon"
                                         variant="secondary"
-                                        className="w-8 h-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform translate-y-4 group-hover:translate-y-0"
+                                        className="w-8 h-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform translate-y-1/2 group-hover:translate-y-0"
                                     >
                                         <Play className="w-4 h-4" />
                                         <span className="sr-only">Play {track.title}</span>
@@ -70,11 +70,12 @@ export default function RecentlyReleased() {
                             <div className="mt-2">
                                 <h3 className="text-lg font-semibold text-white">{track.title}</h3>
                                 <p className="text-sm text-gray-400">{track.artist}</p>
+                                <p className="text-sm text-gray-400">{track.title} - {track.artist}</p>
                             </div>
                         </div>
                     ))}
                 </div>
-                <button onClick={nextTracks} className="text-white p-4 text-2xl">&gt;</button>
+                <button onClick={nextTracks} className="text-black p-4 text-2xl">&gt;</button>
             </div>
         </section>
     )

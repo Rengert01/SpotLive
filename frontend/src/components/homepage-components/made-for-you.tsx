@@ -3,11 +3,9 @@ import { Play } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import tracks from '@/data/made-for-you.json'
 
-export default function Component() {
+export default function MadeForYou() {
     const [images, setImages] = useState<{ [key: string]: string }>({})
     const [error, setError] = useState<string | null>(null)
-    const [currentIndex, setCurrentIndex] = useState(0)
-    const tracksPerPage = 4
 
     useEffect(() => {
         const loadImages = async () => {
@@ -28,26 +26,17 @@ export default function Component() {
         loadImages()
     }, [])
 
-    const nextTracks = () => {
-        setCurrentIndex((prevIndex) => (prevIndex + tracksPerPage) % tracks.length)
-    }
-
-    const prevTracks = () => {
-        setCurrentIndex((prevIndex) => (prevIndex - tracksPerPage + tracks.length) % tracks.length)
-    }
-
     if (error) {
         return <div className="text-red-500">{error}</div>
     }
 
     return (
         <section className="p-6">
-            <h2 className="text-3xl font-bold mb-6 text-white">Made For You</h2>
-            <div className="flex items-center">
-                <button onClick={prevTracks} className="text-black p-4 text-2xl">&lt;</button>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {tracks.slice(currentIndex, currentIndex + tracksPerPage).map((track) => (
-                        <div key={track.id} className="group relative">
+            <h2 className="text-3xl font-bold mb-6 text-black">Made For You</h2>
+            <div className="relative">
+                <div className="flex space-x-4 overflow-x-auto" style={{ width: '100%' }}>
+                    {tracks.map((track) => (
+                        <div key={track.id} className="group relative flex-shrink-0 w-48">
                             <div className="aspect-square overflow-hidden rounded-lg bg-gray-800">
                                 {images[track.id] && (
                                     <img
@@ -56,26 +45,25 @@ export default function Component() {
                                         className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-110"
                                     />
                                 )}
-                                <div className="absolute inset-0 flex items-center justify-center border-0 group-hover:border-4 group-hover:border-black transition-all duration-300">
+                                <div
+                                    className="absolute inset-0 flex items-center justify-center border-0 group-hover:border-4 group-hover:border-black transition-all duration-300">
                                     <Button
                                         size="icon"
                                         variant="secondary"
                                         className="w-8 h-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform translate-y-1/2 group-hover:translate-y-0"
                                     >
-                                        <Play className="w-4 h-4" />
+                                        <Play className="w-4 h-4"/>
                                         <span className="sr-only">Play {track.title}</span>
                                     </Button>
                                 </div>
                             </div>
                             <div className="mt-2">
-                                <h3 className="text-lg font-semibold text-white">{track.title}</h3>
+                                <h3 className="text-lg font-semibold text-black">{track.title}</h3>
                                 <p className="text-sm text-gray-400">{track.artist}</p>
-                                <p className="text-sm text-gray-400">{track.title} - {track.artist}</p>
                             </div>
                         </div>
                     ))}
                 </div>
-                <button onClick={nextTracks} className="text-black p-4 text-2xl">&gt;</button>
             </div>
         </section>
     )

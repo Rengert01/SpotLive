@@ -1,4 +1,4 @@
-import HomePage from "@/components/homepage.tsx";
+import HomePage from "@/pages/homepage.tsx";
 import ProfilePage from "@/components/profile-page.tsx";
 import Layout from "@/layout/layout";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";

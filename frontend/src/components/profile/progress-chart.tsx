@@ -39,7 +39,7 @@ export function ProgressChart({ totalVal }: ProgressChartProp) {
     { browser: "safari", profile: totalVal, fill: "var(--color-safari)" },
   ];
   return (
-    <Card className="flex flex-col w-full">
+    <Card className="flex flex-col w-full border-none shadow-none">
       <CardHeader className="items-center pb-0">
         <CardTitle>Complete Your Profile</CardTitle>
 

@@ -37,7 +37,7 @@ const PasswordInfoBox: React.FC = () => {
     }
 
     return (
-        <div className="bg-white shadow-md rounded-b-lg p-6">
+        <div className="bg-white p-6">
             {/* Title and Edit/Save Buttons */}
             <div className="flex justify-between items-center mb-4">
                 <p className="text-lg font-semibold">Change Password</p>

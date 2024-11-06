@@ -49,9 +49,9 @@ const ProfileReusableLayout = ({ children, user, profile }: ProfileReusableLayou
 
   return (
 
-    <div className="flex flex-col lg:flex-row gap-6 p-4 bg-gray-50">
+    <div className="flex flex-col lg:flex-row gap-6 p-4">
       {/* Left Section */}
-      <div className="lg:w-2/3 bg-white rounded-lg shadow-md p-6">
+      <div className="lg:w-2/3 bg-white rounded-lg shadow-md border-[1px] border-gray p-6">
         <h2 className="text-xl font-semibold mb-4">Your Profile Picture</h2>
         <div className="flex items-center gap-4 mb-6">
           <input
@@ -93,7 +93,7 @@ const ProfileReusableLayout = ({ children, user, profile }: ProfileReusableLayou
       </div>
 
       {/* Right Section */}
-      <div className="lg:w-1/3 bg-white rounded-lg shadow-md p-6">
+      <div className="lg:w-1/3 bg-white rounded-lg shadow-md p-6 shadow-md border-[1px] border-gray">
         <div className="flex flex-col items-center mb-6">
           <ProgressChart totalVal={profile.profileCompletion.completionPercentage || 0} />
         </div>

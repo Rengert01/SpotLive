@@ -3,16 +3,12 @@ import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { useEffect, useState } from "react"
+import axios from "@/config/axios"
 
-//import { Playlist } from "../data/playlists"
+type SidebarProps = React.HTMLAttributes<HTMLDivElement>
 
-interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {
-  //playlists: Playlist[]
-}
-
-export type Playlist = (typeof playlists)[number]
-
-export const playlists = [
+const playlists = [
   "Recently Added",
   "Recently Played",
   "Top Songs",
@@ -28,12 +24,28 @@ export const playlists = [
 ]
 
 export function Sidebar({ className }: SidebarProps) {
+  const [user, setUser] = useState(null)
+
+  useEffect(() => {
+    const fetchSession = async () => {
+      try {
+        const res = await axios.get("/api/auth/session")
+
+        setUser(res.data.user.email)
+      } catch (err) {
+        console.error(err)
+      }
+    }
+
+    fetchSession()
+  }, [])
+
   return (
     <div className={cn("", className)}>
       <div className="h-full space-y-4 pt-4 flex flex-col justify-between">
 
-        <div>
-          <div className="px-3 py-2">
+        <div className="flex flex-col h-full">
+          <div className="px-3 py-2 flex-initial">
             <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
               Discover
             </h2>
@@ -93,7 +105,8 @@ export function Sidebar({ className }: SidebarProps) {
             </Button> */}
             </div>
           </div>
-          <div className="py-2">
+
+          <div className="py-2 flex-initial">
             <h2 className="relative px-7 text-lg font-semibold tracking-tight mb-1">
               Playlists
             </h2>
@@ -128,8 +141,8 @@ export function Sidebar({ className }: SidebarProps) {
             </ScrollArea>
           </div>
 
-          <div className="px-3 py-1">
-            <div className="space-y-1 -mt-">
+          <div className="px-3 py-1 flex-auto content-end">
+            <div className="space-y-1">
               <Button variant="ghost" className="w-full justify-start">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -221,18 +234,24 @@ export function Sidebar({ className }: SidebarProps) {
             </Button> */}
             </div>
           </div>
+
         </div>
 
-        <div className="">
+        <div className="h-16 border-y">
           <DropdownMenu>
-            <DropdownMenuTrigger className="w-full flex gap-4 items-center border-t p-4">
-              <Avatar>
-                <AvatarImage src="https://github.com/shadcn.png" />
-                <AvatarFallback>CN</AvatarFallback>
-              </Avatar>
-              <p className="text-center font-semibold">Username</p>
+            <DropdownMenuTrigger className="h-full w-full flex justify-center p-3">
+              <div className=" flex gap-4 items-center">
+                <Avatar>
+                  <AvatarImage src="https://github.com/shadcn.png" />
+                  <AvatarFallback>CN</AvatarFallback>
+                </Avatar>
+                <div className="space-y-0">
+                  <p className="text-start text-sm font-semibold">Username</p>
+                  <p className="text-start text-sm text-muted-foreground">{user}</p>
+                </div>
+              </div>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-[200px]">
+            <DropdownMenuContent className="w-[250px]">
               <DropdownMenuItem>Profile</DropdownMenuItem>
               <DropdownMenuItem>Log Out</DropdownMenuItem>
             </DropdownMenuContent>

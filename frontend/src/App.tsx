@@ -33,13 +33,9 @@ const router = createBrowserRouter([
 
 export default function App() {
   return (
-    <html lang="en">
-      <body>
-        <main className="flex min-h-screen flex-col items-center justify-center bg-background">
-          <RouterProvider router={router} />
-          <Toaster />
-        </main>
-      </body>
-    </html>
+    <div className="flex min-h-screen flex-col items-center justify-center bg-background">
+      <RouterProvider router={router} />
+      <Toaster />
+    </div>
   )
 }

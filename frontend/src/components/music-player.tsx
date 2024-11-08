@@ -53,6 +53,14 @@ export default function MusicPlayer() {
     console.log(`Volume set to ${newVolume}%`);
   };
 
+  const handleSeek = (value: number[]) => {
+    const newProgress = value[0];
+    if (audioRef.current) {
+      audioRef.current.currentTime = (newProgress / 100) * audioRef.current.duration;
+    }
+    setProgress(newProgress);
+  };
+
   return (
     <div className="flex items-center justify-between p-4 text-white">
 
@@ -87,6 +95,7 @@ export default function MusicPlayer() {
           max={100}
           step={1}
           value={[progress]}
+          onValueChange={handleSeek}
           aria-label="Seek"
         />
       </div>

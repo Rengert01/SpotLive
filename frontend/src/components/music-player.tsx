@@ -62,7 +62,7 @@ export default function MusicPlayer() {
   };
 
   return (
-    <div className="flex items-center justify-between p-4 text-white">
+    <div className="flex items-center justify-between text-white h-full">
 
       <audio ref={audioRef} src="/public/test.mp3" />
 
@@ -79,15 +79,15 @@ export default function MusicPlayer() {
       </div>
 
       <Button variant="ghost" onClick={handleSkipBack}>
-        <SkipBack className="stroke-black"/>
+        <SkipBack className="stroke-black" />
       </Button>
 
       <Button variant="ghost" onClick={togglePlayPause}>
-        {isPlaying ? <Pause className="stroke-black"/> : <Play className="stroke-black"/>}
+        {isPlaying ? <Pause className="stroke-black" /> : <Play className="stroke-black" />}
       </Button>
 
       <Button variant="ghost" onClick={handleSkipForward} size="sm">
-        <SkipForward className="stroke-black"/>
+        <SkipForward className="stroke-black" />
       </Button>
 
       <div className="flex-1 mx-4">
@@ -101,7 +101,7 @@ export default function MusicPlayer() {
       </div>
 
       <div className="flex items-center space-x-2">
-        <Volume1 className="stroke-black"/>
+        <Volume1 className="stroke-black" />
         <Slider
           max={100}
           step={1}
@@ -110,7 +110,7 @@ export default function MusicPlayer() {
           aria-label="Volume"
           className="w-24"
         />
-        <Volume2 className="stroke-black"/>
+        <Volume2 className="stroke-black" />
       </div>
     </div>
   );

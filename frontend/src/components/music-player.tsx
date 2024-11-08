@@ -58,6 +58,18 @@ export default function MusicPlayer() {
 
       <audio ref={audioRef} src="/public/test.mp3" />
 
+      <div className="flex items-center space-x-4">
+        <img
+          src="/public/image.jpg"
+          alt="Song Image"
+          className="w-12 h-12 rounded-md" 
+        />
+        <div>
+          <p className="text-sm font-semibold text-black">Song Name</p>
+          <p className="text-xs text-gray-400">Artist Name</p>
+        </div>
+      </div>
+
       <Button variant="ghost" onClick={handleSkipBack}>
         <SkipBack className="stroke-black"/>
       </Button>

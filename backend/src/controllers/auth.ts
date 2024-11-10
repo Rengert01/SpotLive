@@ -125,6 +125,10 @@ const signOut = async (req: Request, res: Response): Promise<void> => {
   res.status(200).json({ message: "Sign out" });
 }
 
+const getSession = async (req: Request, res: Response): Promise<void> => {
+  res.status(200).json({ user: req.user });
+}
+
 const deleteAccount = async (req: ExtendedRequest, res: Response): Promise<void> => {
   const email = req.body.email;
   try {
@@ -149,4 +153,4 @@ const deleteAccount = async (req: ExtendedRequest, res: Response): Promise<void>
   }
 };
 
-export default { signIn, signUp, signOut, deleteAccount };
+export default { signIn, signUp, signOut, deleteAccount, getSession };

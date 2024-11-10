@@ -12,6 +12,11 @@ const loginSchema = z.object({
   password: z.string()
 })
 
+// Extend the Express Request type to include the `email` field
+interface ExtendedRequest extends Request {
+  email?: string;
+}
+
 passport.use(new LocalStrategy(
   {
     usernameField: "email",
@@ -119,4 +124,31 @@ const signOut = async (req: Request, res: Response): Promise<void> => {
   res.status(200).json({ message: "Sign out" });
 }
 
-export default { signIn, signUp, signOut };
+const deleteAccount = async (req: ExtendedRequest, res: Response): Promise<void> => {
+  const email = req.body.email;
+
+  console.log("req",req.body.email)
+
+  try {
+      const rowsDeleted = await User.destroy({
+          where: {
+              email: email,
+          },
+          force: true,
+      });
+
+      if (rowsDeleted === 0) {
+          // If no rows were deleted, send a 404 response
+          res.status(404).json({ message: "User not found" });
+      } else {
+          // If deletion was successful, send a 200 response
+          res.status(200).json({ message: "Account deleted successfully" });
+      }
+  } catch (error) {
+      // Handle any other errors that may have occurred
+      console.error("Error deleting account:", error);
+      res.status(500).json({ message: "An error occurred while deleting the account" });
+  }
+};
+
+export default { signIn, signUp, signOut, deleteAccount };

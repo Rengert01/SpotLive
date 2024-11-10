@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod"
+import axios from "@/config/axios"
 import {
     Form,
     FormControl,
@@ -14,11 +15,28 @@ import { useForm } from "react-hook-form"
 import { formSchema, passwordSchema } from '@/lib/profile-schema';
 import { z } from "zod"
 import { Pencil } from 'lucide-react';
+import {
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
 import TogglePassword from "../toggle-password";
+import { useNavigate } from "react-router-dom";
+import { toast } from "@/hooks/use-toast";
+
 
 const PasswordInfoBox: React.FC = () => {
     const [editState, setEditState] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
+    const navigate = useNavigate();
+    const userEmail = localStorage.getItem("email");
+    const email = userEmail ? JSON.parse(userEmail) : null;
+
+
     const dummy = {
         current_password: "OldPassword123!",  // Dummy current password
         password: "NewPassword456!",           // Dummy new password
@@ -151,6 +169,58 @@ const PasswordInfoBox: React.FC = () => {
                         </Form>
                     </>
                 )}
+            </div>
+            <div className="mt-10">
+                <Dialog>
+                    <DialogTrigger asChild>
+                        <Button>
+                            Delete Account
+                        </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-md">
+                        <DialogHeader>
+                            <DialogTitle>Delete Account</DialogTitle>
+
+                        </DialogHeader>
+                        <div className="flex items-center space-x-2 mt-10">
+                            <p>Are you sure you want to delete your account?</p>
+                        </div>
+                        <DialogFooter className="sm:justify-start mt-10">
+                            <DialogClose asChild>
+                                <div className="w-full flex justify-end gap-[10px]">
+
+                                    <Button type="button" variant="secondary">
+                                        Close
+                                    </Button>
+                                    <Button type="button" variant="destructive"
+                                        onClick={async () => {
+                                            axios.post("/api/auth/deleteAccount", {
+                                                email
+                                            }).then(() => {
+                                                toast({
+                                                    title: "Account Deleted Successfully",
+                                                    description: "You have successfully logged in!"
+                                                })
+
+                                                navigate("/login")
+                                            }).catch((error) => {
+                                                toast({
+                                                    title: "Something went wrong!",
+                                                    description: error.response.data.message
+                                                })
+                                            })
+
+                                        }}
+                                    >
+                                        Proceed
+                                    </Button>
+                                </div>
+                            </DialogClose>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
+
+
             </div>
         </div>
     );

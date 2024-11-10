@@ -82,32 +82,33 @@ const signUpSchema = z.object({
 })
 
 const signUp = async (req: Request, res: Response): Promise<void> => {
-  try {const result = signUpSchema.safeParse(req.body);
+  try {
+    const result = signUpSchema.safeParse(req.body);
 
-  if (!result.success) {
-    res.status(400).json({ message: result.error });
-    return;
-  }
+    if (!result.success) {
+      res.status(400).json({ message: result.error });
+      return;
+    }
 
-  const { email, password } = result.data;
+    const { email, password } = result.data;
 
-  const user = await User.findOne({
-    where: { email: email }
-  });
-  
-  if (user) {
-    res.status(400).json({ message: "Email already exists." });
-    return;
-  }
-  
-  const hashedPassword = await bcrypt.hash(password, 10);
+    const user = await User.findOne({
+      where: { email: email }
+    });
 
-  const newUser = await User.create({
-    email: email,
-    password: hashedPassword
-  });
+    if (user) {
+      res.status(400).json({ message: "Email already exists." });
+      return;
+    }
 
-  res.status(201).json({ message: "User created", user: newUser });
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const newUser = await User.create({
+      email: email,
+      password: hashedPassword
+    });
+
+    res.status(201).json({ message: "User created", user: newUser });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Internal server error" });
@@ -115,7 +116,7 @@ const signUp = async (req: Request, res: Response): Promise<void> => {
 }
 
 const signOut = async (req: Request, res: Response): Promise<void> => {
-  req.logOut(function(err) {
+  req.logOut(function (err) {
     if (err) {
       console.error(err);
       res.status(500).json({ message: "Internal server error" });
@@ -126,28 +127,25 @@ const signOut = async (req: Request, res: Response): Promise<void> => {
 
 const deleteAccount = async (req: ExtendedRequest, res: Response): Promise<void> => {
   const email = req.body.email;
-
-  console.log("req",req.body.email)
-
   try {
-      const rowsDeleted = await User.destroy({
-          where: {
-              email: email,
-          },
-          force: true,
-      });
+    const rowsDeleted = await User.destroy({
+      where: {
+        email: email,
+      },
+      force: true,
+    });
 
-      if (rowsDeleted === 0) {
-          // If no rows were deleted, send a 404 response
-          res.status(404).json({ message: "User not found" });
-      } else {
-          // If deletion was successful, send a 200 response
-          res.status(200).json({ message: "Account deleted successfully" });
-      }
+    if (rowsDeleted === 0) {
+      // If no rows were deleted, send a 404 response
+      res.status(404).json({ message: "User not found" });
+    } else {
+      // If deletion was successful, send a 200 response
+      res.status(200).json({ message: "Account deleted successfully" });
+    }
   } catch (error) {
-      // Handle any other errors that may have occurred
-      console.error("Error deleting account:", error);
-      res.status(500).json({ message: "An error occurred while deleting the account" });
+    // Handle any other errors that may have occurred
+    console.error("Error deleting account:", error);
+    res.status(500).json({ message: "An error occurred while deleting the account" });
   }
 };
 

@@ -27,8 +27,10 @@ export function Sidebar({ className }: SidebarProps) {
   const [user, setUser] = useState(null)
 
   useEffect(() => {
+    //Todo: Convert this to a custom auth hook
     const fetchSession = async () => {
       try {
+        console.log("Fetching session")
         const res = await axios.get("/api/auth/session")
 
         setUser(res.data.user.email)

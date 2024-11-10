@@ -31,7 +31,7 @@ export default function MusicPlayer() {
       setProgress((audioRef.current.currentTime / audioRef.current.duration) * 100);
     }
   };
-  
+
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.addEventListener("timeupdate", updateDuration);
@@ -64,13 +64,13 @@ export default function MusicPlayer() {
   return (
     <div className="flex items-center justify-between text-white h-full">
 
-      <audio ref={audioRef} src="/public/test.mp3" />
+      <audio ref={audioRef} src="/test.mp3" />
 
       <div className="flex items-center space-x-4">
         <img
-          src="/public/image.jpg"
+          src="/image.jpg"
           alt="Song Image"
-          className="w-12 h-12 rounded-md" 
+          className="w-12 h-12 rounded-md object-cover"
         />
         <div>
           <p className="text-sm font-semibold text-black">Song Name</p>

@@ -119,4 +119,8 @@ const signOut = async (req: Request, res: Response): Promise<void> => {
   res.status(200).json({ message: "Sign out" });
 }
 
-export default { signIn, signUp, signOut };
+const getSession = async (req: Request, res: Response): Promise<void> => {
+  res.status(200).json({ user: req.user });
+}
+
+export default { signIn, signUp, signOut, getSession };

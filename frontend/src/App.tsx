@@ -21,16 +21,16 @@ const router = createBrowserRouter([
         element: <ProfilePage />
       },
     ],
-    loader: async () => {
-      // TODO: This can be a custom hook to set user information (an auth provider)
-      try {
-        await axios.get("/api/auth/session")
-        return true
-      } catch (err) {
-        console.error(err)
-        return redirect("/login")
-      }
-    }
+    // loader: async () => {
+    //   // TODO: This can be a custom hook to set user information (an auth provider)
+    //   try {
+    //     await axios.get("/api/auth/session")
+    //     return true
+    //   } catch (err) {
+    //     console.error(err)
+    //     return redirect("/login")
+    //   }
+    // }
   },
   {
     path: "/login",

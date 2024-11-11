@@ -54,6 +54,26 @@ const PasswordInfoBox: React.FC = () => {
         console.log(values)
     }
 
+
+    const handleDelete = async () => {
+        axios.post("/api/auth/deleteAccount", {
+            email
+        }).then(() => {
+            toast({
+                title: "Account Deleted Successfully",
+                description: "You have successfully logged in!"
+            })
+
+            navigate("/login")
+        }).catch((error) => {
+            toast({
+                title: "Something went wrong!",
+                description: error.response.data.message
+            })
+        })
+
+    }
+
     return (
         <div className="bg-white p-6">
             {/* Title and Edit/Save Buttons */}
@@ -182,10 +202,10 @@ const PasswordInfoBox: React.FC = () => {
                             <DialogTitle>Delete Account</DialogTitle>
 
                         </DialogHeader>
-                        <div className="flex items-center space-x-2 mt-10">
+                        <div className="flex items-center space-x-2">
                             <p>Are you sure you want to delete your account?</p>
                         </div>
-                        <DialogFooter className="sm:justify-start mt-10">
+                        <DialogFooter className="sm:justify-start">
                             <DialogClose asChild>
                                 <div className="w-full flex justify-end gap-[10px]">
 
@@ -193,24 +213,7 @@ const PasswordInfoBox: React.FC = () => {
                                         Close
                                     </Button>
                                     <Button type="button" variant="destructive"
-                                        onClick={async () => {
-                                            axios.post("/api/auth/deleteAccount", {
-                                                email
-                                            }).then(() => {
-                                                toast({
-                                                    title: "Account Deleted Successfully",
-                                                    description: "You have successfully logged in!"
-                                                })
-
-                                                navigate("/login")
-                                            }).catch((error) => {
-                                                toast({
-                                                    title: "Something went wrong!",
-                                                    description: error.response.data.message
-                                                })
-                                            })
-
-                                        }}
+                                        onClick={handleDelete}
                                     >
                                         Proceed
                                     </Button>

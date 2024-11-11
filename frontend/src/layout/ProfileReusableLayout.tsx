@@ -111,6 +111,7 @@ const ProfileReusableLayout = ({ children, user, profile }: ProfileReusableLayou
             </li>
           ))}
         </ul>
+
       </div>
     </div>
 

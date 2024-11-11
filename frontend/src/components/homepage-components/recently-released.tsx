@@ -1,6 +1,7 @@
-import { Play } from 'lucide-react'
-import { Button } from "@/components/ui/button"
-import tracks from '@/data/recently-released.json'
+import { Play } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import tracks from '@/data/recently-released.json';
+import { Link } from 'react-router-dom'; // Assuming you are using react-router for navigation
 
 export default function RecentlyReleased() {
     return (
@@ -28,14 +29,18 @@ export default function RecentlyReleased() {
                                     </Button>
                                 </div>
                             </div>
-                            <div className="mt-2">
+                            <div className="mt-2 relative">
                                 <h3 className="text-lg font-semibold text-black">{track.title}</h3>
-                                <p className="text-sm text-gray-400">{track.artist}</p>
+                                <p className="text-sm text-gray-400">
+                                    <Link to={`/user/${track.artist.replace(/\s+/g, '-').toLowerCase()}`} className="text-blue-500 hover:underline z-10 relative">
+                                        {track.artist}
+                                    </Link>
+                                </p>
                             </div>
                         </div>
                     ))}
                 </div>
             </div>
         </section>
-    )
+    );
 }

@@ -3,48 +3,56 @@
     "id": 1,
     "title": "Doin Ya Thang",
     "artist": "Oliver $",
+    "artistId": 1,
     "cover": "DoinYaThang.jpg"
   },
   {
     "id": 2,
     "title": "I Feel Love (Club Mix)",
     "artist": "Kevin McKay",
+    "artistId": 2,
     "cover": "IFeelLove(ClubMix).jpg"
   },
   {
     "id": 3,
     "title": "I Like To Party",
     "artist": "Disko Junkie",
+    "artistId": 3,
     "cover": "ILikeToParty.jpg"
   },
   {
     "id": 4,
     "title": "Piano Pump",
     "artist": "Superlover",
+    "artistId": 4,
     "cover": "PianoPump.jpg"
   },
   {
     "id": 5,
     "title": "Saxophone",
     "artist": "Simon Adams",
+    "artistId": 5,
     "cover": "Saxophone.jpg"
   },
   {
     "id": 6,
     "title": "Starry Night (Edit)",
     "artist": "Peggy Gou",
+    "artistId": 6,
     "cover": "StarryNight(Edit).jpg"
   },
   {
     "id": 7,
     "title": "Sunday Shoutin' (Mixed)",
     "artist": "Johnny Corporate",
+    "artistId": 7,
     "cover": "SundayShoutin'(Mixed).jpg"
   },
   {
     "id": 8,
     "title": "Who Dares To Believe In Me (Extended Mix)",
     "artist": "Marco Lys",
+    "artistId": 8,
     "cover": "WhoDaresToBelieveInMe(ExtendedMix).jpg"
   }
 ]

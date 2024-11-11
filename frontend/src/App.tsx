@@ -6,6 +6,7 @@ import LoginPage from "@/pages/auth/login";
 import RegisterPage from "@/pages/auth/register";
 import { Toaster } from "@/components/ui/toaster";
 import axios from "@/config/axios";
+import UserProfile from "@/pages/user-page"; // Ensure this import is correct
 
 const router = createBrowserRouter([
   {
@@ -19,6 +20,10 @@ const router = createBrowserRouter([
       {
         path: "/profile",
         element: <ProfilePage />
+      },
+      {
+        path: "/user/:artistId",
+        element: <UserProfile />
       },
     ],
     // loader: async () => {

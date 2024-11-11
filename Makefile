@@ -1,23 +1,22 @@
-db:
-	@docker exec -it jobs_api sh -c 'cd sequelize && npx sequelize-cli db:drop && npx sequelize-cli db:create && npx sequelize-cli db:migrate:undo:all && npx sequelize-cli db:migrate && npx sequelize-cli db:seed:all'
+COMPOSE_FILE=docker-compose.yaml
 
 up:
 	@echo "Starting containers..."
-	@docker compose up -d
+	@docker compose -f $(COMPOSE_FILE) up -d
 
 down:
 	@echo "Stopping containers..."
-	@docker compose down
+	@docker compose -f $(COMPOSE_FILE) down
 
 build:
 	@echo "Building containers..."
-	@docker compose up --build -d
+	@docker compose -f $(COMPOSE_FILE) up --build -d
 
 logs:
 	@echo "Showing logs..."
-	@docker compose logs -f $(container)
+	@docker compose -f $(COMPOSE_FILE) logs -f $(container)
 	
 rebuild:
 	@echo "Rebuilding containers..."
-	@docker compose down
-	@docker compose up --build -d
+	@docker compose -f $(COMPOSE_FILE) down
+	@docker compose -f $(COMPOSE_FILE) up --build -d

@@ -7,7 +7,7 @@ interface UserAttributes {
   password: string;
 }
 
-interface UserCreationAttributes extends Optional<UserAttributes, 'id'> {}
+type UserCreationAttributes = Optional<UserAttributes, 'id'>;
 
 class User
   extends Model<UserAttributes, UserCreationAttributes>

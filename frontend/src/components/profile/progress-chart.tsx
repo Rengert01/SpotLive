@@ -4,45 +4,37 @@ import {
   PolarRadiusAxis,
   RadialBar,
   RadialBarChart,
-} from "recharts";
+} from 'recharts';
 
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { ChartConfig, ChartContainer } from "@/components/ui/chart";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { ChartConfig, ChartContainer } from '@/components/ui/chart';
 
 // Component Description
-export const description = "A radial chart with text";
-
-
+export const description = 'A radial chart with text';
 
 // Chart Configuration
 const chartConfig = {
   profile: {
-    label: "profile",
+    label: 'profile',
   },
   safari: {
-    label: "Safari",
-    color: "hsl(var(--chart-2))",
+    label: 'Safari',
+    color: 'hsl(var(--chart-2))',
   },
 } satisfies ChartConfig;
 
 interface ProgressChartProp {
-  totalVal: number
+  totalVal: number;
 }
 export function ProgressChart({ totalVal }: ProgressChartProp) {
   // Sample Data
   const chartData = [
-    { browser: "safari", profile: totalVal, fill: "var(--color-safari)" },
+    { browser: 'safari', profile: totalVal, fill: 'var(--color-safari)' },
   ];
   return (
     <Card className="flex flex-col w-full border-none shadow-none">
       <CardHeader className="items-center pb-0">
         <CardTitle>Complete Your Profile</CardTitle>
-
       </CardHeader>
       <CardContent className="flex-1 pb-0">
         <ChartContainer
@@ -67,7 +59,7 @@ export function ProgressChart({ totalVal }: ProgressChartProp) {
             <PolarRadiusAxis tick={false} tickLine={false} axisLine={false}>
               <Label
                 content={({ viewBox }) => {
-                  if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                  if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
                     return (
                       <text
                         x={viewBox.cx}
@@ -98,7 +90,6 @@ export function ProgressChart({ totalVal }: ProgressChartProp) {
           </RadialBarChart>
         </ChartContainer>
       </CardContent>
-
     </Card>
   );
 }

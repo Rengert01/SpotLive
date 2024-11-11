@@ -1,6 +1,6 @@
-import MusicPlayer from "@/components/music-player";
-import { Sidebar } from "@/components/sidebar";
-import { Outlet } from "react-router-dom";
+import MusicPlayer from '@/components/music-player';
+import { Sidebar } from '@/components/sidebar';
+import { Outlet } from 'react-router-dom';
 
 export default function Layout() {
   return (
@@ -17,5 +17,5 @@ export default function Layout() {
         </div>
       </div>
     </div>
-  )
+  );
 }

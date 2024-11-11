@@ -1,5 +1,5 @@
-import { DataTypes, Model, Optional, UUIDV4 } from "sequelize";
-import sequelize from "@/config/sequelize";
+import { DataTypes, Model, Optional, UUIDV4 } from 'sequelize';
+import sequelize from '@/config/sequelize';
 
 interface UserAttributes {
   id: string;
@@ -7,9 +7,12 @@ interface UserAttributes {
   password: string;
 }
 
-interface UserCreationAttributes extends Optional<UserAttributes, "id"> {}
+interface UserCreationAttributes extends Optional<UserAttributes, 'id'> {}
 
-class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
+class User
+  extends Model<UserAttributes, UserCreationAttributes>
+  implements UserAttributes
+{
   public id!: string;
   public email!: string;
   public password!: string;

@@ -1,13 +1,13 @@
-import AddressInfoBox from "@/components/profile/address-information";
-import PasswordInfoBox from "@/components/profile/password-info-box";
-import PersonalInfoBox from "@/components/profile/peronal-info-box";
-import ProfileReusableLayout from "@/layout/ProfileReusableLayout";
+import AddressInfoBox from '@/components/profile/address-information';
+import PasswordInfoBox from '@/components/profile/password-info-box';
+import PersonalInfoBox from '@/components/profile/peronal-info-box';
+import ProfileReusableLayout from '@/layout/ProfileReusableLayout';
 
 export default function ProfilePage() {
   const user = {
-    name: "Joe",
-    email: "joeDoe@shshs.com"
-  }
+    name: 'Joe',
+    email: 'joeDoe@shshs.com',
+  };
   const dummyProfileData = {
     profile: {
       profileCompletion: {
@@ -21,9 +21,10 @@ export default function ProfilePage() {
         },
       },
       personalInformation: {
-        firstName: "John",
-        lastName: "Doe",
-        profilePicture: "https://res.cloudinary.com/dxib0srtu/image/upload/v1684077318/samples/people/boy-snow-hoodie.jpg", // Example URL
+        firstName: 'John',
+        lastName: 'Doe',
+        profilePicture:
+          'https://res.cloudinary.com/dxib0srtu/image/upload/v1684077318/samples/people/boy-snow-hoodie.jpg', // Example URL
       },
     },
   };
@@ -34,5 +35,5 @@ export default function ProfilePage() {
       <AddressInfoBox />
       <PasswordInfoBox />
     </ProfileReusableLayout>
-  )
+  );
 }

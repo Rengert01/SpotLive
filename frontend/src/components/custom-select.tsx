@@ -1,7 +1,7 @@
-import { CheckIcon, ChevronDown, Loader2 } from "lucide-react";
-import { useRef, useState } from "react";
-import { cn } from "../lib/utils";
-import { Button } from "./ui/button";
+import { CheckIcon, ChevronDown, Loader2 } from 'lucide-react';
+import { useRef, useState } from 'react';
+import { cn } from '../lib/utils';
+import { Button } from './ui/button';
 import {
   Command,
   CommandEmpty,
@@ -9,9 +9,8 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "./ui/command";
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
-
+} from './ui/command';
+import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 
 type CustomSelectType = {
   loading?: boolean;
@@ -61,7 +60,7 @@ export default function CustomSelect({
         <label
           htmlFor={label}
           className={cn(
-            "block font-normal text-sm pb-1 text-[#616161] relative",
+            'block font-normal text-sm pb-1 text-[#616161] relative',
             labelClass
           )}
         >
@@ -80,10 +79,10 @@ export default function CustomSelect({
             role="combobox"
             aria-expanded={open}
             className={cn(
-              "w-full justify-between bg-white relative",
+              'w-full justify-between bg-white relative',
               className,
-              selected ? "text-[#162238]" : "!text-[#9AA6AC] !font-light ",
-              error && touched && "border-red-500"
+              selected ? 'text-[#162238]' : '!text-[#9AA6AC] !font-light ',
+              error && touched && 'border-red-500'
             )}
             ref={buttonRef}
             disabled={disabled}
@@ -93,23 +92,23 @@ export default function CustomSelect({
               ? selectTwo
                 ? selectTwo
                 : selected
+                  ? options?.filter(
+                      (option) =>
+                        option?.value?.toString().toLowerCase() ===
+                        selected?.toString().toLowerCase()
+                    )[0]?.label
+                  : placeholder
+                    ? placeholder
+                    : 'Select...'
+              : selected
                 ? options?.filter(
                     (option) =>
                       option?.value?.toString().toLowerCase() ===
                       selected?.toString().toLowerCase()
                   )[0]?.label
                 : placeholder
-                ? placeholder
-                : "Select..."
-              : selected
-              ? options?.filter(
-                  (option) =>
-                    option?.value?.toString().toLowerCase() ===
-                    selected?.toString().toLowerCase()
-                )[0]?.label
-              : placeholder
-              ? placeholder
-              : "Select..."}
+                  ? placeholder
+                  : 'Select...'}
             {/* {
                             selected ? options?.filter((option) => (option?.value?.toString().toLowerCase() || option?.label?.toString().toLowerCase()) === selected?.toString().toLowerCase())[0]?.label : "Select..."
                         } */}
@@ -126,12 +125,12 @@ export default function CustomSelect({
             )}
             {!loading ? (
               <CommandEmpty>
-                {emptyStateText ? emptyStateText : "No Record Found."}
+                {emptyStateText ? emptyStateText : 'No Record Found.'}
               </CommandEmpty>
             ) : null}
             <CommandGroup
               className="h-56  scroll-hidden"
-            //   style={{ overflowY: "auto" }}
+              //   style={{ overflowY: "auto" }}
             >
               {loading ? (
                 <div className="flex flex-col mt-5 justify-center items-center">
@@ -151,10 +150,10 @@ export default function CustomSelect({
                       {option.label}
                       <CheckIcon
                         className={cn(
-                          "ml-auto h-4 w-4",
+                          'ml-auto h-4 w-4',
                           selected === option.value
-                            ? "opacity-100"
-                            : "opacity-0"
+                            ? 'opacity-100'
+                            : 'opacity-0'
                         )}
                       />
                     </CommandItem>
@@ -165,7 +164,7 @@ export default function CustomSelect({
           </Command>
         </PopoverContent>
       </Popover>
-      <span className={cn("text-xs text-red-500 hidden", error && "block")}>
+      <span className={cn('text-xs text-red-500 hidden', error && 'block')}>
         {error && touched && error}
       </span>
     </div>

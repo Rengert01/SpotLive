@@ -1,51 +1,55 @@
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { useEffect, useState } from "react"
-import axios from "@/config/axios"
+import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { useEffect, useState } from 'react';
+import axios from '@/config/axios';
 
-type SidebarProps = React.HTMLAttributes<HTMLDivElement>
+type SidebarProps = React.HTMLAttributes<HTMLDivElement>;
 
 const playlists = [
-  "Recently Added",
-  "Recently Played",
-  "Top Songs",
-  "Top Albums",
-  "Top Artists",
-  "Logic Discography",
-  "Bedtime Beats",
-  "Feeling Happy",
-  "I miss Y2K Pop",
-  "Runtober",
-  "Mellow Days",
-  "Eminem Essentials",
-]
+  'Recently Added',
+  'Recently Played',
+  'Top Songs',
+  'Top Albums',
+  'Top Artists',
+  'Logic Discography',
+  'Bedtime Beats',
+  'Feeling Happy',
+  'I miss Y2K Pop',
+  'Runtober',
+  'Mellow Days',
+  'Eminem Essentials',
+];
 
 export function Sidebar({ className }: SidebarProps) {
-  const [user, setUser] = useState(null)
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     //Todo: Convert this to a custom auth hook
     const fetchSession = async () => {
       try {
-        console.log("Fetching session")
-        const res = await axios.get("/api/auth/session")
+        console.log('Fetching session');
+        const res = await axios.get('/api/auth/session');
 
-        setUser(res.data.user.email)
+        setUser(res.data.user.email);
       } catch (err) {
-        console.error(err)
+        console.error(err);
       }
-    }
+    };
 
-    fetchSession()
-  }, [])
+    fetchSession();
+  }, []);
 
   return (
-    <div className={cn("", className)}>
+    <div className={cn('', className)}>
       <div className="h-full space-y-4 pt-4 flex flex-col justify-between">
-
         <div className="flex flex-col h-full">
           <div className="px-3 py-2 flex-initial">
             <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
@@ -236,7 +240,6 @@ export function Sidebar({ className }: SidebarProps) {
             </Button> */}
             </div>
           </div>
-
         </div>
 
         <div className="h-16 border-y">
@@ -249,7 +252,9 @@ export function Sidebar({ className }: SidebarProps) {
                 </Avatar>
                 <div className="space-y-0">
                   <p className="text-start text-sm font-semibold">Username</p>
-                  <p className="text-start text-sm text-muted-foreground">{user}</p>
+                  <p className="text-start text-sm text-muted-foreground">
+                    {user}
+                  </p>
                 </div>
               </div>
             </DropdownMenuTrigger>
@@ -260,6 +265,6 @@ export function Sidebar({ className }: SidebarProps) {
           </DropdownMenu>
         </div>
       </div>
-    </div >
-  )
+    </div>
+  );
 }

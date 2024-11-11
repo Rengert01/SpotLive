@@ -1,19 +1,19 @@
 import { Pencil } from 'lucide-react';
-import CustomSelect from "@/components/custom-select";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Calendar } from "@/components/ui/calendar"
-import React, { useState } from "react";
-import { zodResolver } from "@hookform/resolvers/zod"
-import { CalendarIcon } from "lucide-react"
-import { format } from "date-fns"
-import { cn } from "@/lib/utils";
-import { Controller } from "react-hook-form";
+import CustomSelect from '@/components/custom-select';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Calendar } from '@/components/ui/calendar';
+import React, { useState } from 'react';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { CalendarIcon } from 'lucide-react';
+import { format } from 'date-fns';
+import { cn } from '@/lib/utils';
+import { Controller } from 'react-hook-form';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover"
+} from '@/components/ui/popover';
 import {
   Form,
   FormControl,
@@ -21,58 +21,55 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
-import { useForm } from "react-hook-form"
+} from '@/components/ui/form';
+import { useForm } from 'react-hook-form';
 import { formSchema } from '@/lib/profile-schema';
-import { z } from "zod"
-
+import { z } from 'zod';
 
 const PersonalInfoBox: React.FC = () => {
   const [editState, setEditState] = useState<boolean>(false);
 
   const dummyData: PersonalInfo = {
-    first_name: "Joe",
-    last_name: "Doe",
-    maiden_name: "---",
-    middle_name: "---",
-    date_of_birth: new Date("1990-01-01"),
-    work_email: "joeDoe@mailinator.com",
-    gender: "Male",
-    phone_number: "1234567890",
+    first_name: 'Joe',
+    last_name: 'Doe',
+    maiden_name: '---',
+    middle_name: '---',
+    date_of_birth: new Date('1990-01-01'),
+    work_email: 'joeDoe@mailinator.com',
+    gender: 'Male',
+    phone_number: '1234567890',
   };
-
-
 
   // Declare form
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: dummyData,
-  })
+  });
 
-  const { defaultValues } = form?.formState
+  const { defaultValues } = form?.formState;
 
   // Declare Handle sumbit
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values)
+    console.log(values);
   }
 
   const handleEdit = () => {
     setEditState(true);
   };
 
-
-
   const genderList = [
-    { label: "Male", value: "male" },
-    { label: "Female", value: "female" },
-    { label: "Others", value: "others" },
+    { label: 'Male', value: 'male' },
+    { label: 'Female', value: 'female' },
+    { label: 'Others', value: 'others' },
   ];
 
   return (
     <div className="p-6 bg-white w-full mx-auto mt-8">
       {/* Title and Edit Button */}
       <div className="flex justify-between items-center mb-4">
-        <p className="text-lg font-semibold text-gray-800">Personal Information</p>
+        <p className="text-lg font-semibold text-gray-800">
+          Personal Information
+        </p>
         {editState ? (
           <div className="flex space-x-4">
             <button
@@ -81,12 +78,16 @@ const PersonalInfoBox: React.FC = () => {
             >
               View Mode
             </button>
-
           </div>
         ) : (
-          <button onClick={handleEdit} className="flex items-center text-primary">
+          <button
+            onClick={handleEdit}
+            className="flex items-center text-primary"
+          >
             <span className="text-sm font-medium mr-2">Edit</span>
-            <figure><Pencil className='w-[1rem]' /></figure>
+            <figure>
+              <Pencil className="w-[1rem]" />
+            </figure>
           </button>
         )}
       </div>
@@ -96,7 +97,10 @@ const PersonalInfoBox: React.FC = () => {
         {editState ? (
           <>
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-8"
+              >
                 <FormField
                   control={form.control}
                   name="first_name"
@@ -172,16 +176,16 @@ const PersonalInfoBox: React.FC = () => {
                       <FormLabel>Date of birth</FormLabel>
                       <Popover>
                         <PopoverTrigger asChild>
-                          <FormControl >
+                          <FormControl>
                             <Button
-                              variant={"outline"}
+                              variant={'outline'}
                               className={cn(
-                                "w-full pl-3 text-left font-normal",
-                                !field.value && "text-muted-foreground"
+                                'w-full pl-3 text-left font-normal',
+                                !field.value && 'text-muted-foreground'
                               )}
                             >
                               {field.value ? (
-                                format(field.value, "PPP")
+                                format(field.value, 'PPP')
                               ) : (
                                 <span>Pick a date</span>
                               )}
@@ -195,7 +199,7 @@ const PersonalInfoBox: React.FC = () => {
                             selected={field.value}
                             onSelect={field.onChange}
                             disabled={(date) =>
-                              date > new Date() || date < new Date("1900-01-01")
+                              date > new Date() || date < new Date('1900-01-01')
                             }
                             initialFocus
                           />
@@ -240,36 +244,40 @@ const PersonalInfoBox: React.FC = () => {
         ) : (
           <div className="space-y-4 text-gray-600">
             <div className="flex justify-between">
-              <p className='text-primary '>First Name</p>
-              <p>{defaultValues?.first_name || "---"}</p>
+              <p className="text-primary ">First Name</p>
+              <p>{defaultValues?.first_name || '---'}</p>
             </div>
             <div className="flex justify-between">
-              <p className='text-primary '>Last Name</p>
-              <p>{defaultValues?.last_name || "---"}</p>
+              <p className="text-primary ">Last Name</p>
+              <p>{defaultValues?.last_name || '---'}</p>
             </div>
             <div className="flex justify-between">
-              <p className='text-primary '>Maiden Name</p>
-              <p>{defaultValues?.maiden_name || "---"}</p>
+              <p className="text-primary ">Maiden Name</p>
+              <p>{defaultValues?.maiden_name || '---'}</p>
             </div>
             <div className="flex justify-between">
-              <p className='text-primary '>Middle Name</p>
-              <p>{defaultValues?.middle_name || "---"}</p>
+              <p className="text-primary ">Middle Name</p>
+              <p>{defaultValues?.middle_name || '---'}</p>
             </div>
             <div className="flex justify-between">
-              <p className='text-primary '>Gender</p>
-              <p>{defaultValues?.gender || "---"}</p>
+              <p className="text-primary ">Gender</p>
+              <p>{defaultValues?.gender || '---'}</p>
             </div>
             <div className="flex justify-between">
-              <p className='text-primary '>DOB</p>
-              <p>{defaultValues?.date_of_birth ? new Date(defaultValues.date_of_birth).toLocaleDateString() : "---"}</p>
+              <p className="text-primary ">DOB</p>
+              <p>
+                {defaultValues?.date_of_birth
+                  ? new Date(defaultValues.date_of_birth).toLocaleDateString()
+                  : '---'}
+              </p>
             </div>
             <div className="flex justify-between">
-              <p className='text-primary '>Email</p>
-              <p>{defaultValues?.work_email || "---"}</p>
+              <p className="text-primary ">Email</p>
+              <p>{defaultValues?.work_email || '---'}</p>
             </div>
             <div className="flex justify-between">
-              <p className='text-primary '>Phone Number</p>
-              <p>{defaultValues?.phone_number || "---"}</p>
+              <p className="text-primary ">Phone Number</p>
+              <p>{defaultValues?.phone_number || '---'}</p>
             </div>
           </div>
         )}

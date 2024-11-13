@@ -22,7 +22,7 @@ const router = createBrowserRouter([
         element: <ProfilePage />
       },
       {
-        path: "/user/:artistId",
+        path: `/user/:id`,
         element: <UserProfile />
       },
     ],

@@ -1,5 +1,5 @@
 import express, { Express, Request, Response } from "express";
-import env from "env";
+import env from "../env";
 import cookieParser from "cookie-parser";
 import session from "express-session";
 import passport from "passport";

@@ -1,6 +1,6 @@
 import { Sequelize } from 'sequelize';
 
-import env from 'env';
+import env from '../../env';
 
 const sequelize = new Sequelize(env.POSTGRES_DB, env.POSTGRES_USER, env.POSTGRES_PASSWORD, {
   dialect: 'postgres',

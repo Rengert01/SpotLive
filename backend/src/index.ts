@@ -1,7 +1,7 @@
 import express, { Express, Request, Response } from "express";
 import env from "../env";
 import cookieParser from "cookie-parser";
-import session from "express-session";
+import session from "cookie-session";
 import passport from "passport";
 import cors from "cors";
 import corsOptions from "@/config/cors";
@@ -15,8 +15,6 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(session({
   secret: env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false,
 }))
 
 app.use(passport.session());

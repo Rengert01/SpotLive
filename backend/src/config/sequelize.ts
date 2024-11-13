@@ -8,7 +8,7 @@ const sequelize = new Sequelize(env.POSTGRES_DB, env.POSTGRES_USER, env.POSTGRES
   port: parseInt(env.POSTGRES_PORT),
 });
 
-async function testConnection() {
+export async function testConnection() {
   try {
     await sequelize.authenticate();
     await sequelize.sync();
@@ -17,7 +17,5 @@ async function testConnection() {
     console.log(error);
   }
 }
-
-testConnection();
 
 export default sequelize;

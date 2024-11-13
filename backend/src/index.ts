@@ -22,17 +22,22 @@ app.use(session({
 app.use(passport.session());
 
 import authRoutes from "@/routes/auth"
+import musicRoutes from "@/routes/music"
 import isAuthenticated from "@/middleware/auth";
+import sequelize, { testConnection } from "@/config/sequelize";
+import { Music } from "@/models/music";
 
 app.use("/api/auth", authRoutes);
 
 // Everything below this line will require authentication
 app.use(isAuthenticated);
 
+app.use("/api/music", musicRoutes)
 app.get("/protected", (req: Request, res: Response) => {
   res.status(200).json({ message: "If you are reading this you are authenticated" });
 })
 
-app.listen(port, () => {
+app.listen(port, async () => {
+  await testConnection();
   console.log(`[server]: Server is running at http://localhost:${port}`);
 });

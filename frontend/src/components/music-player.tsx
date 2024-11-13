@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Pause, Play, SkipBack, SkipForward, Volume1, Volume2 } from "lucide-react";
@@ -32,16 +32,16 @@ export default function MusicPlayer() {
     }
   };
 
-  useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.addEventListener("timeupdate", updateDuration);
-    }
-    return () => {
-      if (audioRef.current) {
-        audioRef.current.removeEventListener("timeupdate", updateDuration);
-      }
-    };
-  }, []);
+  // useEffect(() => {
+  //   if (audioRef.current) {
+  //     audioRef.current.addEventListener("timeupdate", updateDuration);
+  //   }
+  //   return () => {
+  //     if (audioRef.current) {
+  //       audioRef.current.removeEventListener("timeupdate", updateDuration);
+  //     }
+  //   };
+  // }, []);
 
   const handleVolumeChange = (value: number[]) => {
     const newVolume = value[0];
@@ -64,7 +64,12 @@ export default function MusicPlayer() {
   return (
     <div className="flex items-center justify-between text-white h-full">
 
-      <audio ref={audioRef} src="/test.mp3" />
+      <audio
+        ref={audioRef}
+        src="http://localhost:3001/api/music/stream/1ada1816-9cd6-47a6-892e-8f983a980c91"
+        onTimeUpdate={updateDuration}
+        onEnded={handleSkipForward}
+      />
 
       <div className="flex items-center space-x-4">
         <img

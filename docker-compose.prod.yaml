@@ -65,6 +65,8 @@ services:
       - ./frontend/public:/app/frontend/public
       - ./frontend/package.json:/app/frontend/package.json
       - ./frontend/package-lock.json:/app/frontend/package-lock.json
+    labels:
+      - "traefik:http.routers.web.rule=Host(`les-test.francecentral.cloudapp.azure.com`)"
     expose:
       - "${VITE_APP_PORT}"
     environment:

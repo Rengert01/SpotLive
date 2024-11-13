@@ -30,8 +30,8 @@ type CustomSelectType = {
   emptyStateText?: string;
   setSelected: (event: any) => void;
   onBlur?: (event: React.FocusEvent<HTMLButtonElement>) => void;
-  touched?: any;
-  error?: any;
+  touched?: boolean;
+  error?: boolean;
 };
 
 export default function CustomSelect({

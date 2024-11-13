@@ -33,7 +33,7 @@ export function Sidebar({ className }: SidebarProps) {
       try {
         console.log("Fetching session")
         const res = await axios.get("/api/auth/session")
-
+        localStorage.setItem("user", JSON.stringify(res.data.user))
         setUser(res.data.user.email)
       } catch (err) {
         console.error(err)

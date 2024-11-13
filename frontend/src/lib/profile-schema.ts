@@ -7,12 +7,11 @@ export const formSchema = z.object({
     last_name: z.string().min(2, {
       message: "Last name must be at least 2 characters.",
     }),
-    maiden_name: z.string(),
-    middle_name: z.string(),
+    username: z.string(),
     date_of_birth: z.date({
       message: "Date is required"
     }),
-    work_email: z.string().email({
+    email: z.string().email({
       message: "Enter a valid email.",
     }),
     gender: z.string().min(2, {

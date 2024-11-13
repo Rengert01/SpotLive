@@ -1,17 +1,12 @@
-import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { ProgressChart } from "@/components/profile/progress-chart";
+import React, { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { ProgressChart } from '@/components/profile/progress-chart';
 import { Pencil } from 'lucide-react';
-import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
-
+import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar';
 
 interface ProfileReusableLayoutProps {
   pageTitle?: string;
-  children?: React.ReactNode;
-  user: {
-    name: string;
-    email: string;
-  };
+  children?: JSX.Element;
   profile: {
     profileCompletion: {
       completionPercentage: number;
@@ -23,23 +18,37 @@ interface ProfileReusableLayoutProps {
         workInformation: boolean;
       };
     };
-    personalInformation: {
-      firstName: string;
-      lastName: string;
-      profilePicture?: string;
-    };
+    personalInformation: PersonalInformationProps;
   };
 }
 
-const ProfileReusableLayout = ({ children, user, profile }: ProfileReusableLayoutProps) => {
+const ProfileReusableLayout = ({
+  children,
+  profile,
+}: ProfileReusableLayoutProps) => {
   const [profileImg, setProfileImg] = useState<File | null>(null);
 
   const listToComplete = [
-    { name: "Setup Account", complete: profile.profileCompletion.checklist.setupAccount },
-    { name: "Personal Information", complete: profile.profileCompletion.checklist.personalInformation },
-    { name: "Upload Photo", complete: profile.profileCompletion.checklist.uploadPhoto },
-    { name: "Contact Information", complete: profile.profileCompletion.checklist.contactInformation },
-    { name: "Work Information", complete: profile.profileCompletion.checklist.workInformation },
+    {
+      name: 'Setup Account',
+      complete: profile.profileCompletion.checklist.setupAccount,
+    },
+    {
+      name: 'Personal Information',
+      complete: profile.profileCompletion.checklist.personalInformation,
+    },
+    {
+      name: 'Upload Photo',
+      complete: profile.profileCompletion.checklist.uploadPhoto,
+    },
+    {
+      name: 'Contact Information',
+      complete: profile.profileCompletion.checklist.contactInformation,
+    },
+    {
+      name: 'Work Information',
+      complete: profile.profileCompletion.checklist.workInformation,
+    },
   ];
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -48,7 +57,6 @@ const ProfileReusableLayout = ({ children, user, profile }: ProfileReusableLayou
   };
 
   return (
-
     <div className="flex flex-col lg:flex-row gap-6 p-4">
       {/* Left Section */}
       <div className="lg:w-2/3 bg-white rounded-lg shadow-md border-[1px] border-gray p-6">
@@ -64,14 +72,20 @@ const ProfileReusableLayout = ({ children, user, profile }: ProfileReusableLayou
           <label htmlFor="profile-user-image" className="cursor-pointer">
             <div className="w-24 h-24 rounded-full overflow-hidden border border-gray-300">
               <Avatar className="flex text-center m-auto items-center justify-center w-full h-full">
-                <AvatarImage src={profile?.personalInformation?.profilePicture} />
+                <AvatarImage
+                  src={profile?.personalInformation?.profilePicture}
+                />
                 <AvatarFallback className="text-center ">NO</AvatarFallback>
               </Avatar>
             </div>
           </label>
           <div>
-            <p className="text-lg font-bold">{user.name || "User Name"}</p>
-            <p className="text-sm text-gray-500">{user.email || "user@example.com"}</p>
+            <p className="text-lg font-bold">
+              {profile.personalInformation.first_name || 'Hello'}
+            </p>
+            <p className="text-sm text-gray-500">
+              {profile.personalInformation.email || 'user@example.com'}
+            </p>
           </div>
         </div>
         {profileImg ? (
@@ -82,12 +96,19 @@ const ProfileReusableLayout = ({ children, user, profile }: ProfileReusableLayou
             <Button variant="default">Save Picture</Button>
           </div>
         ) : (
-          <label htmlFor="profile-user-image" className="btn-primary cursor-pointer flex gap-3 items-center">
-            <span>Upload Picture</span> <figure><Pencil className='w-[1rem]' /></figure>
+          <label
+            htmlFor="profile-user-image"
+            className="btn-primary cursor-pointer flex gap-3 items-center"
+          >
+            <span>Upload Picture</span>{' '}
+            <figure>
+              <Pencil className="w-[1rem]" />
+            </figure>
           </label>
         )}
         <p className="text-sm text-gray-500 mt-2">
-          Only standard format 800x800 px are allowed (JPG, PNG). Max file size: 1MB.
+          Only standard format 800x800 px are allowed (JPG, PNG). Max file size:
+          1MB.
         </p>
         <div className="mt-8">{children}</div>
       </div>
@@ -95,7 +116,9 @@ const ProfileReusableLayout = ({ children, user, profile }: ProfileReusableLayou
       {/* Right Section */}
       <div className="lg:w-1/3 bg-white rounded-lg shadow-md p-6 shadow-md border-[1px] border-gray">
         <div className="flex flex-col items-center mb-6">
-          <ProgressChart totalVal={profile.profileCompletion.completionPercentage || 0} />
+          <ProgressChart
+            totalVal={profile.profileCompletion.completionPercentage || 0}
+          />
         </div>
         <ul className="space-y-2">
           {listToComplete.map((item, index) => (
@@ -105,16 +128,16 @@ const ProfileReusableLayout = ({ children, user, profile }: ProfileReusableLayou
               ) : (
                 <span className="text-gray-500">✕</span>
               )}
-              <span className={`${item.complete ? "text-gray-900" : "text-gray-500"}`}>
+              <span
+                className={`${item.complete ? 'text-gray-900' : 'text-gray-500'}`}
+              >
                 {item.name}
               </span>
             </li>
           ))}
         </ul>
-
       </div>
     </div>
-
   );
 };
 

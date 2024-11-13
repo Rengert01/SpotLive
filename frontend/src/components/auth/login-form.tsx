@@ -47,7 +47,6 @@ export function LoginForm() {
         title: "Login Successful",
         description: "You have successfully logged in!"
       })
-      localStorage.setItem("email", JSON.stringify(data.email))
       return navigate("/")
     }).catch((error) => {
       toast({

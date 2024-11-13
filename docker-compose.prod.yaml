@@ -19,7 +19,7 @@ services:
   api:
     build:
       context: ./backend/
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.prod
       additional_contexts:
         assets: ./
     restart: unless-stopped
@@ -43,12 +43,11 @@ services:
     deploy:
       mode: replicated
       replicas: 3
-    command: npm run build && npm run start
 
   web:
     build:
       context: ./frontend/
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.prod
     volumes:
       - ./frontend/src:/app/frontend/src
       - ./frontend/public:/app/frontend/public
@@ -59,8 +58,6 @@ services:
     deploy:
       mode: replicated
       replicas: 3
-    command: 
-      - npm run build && npm run preview
 
 volumes:
   postgres-data:

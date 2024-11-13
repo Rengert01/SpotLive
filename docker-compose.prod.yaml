@@ -56,6 +56,8 @@ services:
       - ./frontend/package-lock.json:/app/frontend/package-lock.json
     expose:
       - "${VITE_APP_PORT}"
+    environment:
+      VITE_APP_PORT: ${VITE_APP_PORT:?}
     deploy:
       mode: replicated
       replicas: 3

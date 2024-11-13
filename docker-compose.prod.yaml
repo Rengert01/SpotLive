@@ -43,6 +43,7 @@ services:
     deploy:
       mode: replicated
       replicas: 3
+    command: npm run start
 
   web:
     build:
@@ -58,6 +59,7 @@ services:
     deploy:
       mode: replicated
       replicas: 3
+    command: npm run start
 
 volumes:
   postgres-data:

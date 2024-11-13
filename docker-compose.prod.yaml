@@ -61,7 +61,7 @@ services:
     deploy:
       mode: replicated
       replicas: 3
-    command: npm run start
+    command: npm run preview
 
 volumes:
   postgres-data:

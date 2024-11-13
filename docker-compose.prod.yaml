@@ -4,11 +4,14 @@ services:
     command:
       - "--api.insecure=true"
       - "--providers.docker"
+      - "--log.filePath=/var/log/traefik.log"
     ports:
       - "80:80"
       - "8080:8080"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+    labels:
+      - "traefik.enable=true"
   
   db:
     image: postgres

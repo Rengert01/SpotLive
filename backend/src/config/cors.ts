@@ -1,7 +1,9 @@
 import { CorsOptions } from "cors";
 
+import env from "../../env";
+
 const corsOptions: CorsOptions = {
-  origin: "http://localhost:3000", 
+  origin: env.CORS_WHITELIST.split(","),
   credentials: true,
 }
 

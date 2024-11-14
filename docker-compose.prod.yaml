@@ -59,6 +59,7 @@ services:
       POSTGRES_HOST: ${POSTGRES_HOST:?}
       DB_LOGGING: ${DB_LOGGING:?}
       SESSION_SECRET: ${SESSION_SECRET:?}
+      CORS_WHITELIST: ${CORS_WHITELIST:?}
     expose:
       - "${BACKEND_API_PORT}"
     command: npm run start

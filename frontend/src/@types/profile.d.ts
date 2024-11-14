@@ -10,9 +10,7 @@ interface PersonalInfo {
 }
 
 interface PersonalInformationProps {
-  first_name?: string;
-  last_name?: string;
-  profilePicture?: string;
+  image?: string;
   email?: string;
   gender?: string;
   username?: string;

@@ -25,6 +25,8 @@ import {
 import { useForm } from 'react-hook-form';
 import { formSchema } from '@/lib/profile-schema';
 import { z } from 'zod';
+import axios from '@/config/axios';
+import { toast } from '@/hooks/use-toast';
 
 const PersonalInfoBox = ({ user }: PersonalInfoBoxProps) => {
   const [editState, setEditState] = useState<boolean>(false);
@@ -36,11 +38,37 @@ const PersonalInfoBox = ({ user }: PersonalInfoBoxProps) => {
   });
 
   const { defaultValues } = form.formState;
-
   // Declare Handle sumbit
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-  }
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    // console.log(values);
+    axios
+      .put('/api/auth/editProfile', values)
+      .then(() => {
+        toast({
+          title: 'Profile update Successful',
+          description: 'You have successfully updated your profile!',
+        });
+        setEditState(false);
+        axios
+          .get('/api/auth/session')
+          .then((res) => {
+            localStorage.setItem('user', JSON.stringify(res.data.user));
+          })
+
+          .catch((error) => {
+            toast({
+              title: 'Fetching new data Failed',
+              description: error.response.data.message,
+            });
+          });
+      })
+      .catch((error) => {
+        toast({
+          title: 'Profile update Failed',
+          description: error.response.data.message,
+        });
+      });
+  };
 
   const handleEdit = () => {
     setEditState(true);
@@ -90,33 +118,6 @@ const PersonalInfoBox = ({ user }: PersonalInfoBoxProps) => {
                 onSubmit={form.handleSubmit(onSubmit)}
                 className="space-y-8"
               >
-                <FormField
-                  control={form.control}
-                  name="first_name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>First Name</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter First Name" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="last_name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Last Name</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter Last Name" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
                 <FormField
                   control={form.control}
                   name="username"
@@ -193,9 +194,13 @@ const PersonalInfoBox = ({ user }: PersonalInfoBoxProps) => {
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Work Email</FormLabel>
+                      <FormLabel>Email</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter Work Email" {...field} />
+                        <Input
+                          placeholder="Enter Work Email"
+                          {...field}
+                          disabled
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -203,7 +208,7 @@ const PersonalInfoBox = ({ user }: PersonalInfoBoxProps) => {
                 />
                 <FormField
                   control={form.control}
-                  name="phone_number"
+                  name="phone"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Phone Number</FormLabel>
@@ -220,14 +225,6 @@ const PersonalInfoBox = ({ user }: PersonalInfoBoxProps) => {
           </>
         ) : (
           <div className="space-y-4 text-gray-600">
-            <div className="flex justify-between">
-              <p className="text-primary ">First Name</p>
-              <p>{defaultValues?.first_name || '---'}</p>
-            </div>
-            <div className="flex justify-between">
-              <p className="text-primary ">Last Name</p>
-              <p>{defaultValues?.last_name || '---'}</p>
-            </div>
             <div className="flex justify-between">
               <p className="text-primary ">Username</p>
               <p>{defaultValues?.username || '---'}</p>
@@ -250,7 +247,7 @@ const PersonalInfoBox = ({ user }: PersonalInfoBoxProps) => {
             </div>
             <div className="flex justify-between">
               <p className="text-primary ">Phone Number</p>
-              <p>{defaultValues?.phone_number || '---'}</p>
+              <p>{defaultValues?.phone || '---'}</p>
             </div>
           </div>
         )}

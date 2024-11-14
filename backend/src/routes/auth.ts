@@ -7,6 +7,12 @@ router.post("/signIn", authController.signIn);
 router.post("/signUp", authController.signUp);
 router.post("/signOut", authController.signOut);
 router.post("/deleteAccount", authController.deleteAccount);
+router.put(
+  "/editProfile",
+  isAuthenticated,
+  authController.upload,
+  authController.updateProfile
+);
 
 router.get("/session", isAuthenticated, authController.getSession);
 

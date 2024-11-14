@@ -2,17 +2,24 @@ services:
   reverse-proxy:
     image: traefik:v3.1
     command:
-      - "--api.insecure=true"
       - "--providers.docker"
-      - "--log.filePath=/var/log/traefik.log"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entryPoints.websecure.address=:443"
+      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+      - "--certificatesresolvers.myresolver.acme.email=sergiopeixoto3@gmail.com"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
     ports:
       - "80:80"
-      - "8080:8080"
+      - "443:443"
     volumes:
+      - letsencrypt:/letsencrypt
       - /var/run/docker.sock:/var/run/docker.sock
     labels:
       - "traefik.enable=true"
-  
+
   db:
     image: postgres
     restart: always
@@ -54,12 +61,12 @@ services:
       SESSION_SECRET: ${SESSION_SECRET:?}
     expose:
       - "${BACKEND_API_PORT}"
+    command: npm run start
     deploy:
       mode: replicated
       replicas: 3
-    command: npm run start
 
-  web:
+  spotlive:
     build:
       context: ./frontend/
       dockerfile: Dockerfile.prod
@@ -70,15 +77,18 @@ services:
       - ./frontend/package-lock.json:/app/frontend/package-lock.json
     labels:
       - "traefik.enable=true"
-      - "traefik:http.routers.web.rule=Host(`les-test.francecentral.cloudapp.azure.com`)"
+      - "traefik.http.routers.spotlive.rule=Host(`les-test.francecentral.cloudapp.azure.com`)"
+      - "traefik.http.routers.spotlive.entrypoints=websecure"
+      - "traefik.http.routers.spotlive.tls.certresolver=myresolver"
     expose:
       - "${VITE_APP_PORT}"
     environment:
       VITE_APP_PORT: ${VITE_APP_PORT:?}
+    command: npm run preview
     deploy:
       mode: replicated
       replicas: 3
-    command: npm run preview
 
 volumes:
   postgres-data:
+  letsencrypt:

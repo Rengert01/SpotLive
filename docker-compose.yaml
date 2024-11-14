@@ -13,6 +13,7 @@ services:
     tty: true
     environment:
       VITE_APP_PORT: ${VITE_APP_PORT:?}
+      VITE_APP_API_URL: ${VITE_APP_API_URL:?}
     command: npm run dev
 
   api:

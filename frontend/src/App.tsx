@@ -43,6 +43,7 @@ const router = createBrowserRouter([
 ])
 
 export default function App() {
+  console.log(import.meta.env);
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background">
       <RouterProvider router={router} />

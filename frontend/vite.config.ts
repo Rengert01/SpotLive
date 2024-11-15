@@ -11,8 +11,10 @@ export default defineConfig(({ mode }) => {
 
   const VITE_APP_PORT = process.env.VITE_APP_PORT;
 
+  const env = loadEnv(mode, process.cwd(), '');
+
   return {
-    envDir: '..',
+    envDir: '',
     plugins: [react()],
     resolve: {
       alias: {

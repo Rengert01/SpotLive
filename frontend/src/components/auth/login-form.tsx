@@ -42,7 +42,8 @@ export function LoginForm() {
   });
 
   async function onSubmit(data: z.infer<typeof loginSchema>) {
-    axios.post("/api/auth/signIn", data).then(() => {
+console.log(import.meta.env.VITE_APP_API_URL);    
+axios.post("/api/auth/signIn", data).then(() => {
       toast({
         title: "Login Successful",
         description: "You have successfully logged in!"

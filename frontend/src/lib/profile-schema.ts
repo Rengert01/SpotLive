@@ -17,23 +17,29 @@ export const formSchema = z.object({
 });
 
 export const addressSchema = z.object({
-  address: z.string().min(5, {
-    message: 'Address must be at least 5 characters.',
+  street: z.string().min(5, {
+    message: 'Street must be at least 5 characters.',
   }),
-  city: z.string(),
-  state: z.string(),
-  country: z.string(),
+  city: z.string().min(1, {
+    message: 'City is required.',
+  }),
+  state: z.string().min(1, {
+    message: 'State is required.',
+  }),
+  country: z.string().min(5, {
+    message: 'Country is required.',
+  }),
 });
 export const passwordSchema = z
   .object({
-    password: z.string().min(5, {
+    new_password: z.string().min(5, {
       message: 'Password must be at least 5 characters.',
     }),
     password_confirmation: z.string().min(5, {
       message: 'Password confirmation must be at least 5 characters.',
     }),
   })
-  .refine((data) => data.password === data.password_confirmation, {
+  .refine((data) => data.new_password === data.password_confirmation, {
     message: 'Passwords do not match.',
     path: ['password_confirmation'],
   });

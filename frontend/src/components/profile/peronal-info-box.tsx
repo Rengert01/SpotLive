@@ -3,7 +3,7 @@ import CustomSelect from '@/components/custom-select';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Calendar } from '@/components/ui/calendar';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { CalendarIcon } from 'lucide-react';
 import { format } from 'date-fns';
@@ -34,40 +34,30 @@ const PersonalInfoBox = ({ user }: PersonalInfoBoxProps) => {
   // Declare form
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: user,
+    defaultValues: {
+      ...user, // Spread all properties of user
+      date_of_birth: user?.date_of_birth ? user.date_of_birth : undefined,
+    },
   });
 
   const { defaultValues } = form.formState;
   // Declare Handle sumbit
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     // console.log(values);
-    axios
-      .put('/api/auth/editProfile', values)
-      .then(() => {
-        toast({
-          title: 'Profile update Successful',
-          description: 'You have successfully updated your profile!',
-        });
-        setEditState(false);
-        axios
-          .get('/api/auth/session')
-          .then((res) => {
-            localStorage.setItem('user', JSON.stringify(res.data.user));
-          })
-
-          .catch((error) => {
-            toast({
-              title: 'Fetching new data Failed',
-              description: error.response.data.message,
-            });
-          });
-      })
-      .catch((error) => {
-        toast({
-          title: 'Profile update Failed',
-          description: error.response.data.message,
-        });
+    try {
+      const res = await axios.put('/api/auth/editProfile', values);
+      localStorage.setItem('user', JSON.stringify(res.data.user));
+      form.reset(values); // Sync form with updated values
+      toast({
+        title: 'Profile update Successful',
+        description: 'You have successfully updated your profile!',
       });
+      setEditState(false);
+    } catch (error) {
+      toast({
+        title: 'Profile update Failed',
+      });
+    }
   };
 
   const handleEdit = () => {
@@ -227,27 +217,37 @@ const PersonalInfoBox = ({ user }: PersonalInfoBoxProps) => {
           <div className="space-y-4 text-gray-600">
             <div className="flex justify-between">
               <p className="text-primary ">Username</p>
-              <p>{defaultValues?.username || '---'}</p>
-            </div>
-            <div className="flex justify-between">
-              <p className="text-primary ">Gender</p>
-              <p>{defaultValues?.gender || '---'}</p>
-            </div>
-            <div className="flex justify-between">
-              <p className="text-primary ">DOB</p>
               <p>
-                {defaultValues?.date_of_birth
-                  ? new Date(defaultValues.date_of_birth).toLocaleDateString()
-                  : '---'}
+                {defaultValues?.username === ''
+                  ? '---'
+                  : defaultValues?.username}
               </p>
             </div>
             <div className="flex justify-between">
+              <p className="text-primary ">Gender</p>
+              <p>
+                {defaultValues?.gender === '' ? '---' : defaultValues?.gender}
+              </p>
+            </div>
+            {/* <div className="flex justify-between">
+              <p className="text-primary ">DOB</p> */}
+            {/* <p>
+                {defaultValues?.date_of_birth
+                  ? defaultValues?.date_of_birth.toISOString()
+                  : '---'}
+              </p> */}
+            {/* </div> */}
+            <div className="flex justify-between">
               <p className="text-primary ">Email</p>
-              <p>{defaultValues?.email || '---'}</p>
+              <p>
+                {defaultValues?.email === '' ? '---' : defaultValues?.email}
+              </p>
             </div>
             <div className="flex justify-between">
               <p className="text-primary ">Phone Number</p>
-              <p>{defaultValues?.phone || '---'}</p>
+              <p>
+                {defaultValues?.phone === '' ? '---' : defaultValues?.phone}
+              </p>
             </div>
           </div>
         )}

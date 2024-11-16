@@ -54,7 +54,7 @@ export function Sidebar({ className }: SidebarProps) {
     axios
       .post('/api/auth/signOut')
       .then(() => {
-        navigate('/');
+        navigate('/login');
         toast({
           title: 'Logout Successful',
           description: 'You have successfully logged out!',

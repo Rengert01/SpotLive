@@ -17,7 +17,7 @@ interface PersonalInformationProps {
   phone?: string;
   country?: string;
   state?: string;
-  date_of_birth?: Date;
+  date_of_birth?: date;
   city?: string;
   street?: string;
   id?: string;
@@ -28,4 +28,11 @@ interface PersonalInformationProps {
 
 interface PersonalInfoBoxProps {
   user: PersonalInformationProps;
+}
+
+interface addressSchemainterface {
+  country?: string;
+  city?: string;
+  street?: string;
+  state?: string;
 }

@@ -7,6 +7,7 @@ import { Strategy as LocalStrategy } from "passport-local";
 import path from "path";
 
 import { z } from "zod";
+import fs from "fs";
 const multer = require("multer");
 
 const loginSchema = z.object({
@@ -108,6 +109,10 @@ const upload = multer({
 
 const signIn = async (req: Request, res: Response): Promise<void> => {
   passport.authenticate("local")(req, res, () => {
+    res.cookie("email", req.body.email, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+    });
     res.status(200).json({ message: "Sign in" });
   });
 };
@@ -173,7 +178,6 @@ const signUp = async (req: Request, res: Response): Promise<void> => {
       email: email,
       password: hashedPassword,
     });
-
     res.status(201).json({ message: "User created", user: newUser });
   } catch (err) {
     console.error(err);
@@ -225,6 +229,9 @@ const deleteAccount = async (
 };
 
 const updateProfile = async (req: Request, res: Response): Promise<void> => {
+  // Extract email from cookie
+  const email = req.cookies.email;
+
   try {
     const {
       gender,
@@ -236,12 +243,7 @@ const updateProfile = async (req: Request, res: Response): Promise<void> => {
       date_of_birth,
       city,
       new_password,
-      email,
     } = req.body;
-
-    // Check if there's a new image, or default to the existing image in the database
-    const newImage = req?.file?.path ? `/images/${req.file.filename}` : null;
-
     // Find the user in the database by email
     const user = await User.findOne({
       where: { email: email },
@@ -250,6 +252,25 @@ const updateProfile = async (req: Request, res: Response): Promise<void> => {
     if (!user) {
       res.status(404).json({ message: "User not found" });
       return;
+    }
+
+    // Check if there's a new image
+    let newImage = null;
+    if (req.file) {
+      // If the user has an old profile image, delete it from the server
+      if (user.image) {
+        const oldImagePath = path.join(
+          __dirname,
+          "../images",
+          path.basename(user.image)
+        );
+        fs.unlink(oldImagePath, (err) => {
+          if (err) console.error("Error deleting old image:", err);
+        });
+      }
+
+      // Set the new image path
+      newImage = `/images/${req.file.filename}`;
     }
 
     // Prepare the updated fields, only including provided values
@@ -274,10 +295,19 @@ const updateProfile = async (req: Request, res: Response): Promise<void> => {
 
     // Update the user with the specified fields
     await user.update(updatedFields);
+    user.updateChecklist();
+    user.completionPercentage = user.calculateCompletionPercentage();
+
+    // Save the updated profile completion
+    await user.save();
 
     res.status(201).json({
       message: "User details updated successfully",
       user,
+      profileCompletion: {
+        percentage: user.completionPercentage,
+        checklist: user.checklist,
+      },
     });
   } catch (err) {
     console.error(err);

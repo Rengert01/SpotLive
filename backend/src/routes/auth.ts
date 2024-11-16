@@ -9,7 +9,6 @@ router.post("/signOut", authController.signOut);
 router.post("/deleteAccount", authController.deleteAccount);
 router.put(
   "/editProfile",
-  isAuthenticated,
   authController.upload,
   authController.updateProfile
 );

@@ -19,17 +19,19 @@ import { z } from 'zod';
 import axios from '@/config/axios';
 import { toast } from '@/hooks/use-toast';
 import { useUserStore } from '@/store';
+import { ProfileLoader } from '../profile-loader';
 
 const AddressInfoBox = () => {
   const { user, setUser } = useUserStore();
   const [editState, setEditState] = useState(false);
   const [selectedCountryData, setSelectedCountryData] = useState<any>({});
+  const [loading, setLoading] = useState(true);
 
   const defaults = {
-    country: user?.country || '',
-    street: user?.street || '',
-    city: user?.city || '',
-    state: user?.state || '',
+    country: '',
+    street: '',
+    city: '',
+    state: '',
   };
 
   const form = useForm<z.infer<typeof addressSchema>>({
@@ -44,6 +46,19 @@ const AddressInfoBox = () => {
 
   // Update state options when country changes
   useEffect(() => {
+    if (user) {
+      form.reset({
+        country: user?.country || '',
+        street: user?.street || '',
+        city: user?.city || '',
+        state: user?.state || '',
+      });
+      setLoading(false);
+    }
+  }, [user, form]);
+
+  // Update country-specific states when country changes
+  useEffect(() => {
     if (selectedCountry) {
       const countryData = COUNTRIES_STATES.find(
         (f) => f.name === selectedCountry
@@ -53,22 +68,28 @@ const AddressInfoBox = () => {
   }, [selectedCountry]);
 
   const onSubmit = async (values: z.infer<typeof addressSchema>) => {
+    setLoading(true);
     try {
       const res = await axios.put('/api/auth/editProfile', values);
-      // localStorage.setItem('user', JSON.stringify(res.data.user));
       setUser(res.data.user);
       toast({
         title: 'Profile updated successfully!',
         description: 'Your address information has been updated.',
       });
       setEditState(false);
+      setLoading(false);
       reset(values); // Sync form with updated values
     } catch (error) {
+      setLoading(false);
       toast({ title: 'Profile update failed' });
     }
   };
 
   const handleEdit = () => setEditState(true);
+
+  if (loading) {
+    return <ProfileLoader />; // Show loading state while user data is being fetched
+  }
 
   return (
     <div className="bg-white p-6 space-y-6">

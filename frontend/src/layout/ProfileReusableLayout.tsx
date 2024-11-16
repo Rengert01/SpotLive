@@ -130,7 +130,7 @@ const ProfileReusableLayout = ({ children }: ProfileReusableLayoutProps) => {
           </div>
         ) : (
           <label
-            htmlFor="profile-user-image"
+            htmlFor="profileImg"
             className="btn-primary cursor-pointer flex gap-3 items-center"
           >
             <span>Upload Picture</span>{' '}

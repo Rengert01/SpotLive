@@ -24,6 +24,14 @@ interface PersonalInformationProps {
   password?: string;
   createdAt?: string;
   updatedAt?: string;
+  completionPercentage?: number;
+  checklist?: {
+    contactInformation?: boolean;
+    personalInformation?: boolean;
+    setupAccount?: boolean;
+    uploadPhoto?: boolean;
+    workInformation?: boolean;
+  };
 }
 
 interface PersonalInfoBoxProps {

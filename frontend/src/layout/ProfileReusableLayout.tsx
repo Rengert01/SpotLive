@@ -10,24 +10,12 @@ const port = 'http://localhost:3001';
 interface ProfileReusableLayoutProps {
   pageTitle?: string;
   children?: JSX.Element;
-  profile: {
-    profileCompletion: {
-      completionPercentage: number;
-      checklist: {
-        setupAccount: boolean;
-        personalInformation: boolean;
-        uploadPhoto: boolean;
-        contactInformation: boolean;
-        workInformation: boolean;
-      };
-    };
-    personalInformation: PersonalInformationProps;
-  };
+  personalInformation: PersonalInformationProps;
 }
 
 const ProfileReusableLayout = ({
   children,
-  profile,
+  personalInformation,
 }: ProfileReusableLayoutProps) => {
   const [profileImg, setProfileImg] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -36,23 +24,23 @@ const ProfileReusableLayout = ({
   const listToComplete = [
     {
       name: 'Setup Account',
-      complete: profile.profileCompletion.checklist.setupAccount,
+      complete: personalInformation?.checklist?.setupAccount || false,
     },
     {
       name: 'Personal Information',
-      complete: profile.profileCompletion.checklist.personalInformation,
+      complete: personalInformation?.checklist?.personalInformation || false,
     },
     {
       name: 'Upload Photo',
-      complete: profile.profileCompletion.checklist.uploadPhoto,
+      complete: personalInformation?.checklist?.uploadPhoto || false,
     },
     {
       name: 'Contact Information',
-      complete: profile.profileCompletion.checklist.contactInformation,
+      complete: personalInformation?.checklist?.contactInformation || false,
     },
     {
       name: 'Work Information',
-      complete: profile.profileCompletion.checklist.workInformation,
+      complete: personalInformation?.checklist?.workInformation || false,
     },
   ];
 
@@ -81,10 +69,11 @@ const ProfileReusableLayout = ({
 
       // Update the profile information with the new image URL from the server
       if (response.data?.imageUrl) {
-        profile.personalInformation.image = response.data.imageUrl;
+        personalInformation.image = response.data.imageUrl;
         setPreviewUrl(URL.createObjectURL(profileImg)); // Clear the preview URL
 
         localStorage.setItem('user', JSON.stringify(response.data.user));
+        window.location.reload();
       }
       setEdit(false);
     } catch (error) {
@@ -109,10 +98,7 @@ const ProfileReusableLayout = ({
             <div className="w-24 h-24 rounded-full overflow-hidden border border-gray-300">
               <Avatar className="flex text-center m-auto items-center justify-center w-full h-full">
                 <AvatarImage
-                  src={
-                    previewUrl ||
-                    `${port}${profile?.personalInformation?.image}`
-                  }
+                  src={previewUrl || `${port}${personalInformation?.image}`}
                 />
                 <AvatarFallback className="text-center ">NO</AvatarFallback>
               </Avatar>
@@ -120,10 +106,10 @@ const ProfileReusableLayout = ({
           </label>
           <div>
             <p className="text-lg font-bold">
-              {profile.personalInformation.username || 'Hello'}
+              {personalInformation?.username || 'Hello'}
             </p>
             <p className="text-sm text-gray-500">
-              {profile.personalInformation.email || 'user@example.com'}
+              {personalInformation?.email || 'user@example.com'}
             </p>
           </div>
         </div>
@@ -166,7 +152,7 @@ const ProfileReusableLayout = ({
       <div className="lg:w-1/3 bg-white rounded-lg shadow-md p-6 shadow-md border-[1px] border-gray">
         <div className="flex flex-col items-center mb-6">
           <ProgressChart
-            totalVal={profile.profileCompletion.completionPercentage || 0}
+            totalVal={personalInformation?.completionPercentage || 0}
           />
         </div>
         <ul className="space-y-2">

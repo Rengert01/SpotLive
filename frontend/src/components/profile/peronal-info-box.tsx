@@ -35,12 +35,16 @@ const PersonalInfoBox = ({ user }: PersonalInfoBoxProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      ...user, // Spread all properties of user
+      username: user?.username,
+      email: user?.email,
+      gender: user?.gender,
+      phone: user?.phone,
       date_of_birth: user?.date_of_birth ? user.date_of_birth : undefined,
     },
   });
 
   const { defaultValues } = form.formState;
+  
   // Declare Handle sumbit
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     // console.log(values);
@@ -218,7 +222,7 @@ const PersonalInfoBox = ({ user }: PersonalInfoBoxProps) => {
             <div className="flex justify-between">
               <p className="text-primary ">Username</p>
               <p>
-                {defaultValues?.username === ''
+                {defaultValues?.username === ""
                   ? '---'
                   : defaultValues?.username}
               </p>

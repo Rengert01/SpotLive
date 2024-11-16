@@ -7,24 +7,8 @@ export default function ProfilePage() {
   const user = localStorage.getItem('user');
   const userData: PersonalInformationProps = user ? JSON.parse(user) : null;
 
-  const dummyProfileData = {
-    profile: {
-      profileCompletion: {
-        completionPercentage: 75, // Example completion percentage
-        checklist: {
-          setupAccount: true,
-          personalInformation: true,
-          uploadPhoto: false,
-          contactInformation: true,
-          workInformation: false,
-        },
-      },
-      personalInformation: userData,
-    },
-  };
-
   return (
-    <ProfileReusableLayout profile={dummyProfileData?.profile}>
+    <ProfileReusableLayout personalInformation={userData}>
       <>
         <PersonalInfoBox user={userData} />
         <AddressInfoBox user={userData} />

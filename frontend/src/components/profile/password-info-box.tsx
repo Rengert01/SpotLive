@@ -27,8 +27,10 @@ import {
 import TogglePassword from '../toggle-password';
 import { useNavigate } from 'react-router-dom';
 import { toast } from '@/hooks/use-toast';
+import { useUserStore } from '@/store';
 
-const PasswordInfoBox = ({ user }: PersonalInfoBoxProps) => {
+const PasswordInfoBox = () => {
+  const { user, setUser } = useUserStore();
   const [editState, setEditState] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
@@ -52,7 +54,8 @@ const PasswordInfoBox = ({ user }: PersonalInfoBoxProps) => {
       const res = await axios.put('/api/auth/editProfile', {
         new_password: values.new_password,
       });
-      localStorage.setItem('user', JSON.stringify(res.data.user));
+      // localStorage.setItem('user', JSON.stringify(res.data.user));
+      setUser(res.data.user);
       toast({
         title: 'Profile updated successfully!',
         description: 'Your password has been updated.',

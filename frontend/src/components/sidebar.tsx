@@ -12,6 +12,7 @@ import { useEffect, useState } from 'react';
 import axios from '@/config/axios';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from '@/hooks/use-toast';
+import { useUserStore } from '@/store';
 
 type SidebarProps = React.HTMLAttributes<HTMLDivElement>;
 
@@ -31,8 +32,9 @@ const playlists = [
 ];
 
 export function Sidebar({ className }: SidebarProps) {
-  const [user, setUser] = useState(null);
   const navigate = useNavigate();
+  const { user, setUser, clearUser } = useUserStore();
+  const port = 'http://localhost:3001';
 
   useEffect(() => {
     //Todo: Convert this to a custom auth hook
@@ -40,8 +42,7 @@ export function Sidebar({ className }: SidebarProps) {
       try {
         console.log('Fetching session');
         const res = await axios.get('/api/auth/session');
-        localStorage.setItem('user', JSON.stringify(res.data.user));
-        setUser(res.data.user.email);
+        setUser(res.data.user);
       } catch (err) {
         console.error(err);
       }
@@ -59,7 +60,8 @@ export function Sidebar({ className }: SidebarProps) {
           title: 'Logout Successful',
           description: 'You have successfully logged out!',
         });
-        localStorage.clear();
+        // localStorage.clear();
+        clearUser();
       })
 
       .catch((error) => {
@@ -271,13 +273,15 @@ export function Sidebar({ className }: SidebarProps) {
             <DropdownMenuTrigger className="h-full w-full flex justify-center p-3">
               <div className=" flex gap-4 items-center">
                 <Avatar>
-                  <AvatarImage src="https://github.com/shadcn.png" />
+                  <AvatarImage src={`${port}${user?.image}`} />
                   <AvatarFallback>CN</AvatarFallback>
                 </Avatar>
                 <div className="space-y-0">
-                  <p className="text-start text-sm font-semibold">Username</p>
+                  <p className="text-start text-sm font-semibold">
+                    {user?.username || 'Hello'}
+                  </p>
                   <p className="text-start text-sm text-muted-foreground">
-                    {user}
+                    {user?.email}
                   </p>
                 </div>
               </div>

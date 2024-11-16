@@ -18,8 +18,10 @@ import { addressSchema } from '@/lib/profile-schema';
 import { z } from 'zod';
 import axios from '@/config/axios';
 import { toast } from '@/hooks/use-toast';
+import { useUserStore } from '@/store';
 
-const AddressInfoBox = ({ user }: { user: any }) => {
+const AddressInfoBox = () => {
+  const { user, setUser } = useUserStore();
   const [editState, setEditState] = useState(false);
   const [selectedCountryData, setSelectedCountryData] = useState<any>({});
 
@@ -53,7 +55,8 @@ const AddressInfoBox = ({ user }: { user: any }) => {
   const onSubmit = async (values: z.infer<typeof addressSchema>) => {
     try {
       const res = await axios.put('/api/auth/editProfile', values);
-      localStorage.setItem('user', JSON.stringify(res.data.user));
+      // localStorage.setItem('user', JSON.stringify(res.data.user));
+      setUser(res.data.user);
       toast({
         title: 'Profile updated successfully!',
         description: 'Your address information has been updated.',

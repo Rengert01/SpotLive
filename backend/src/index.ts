@@ -1,4 +1,4 @@
-import express, { Express, Request, Response } from "express";
+import express, { Express, Request, Response, NextFunction } from "express";
 import env from "env";
 import cookieParser from "cookie-parser";
 import session from "express-session";
@@ -23,8 +23,35 @@ app.use(
 
 app.use(passport.session());
 
+// Middleware to ensure the latest session data is fetched
+app.use(async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const email: string = req.cookies?.email; // Retrieve email from cookies
+
+    if (email) {
+      // Fetch the user by email
+      const user = await User.findOne({
+        where: { email },
+      });
+
+      if (user) {
+        // Assign the user object to `req.user` if found
+        (req as any).user = user;
+      } else {
+        (req as any).user = null; // Explicitly set `req.user` to null if no user is found
+      }
+    }
+
+    next(); // Proceed to the next middleware or route handler
+  } catch (err) {
+    console.error("Error fetching session data:", err);
+    next(); // Ensure the request flow continues even if there's an error
+  }
+});
+
 import authRoutes from "@/routes/auth";
 import isAuthenticated from "@/middleware/auth";
+import { User } from "./models/user";
 
 app.use("/api/auth", authRoutes);
 

@@ -4,15 +4,12 @@ import PersonalInfoBox from '@/components/profile/peronal-info-box';
 import ProfileReusableLayout from '@/layout/ProfileReusableLayout';
 
 export default function ProfilePage() {
-  const user = localStorage.getItem('user');
-  const userData: PersonalInformationProps = user ? JSON.parse(user) : null;
-
   return (
-    <ProfileReusableLayout personalInformation={userData}>
+    <ProfileReusableLayout>
       <>
-        <PersonalInfoBox user={userData} />
-        <AddressInfoBox user={userData} />
-        <PasswordInfoBox user={userData} />
+        <PersonalInfoBox />
+        <AddressInfoBox />
+        <PasswordInfoBox />
       </>
     </ProfileReusableLayout>
   );

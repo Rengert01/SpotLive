@@ -5,21 +5,19 @@ import { Pencil } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar';
 import axios from '@/config/axios';
 import { Input } from '@/components/ui/input';
+import { useUserStore } from '@/store';
 
 const port = 'http://localhost:3001';
 interface ProfileReusableLayoutProps {
   pageTitle?: string;
   children?: JSX.Element;
-  personalInformation: PersonalInformationProps;
 }
 
-const ProfileReusableLayout = ({
-  children,
-  personalInformation,
-}: ProfileReusableLayoutProps) => {
+const ProfileReusableLayout = ({ children }: ProfileReusableLayoutProps) => {
   const [profileImg, setProfileImg] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [edit, setEdit] = useState<boolean>(false);
+  const { user: personalInformation, setUser } = useUserStore();
 
   const listToComplete = [
     {
@@ -71,8 +69,8 @@ const ProfileReusableLayout = ({
       if (response.data?.imageUrl) {
         personalInformation.image = response.data.imageUrl;
         setPreviewUrl(URL.createObjectURL(profileImg)); // Clear the preview URL
-
-        localStorage.setItem('user', JSON.stringify(response.data.user));
+        setUser(response.data.user);
+        // localStorage.setItem('user', JSON.stringify(response.data.user));
         window.location.reload();
       }
       setEdit(false);

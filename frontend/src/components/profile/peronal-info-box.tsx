@@ -27,10 +27,12 @@ import { formSchema } from '@/lib/profile-schema';
 import { z } from 'zod';
 import axios from '@/config/axios';
 import { toast } from '@/hooks/use-toast';
+import { useUserStore } from '@/store';
 
-const PersonalInfoBox = ({ user }: PersonalInfoBoxProps) => {
+const PersonalInfoBox = () => {
   const [editState, setEditState] = useState<boolean>(false);
 
+  const { user, setUser } = useUserStore();
   // Declare form
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -44,13 +46,14 @@ const PersonalInfoBox = ({ user }: PersonalInfoBoxProps) => {
   });
 
   const { defaultValues } = form.formState;
-  
+
   // Declare Handle sumbit
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     // console.log(values);
     try {
       const res = await axios.put('/api/auth/editProfile', values);
-      localStorage.setItem('user', JSON.stringify(res.data.user));
+      // localStorage.setItem('user', JSON.stringify(res.data.user));
+      setUser(res.data.user);
       form.reset(values); // Sync form with updated values
       toast({
         title: 'Profile update Successful',
@@ -222,7 +225,7 @@ const PersonalInfoBox = ({ user }: PersonalInfoBoxProps) => {
             <div className="flex justify-between">
               <p className="text-primary ">Username</p>
               <p>
-                {defaultValues?.username === ""
+                {defaultValues?.username === ''
                   ? '---'
                   : defaultValues?.username}
               </p>

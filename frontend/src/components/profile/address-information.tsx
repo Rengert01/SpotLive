@@ -24,7 +24,7 @@ import { ProfileLoader } from '../profile-loader';
 const AddressInfoBox = () => {
   const { user, setUser } = useUserStore();
   const [editState, setEditState] = useState(false);
-  const [selectedCountryData, setSelectedCountryData] = useState<any>({});
+  const [selectedCountryData, setSelectedCountryData] = useState<Country>();
   const [loading, setLoading] = useState(true);
 
   const defaults = {
@@ -63,7 +63,7 @@ const AddressInfoBox = () => {
       const countryData = COUNTRIES_STATES.find(
         (f) => f.name === selectedCountry
       );
-      setSelectedCountryData(countryData || {});
+      setSelectedCountryData(countryData);
     }
   }, [selectedCountry]);
 
@@ -81,7 +81,7 @@ const AddressInfoBox = () => {
       reset(values); // Sync form with updated values
     } catch (error) {
       setLoading(false);
-      toast({ title: 'Profile update failed' });
+      toast({ title: 'Profile update failed', description: `${error}` });
     }
   };
 
@@ -156,10 +156,12 @@ const AddressInfoBox = () => {
                   <CustomSelect
                     label="State"
                     options={
-                      selectedCountryData?.stateProvinces?.map((item: any) => ({
-                        label: item.name,
-                        value: item.name,
-                      })) || []
+                      selectedCountryData?.stateProvinces?.map(
+                        (item: StateProvince) => ({
+                          label: item.name,
+                          value: item.name,
+                        })
+                      ) || []
                     }
                     selected={field.value}
                     setSelected={field.onChange}

@@ -81,6 +81,7 @@ const PersonalInfoBox = () => {
       setIsLoading(false);
       toast({
         title: 'Profile update Failed',
+        description: `${error}`
       });
     }
   };

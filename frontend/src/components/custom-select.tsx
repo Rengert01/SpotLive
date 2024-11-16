@@ -15,7 +15,7 @@ import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 type CustomSelectType = {
   loading?: boolean;
   mainClass?: string;
-  options: Record<string, any>[];
+  options: Record<string, string>[];
   id?: string | number;
   selected: string;
   selectTwo?: string;
@@ -27,7 +27,7 @@ type CustomSelectType = {
   placeholder?: string;
   canSearch?: boolean;
   emptyStateText?: string;
-  setSelected: (event: any) => void;
+  setSelected: (event: string) => void;
   onBlur?: (event: React.FocusEvent<HTMLButtonElement>) => void;
   touched?: boolean;
   error?: boolean;

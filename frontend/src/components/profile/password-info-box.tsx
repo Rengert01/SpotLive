@@ -63,7 +63,7 @@ const PasswordInfoBox = () => {
       setEditState(false);
       form.reset(values); // Sync form with updated values
     } catch (error) {
-      toast({ title: 'Profile update failed' });
+      toast({ title: 'Profile update failed', description: `${error}` });
     }
   };
 

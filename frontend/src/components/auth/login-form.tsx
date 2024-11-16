@@ -62,38 +62,38 @@ export function LoginForm() {
   async function onSubmit(data: z.infer<typeof loginSchema>) {
     try {
       // Attempt to log in
-      const loginResponse = await axios.post("/api/auth/signIn", data);
-  
+      const loginResponse = await axios.post('/api/auth/signIn', data);
+
       if (loginResponse.status === 200) {
         // Login was successful, proceed to fetch session
-        console.log("Fetching session");
-        const sessionResponse = await axios.get("/api/auth/session");
-  
+        console.log('Fetching session');
+        const sessionResponse = await axios.get('/api/auth/session');
+
         // Set user data
         setUser(sessionResponse.data.user);
-  
+
         // Show success toast
         toast({
-          title: "Login Successful",
-          description: "You have successfully logged in!",
+          title: 'Login Successful',
+          description: 'You have successfully logged in!',
         });
-  
+
         // Navigate to the home page
-        navigate("/");
+        navigate('/');
       } else {
         // Handle unexpected status codes
-        throw new Error("Unexpected response status during login.");
+        throw new Error('Unexpected response status during login.');
       }
-    } catch (error: any) {
+    } catch (error) {
       // Handle errors
       toast({
-        title: "Login Failed",
-        description: error.response?.data?.message || "An error occurred.",
+        title: 'Login Failed',
+        description: `${error}`,
       });
-      console.error("Error during login:", error);
+      console.error('Error during login:', error);
     }
   }
-  
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>

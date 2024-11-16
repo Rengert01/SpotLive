@@ -44,3 +44,20 @@ interface addressSchemainterface {
   street?: string;
   state?: string;
 }
+
+// Interface for state/province
+interface StateProvince {
+  name: string;
+}
+
+// Interface for country data
+interface Country {
+  name: string;
+  countryCode: string;
+  countryCodeAlpha3: string;
+  phone: string;
+  currency: string;
+  flag: string; // You can change the type if the flag is an object or URL instead of a string.
+  symbol: string;
+  stateProvinces: StateProvince[];
+}

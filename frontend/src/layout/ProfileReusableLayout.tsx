@@ -147,7 +147,7 @@ const ProfileReusableLayout = ({ children }: ProfileReusableLayoutProps) => {
       </div>
 
       {/* Right Section */}
-      <div className="lg:w-1/3 bg-white rounded-lg shadow-md p-6 shadow-md border-[1px] border-gray">
+      <div className="lg:w-1/3 bg-white rounded-lg shadow-md p-6 border-[1px] border-gray">
         <div className="flex flex-col items-center mb-6">
           <ProgressChart
             totalVal={personalInformation?.completionPercentage || 0}

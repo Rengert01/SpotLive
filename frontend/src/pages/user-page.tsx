@@ -5,7 +5,7 @@ import TrackSection from '@/components/ui/track-section';
 
 const UserProfile = () => {
   const { id } = useParams();
-  const curr = tracks.find(track => track.id === id);
+  const curr = tracks.find((track) => track.id === id);
 
   if (!curr) {
     return <div>Track not found</div>;
@@ -28,7 +28,10 @@ const UserProfile = () => {
 
       <div className="p-8">
         <div className="flex items-center gap-4 mb-8">
-          <Button variant="outline" className="text-Black border-white hover:bg-white/10">
+          <Button
+            variant="outline"
+            className="text-Black border-white hover:bg-white/10"
+          >
             Follow
           </Button>
         </div>
@@ -45,6 +48,6 @@ const UserProfile = () => {
       </div>
     </section>
   );
-}
+};
 
 export default UserProfile;

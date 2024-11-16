@@ -1,11 +1,11 @@
 // FILE: RecentlyReleased.tsx
-import TrackSection from "@/components/ui/track-section";
+import TrackSection from '@/components/ui/track-section';
 
 export default function RecentlyReleased() {
-    return (
-        <TrackSection
-            title="Recently Released"
-            filterFunction={(track) => track.recent}
-        />
-    );
+  return (
+    <TrackSection
+      title="Recently Released"
+      filterFunction={(track) => track.recent}
+    />
+  );
 }

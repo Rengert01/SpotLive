@@ -1,6 +1,6 @@
-// // This file is used to create the login page which is displayed first. 
+// // This file is used to create the login page which is displayed first.
 // // The file contains a input field for the username and password. And a button to log in.
-// // The user credentials should be checked, if they are correct the user moves to the App page, 
+// // The user credentials should be checked, if they are correct the user moves to the App page,
 // // otherwise an error message is displayed and the user has to try again.
 
 // // The content of the page is shown centered in the middle of the screen. The username, password and login button are placed under each other.

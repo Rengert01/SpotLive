@@ -1,10 +1,10 @@
-import express, { Express, Request, Response, NextFunction } from "express";
-import env from "env";
-import cookieParser from "cookie-parser";
-import session from "express-session";
-import passport from "passport";
-import cors from "cors";
-import corsOptions from "@/config/cors";
+import express, { Express, Request, Response, NextFunction } from 'express';
+import env from 'env';
+import cookieParser from 'cookie-parser';
+import session from 'express-session';
+import passport from 'passport';
+import cors from 'cors';
+import corsOptions from '@/config/cors';
 
 const app: Express = express();
 const port = env.BACKEND_API_PORT ?? 3001;
@@ -23,7 +23,7 @@ app.use(
 
 app.use(passport.session());
 
-// Middleware to ensure the latest session data is fetched
+//Middleware to ensure the latest session data is fetched
 app.use(async (req: Request, res: Response, next: NextFunction) => {
   try {
     const email: string = req.cookies?.email; // Retrieve email from cookies
@@ -36,37 +36,37 @@ app.use(async (req: Request, res: Response, next: NextFunction) => {
 
       if (user) {
         // Assign the user object to `req.user` if found
-        (req as any).user = user;
+        req.user = user;
       } else {
-        (req as any).user = null; // Explicitly set `req.user` to null if no user is found
+        req.user = undefined; // Explicitly set `req.user` to null if no user is found
       }
     }
 
     next(); // Proceed to the next middleware or route handler
   } catch (err) {
-    console.error("Error fetching session data:", err);
+    console.error('Error fetching session data:', err);
     next(); // Ensure the request flow continues even if there's an error
   }
 });
 
-import authRoutes from "@/routes/auth";
-import isAuthenticated from "@/middleware/auth";
-import { User } from "./models/user";
-import profileRouter from "./routes/profile";
+import authRoutes from '@/routes/auth';
+import isAuthenticated from '@/middleware/auth';
+import { User } from './models/user';
+import profileRouter from './routes/profile';
 
-app.use("/api/auth", authRoutes);
-app.use("/api/auth", profileRouter);
+app.use('/api/auth', authRoutes);
+app.use('/api/auth', profileRouter);
 
 // Static images folder
-app.use("/uploads/images", express.static("src/uploads/images"));
+app.use('/uploads/images', express.static('src/uploads/images'));
 
 // Everything below this line will require authentication
 app.use(isAuthenticated);
 
-app.get("/protected", (req: Request, res: Response) => {
+app.get('/protected', (req: Request, res: Response) => {
   res
     .status(200)
-    .json({ message: "If you are reading this you are authenticated" });
+    .json({ message: 'If you are reading this you are authenticated' });
 });
 
 app.listen(port, () => {

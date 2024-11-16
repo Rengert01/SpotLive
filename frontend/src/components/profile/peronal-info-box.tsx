@@ -4,6 +4,7 @@ import CustomSelect from '@/components/custom-select';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Calendar } from '@/components/ui/calendar';
+import React from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { CalendarIcon } from 'lucide-react';
 import { format } from 'date-fns';
@@ -81,7 +82,7 @@ const PersonalInfoBox = () => {
       setIsLoading(false);
       toast({
         title: 'Profile update Failed',
-        description: `${error}`
+        description: `${error}`,
       });
     }
   };

@@ -1,17 +1,17 @@
-const multer = require("multer");
-import path from "path";
+import multer from 'multer';
+import path from 'path';
 
 const storage = multer.diskStorage({
   destination: (
-    req: Request,
+    req: Express.Request,
     file: Express.Multer.File,
     cb: (error: Error | null, destination: string) => void
   ) => {
     // Set the destination path for image uploads
-    cb(null, path.join(__dirname, "../uploads/images"));
+    cb(null, path.join(__dirname, '../uploads/images'));
   },
   filename: (
-    req: Request,
+    req: Express.Request,
     file: Express.Multer.File,
     cb: (error: Error | null, filename: string) => void
   ) => {
@@ -23,22 +23,22 @@ const storage = multer.diskStorage({
 
 // Define the fileFilter to allow only images (JPEG, PNG)
 const fileFilter = (
-  req: Request,
+  req: Express.Request,
   file: Express.Multer.File,
-  cb: (error: Error | null, destination: boolean) => void
+  cb: multer.FileFilterCallback
 ) => {
   // Check the file type
-  if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
+  if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
     cb(null, true); // Accept file
   } else {
-    cb(new Error("Only JPEG and PNG images are allowed!"), false); // Reject file
+    cb(new Error('Only JPEG and PNG images are allowed!')); // Reject file
   }
 };
 
 export const upload = multer({
   storage: storage,
   limits: {
-    fileSize: "5000000",
+    fileSize: 5000000,
   },
   fileFilter: fileFilter,
-}).single("image");
+}).single('image');

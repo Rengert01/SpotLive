@@ -1,5 +1,5 @@
-import { DataTypes, Model, Optional, UUIDV4 } from "sequelize";
-import sequelize from "@/config/sequelize";
+import { DataTypes, Model, Optional, UUIDV4 } from 'sequelize';
+import sequelize from '@/config/sequelize';
 
 interface UserAttributes {
   id: string;
@@ -18,7 +18,7 @@ interface UserAttributes {
   checklist?: object;
 }
 
-interface UserCreationAttributes extends Optional<UserAttributes, "id"> {}
+type UserCreationAttributes = Optional<UserAttributes, 'id'>;
 
 class User
   extends Model<UserAttributes, UserCreationAttributes>
@@ -62,7 +62,7 @@ class User
 
     // Count the filled fields
     fields.forEach((field) => {
-      if (field && field !== "") {
+      if (field && field !== '') {
         filledFields++;
       }
     });
@@ -111,32 +111,32 @@ User.init(
     image: {
       type: DataTypes.STRING,
       allowNull: true,
-      defaultValue: "/uploads/images/profile.jpg",
+      defaultValue: '/uploads/images/profile.jpg',
     },
     gender: {
       type: DataTypes.STRING,
       allowNull: true,
-      defaultValue: "",
+      defaultValue: '',
     },
     username: {
       type: DataTypes.STRING,
       allowNull: true,
-      defaultValue: "",
+      defaultValue: '',
     },
     phone: {
       type: DataTypes.STRING,
       allowNull: true,
-      defaultValue: "",
+      defaultValue: '',
     },
     country: {
       type: DataTypes.STRING,
       allowNull: true,
-      defaultValue: "",
+      defaultValue: '',
     },
     state: {
       type: DataTypes.STRING,
       allowNull: true,
-      defaultValue: "",
+      defaultValue: '',
     },
     date_of_birth: {
       type: DataTypes.DATE,
@@ -145,12 +145,12 @@ User.init(
     city: {
       type: DataTypes.STRING,
       allowNull: true,
-      defaultValue: "",
+      defaultValue: '',
     },
     street: {
       type: DataTypes.STRING,
       allowNull: true,
-      defaultValue: "",
+      defaultValue: '',
     },
     // Add profile completion fields
     completionPercentage: {

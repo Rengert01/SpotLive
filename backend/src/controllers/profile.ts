@@ -1,8 +1,8 @@
-import { User } from "@/models/user";
-import { Request, Response } from "express";
-import path from "path";
-import fs from "fs";
-import bcrypt from "bcryptjs";
+import { User } from '@/models/user';
+import { Request, Response } from 'express';
+import path from 'path';
+import fs from 'fs';
+import bcrypt from 'bcryptjs';
 
 // Extend the Express Request type to include the `email` field
 interface ExtendedRequest extends Request {
@@ -24,17 +24,17 @@ const deleteAccount = async (
 
     if (rowsDeleted === 0) {
       // If no rows were deleted, send a 404 response
-      res.status(404).json({ message: "User not found" });
+      res.status(404).json({ message: 'User not found' });
     } else {
       // If deletion was successful, send a 200 response
-      res.status(200).json({ message: "Account deleted successfully" });
+      res.status(200).json({ message: 'Account deleted successfully' });
     }
   } catch (error) {
     // Handle any other errors that may have occurred
-    console.error("Error deleting account:", error);
+    console.error('Error deleting account:', error);
     res
       .status(500)
-      .json({ message: "An error occurred while deleting the account" });
+      .json({ message: 'An error occurred while deleting the account' });
   }
 };
 
@@ -60,7 +60,7 @@ const updateProfile = async (req: Request, res: Response): Promise<void> => {
     });
 
     if (!user) {
-      res.status(404).json({ message: "User not found" });
+      res.status(404).json({ message: 'User not found' });
       return;
     }
 
@@ -71,11 +71,11 @@ const updateProfile = async (req: Request, res: Response): Promise<void> => {
       if (user.image) {
         const oldImagePath = path.join(
           __dirname,
-          "../uploads/images",
+          '../uploads/images',
           path.basename(user.image)
         );
         fs.unlink(oldImagePath, (err) => {
-          if (err) console.error("Error deleting old image:", err);
+          if (err) console.error('Error deleting old image:', err);
         });
       }
 
@@ -112,7 +112,7 @@ const updateProfile = async (req: Request, res: Response): Promise<void> => {
     await user.save();
 
     res.status(201).json({
-      message: "User details updated successfully",
+      message: 'User details updated successfully',
       user,
       profileCompletion: {
         percentage: user.completionPercentage,
@@ -121,7 +121,7 @@ const updateProfile = async (req: Request, res: Response): Promise<void> => {
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({ message: 'Internal server error' });
   }
 };
 

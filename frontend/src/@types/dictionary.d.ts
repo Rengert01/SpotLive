@@ -1,3 +1,3 @@
 export type Dictionary = {
-    [key: string]: string;
-  };
+  [key: string]: string;
+};

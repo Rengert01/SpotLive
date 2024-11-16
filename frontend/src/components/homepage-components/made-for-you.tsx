@@ -1,11 +1,11 @@
 // FILE: MadeForYou.tsx
-import TrackSection from "@/components/ui/track-section";
+import TrackSection from '@/components/ui/track-section';
 
 export default function MadeForYou() {
-    return (
-        <TrackSection
-            title="Made For You"
-            filterFunction={(track) => track.madeforyou}
-        />
-    );
+  return (
+    <TrackSection
+      title="Made For You"
+      filterFunction={(track) => track.madeforyou}
+    />
+  );
 }

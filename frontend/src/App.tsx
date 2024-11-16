@@ -1,5 +1,4 @@
 import HomePage from '@/pages/homepage.tsx';
-
 import Layout from '@/layout/layout';
 import {
   createBrowserRouter,
@@ -10,7 +9,7 @@ import LoginPage from '@/pages/auth/login';
 import RegisterPage from '@/pages/auth/register';
 import { Toaster } from '@/components/ui/toaster';
 import axios from '@/config/axios';
-import UserProfile from '@/pages/user-page'; // Ensure this import is correct
+import UserProfile from '@/pages/user-page';
 import ProfilePage from './pages/profile-page';
 
 const router = createBrowserRouter([

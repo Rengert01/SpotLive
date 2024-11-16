@@ -1,11 +1,16 @@
-import { useState } from "react";
-import RecentlyReleasedTracks from "@/components/homepage-components/recently-released.tsx";
-import MadeForYouTracks from "@/components/homepage-components/made-for-you.tsx";
-import { Live } from "@/pages/live";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs.tsx";
+import { useState } from 'react';
+import RecentlyReleasedTracks from '@/components/homepage-components/recently-released.tsx';
+import MadeForYouTracks from '@/components/homepage-components/made-for-you.tsx';
+import { Live } from '@/pages/live';
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+} from '@/components/ui/tabs.tsx';
 
 export default function HomePage() {
-  const [activeTab, setActiveTab] = useState("Music");
+  const [activeTab, setActiveTab] = useState('Music');
 
   return (
     <div>

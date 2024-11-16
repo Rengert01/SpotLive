@@ -1,7 +1,14 @@
-import { useState, useRef, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Slider } from "@/components/ui/slider";
-import { Pause, Play, SkipBack, SkipForward, Volume1, Volume2 } from "lucide-react";
+import { useState, useRef, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { Slider } from '@/components/ui/slider';
+import {
+  Pause,
+  Play,
+  SkipBack,
+  SkipForward,
+  Volume1,
+  Volume2,
+} from 'lucide-react';
 
 export default function MusicPlayer() {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -19,26 +26,31 @@ export default function MusicPlayer() {
   };
 
   const handleSkipBack = () => {
-    console.log("Skipped to previous song");
+    console.log('Skipped to previous song');
   };
 
   const handleSkipForward = () => {
-    console.log("Skipped to next song");
+    console.log('Skipped to next song');
   };
 
   const updateDuration = () => {
     if (audioRef.current) {
-      setProgress((audioRef.current.currentTime / audioRef.current.duration) * 100);
+      setProgress(
+        (audioRef.current.currentTime / audioRef.current.duration) * 100
+      );
     }
   };
 
   useEffect(() => {
+    let audioRefValue = null;
+
     if (audioRef.current) {
-      audioRef.current.addEventListener("timeupdate", updateDuration);
+      audioRefValue = audioRef.current;
+      audioRefValue.addEventListener('timeupdate', updateDuration);
     }
     return () => {
-      if (audioRef.current) {
-        audioRef.current.removeEventListener("timeupdate", updateDuration);
+      if (audioRefValue) {
+        audioRefValue.removeEventListener('timeupdate', updateDuration);
       }
     };
   }, []);
@@ -56,14 +68,14 @@ export default function MusicPlayer() {
   const handleSeek = (value: number[]) => {
     const newProgress = value[0];
     if (audioRef.current) {
-      audioRef.current.currentTime = (newProgress / 100) * audioRef.current.duration;
+      audioRef.current.currentTime =
+        (newProgress / 100) * audioRef.current.duration;
     }
     setProgress(newProgress);
   };
 
   return (
     <div className="flex items-center justify-between text-white h-full">
-
       <audio ref={audioRef} src="/test.mp3" />
 
       <div className="flex items-center space-x-4">
@@ -83,7 +95,11 @@ export default function MusicPlayer() {
       </Button>
 
       <Button variant="ghost" onClick={togglePlayPause}>
-        {isPlaying ? <Pause className="stroke-black" /> : <Play className="stroke-black" />}
+        {isPlaying ? (
+          <Pause className="stroke-black" />
+        ) : (
+          <Play className="stroke-black" />
+        )}
       </Button>
 
       <Button variant="ghost" onClick={handleSkipForward} size="sm">

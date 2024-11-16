@@ -1,5 +1,4 @@
-
-import { Button } from "@/components/ui/button"
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -8,9 +7,9 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 export function Live() {
   return (
@@ -31,7 +30,9 @@ export function Live() {
           <path d="M17 18.5a9 9 0 1 0-10 0" />
         </svg>
 
-        <h3 className="mt-4 text-lg font-semibold">No Live Performances right now</h3>
+        <h3 className="mt-4 text-lg font-semibold">
+          No Live Performances right now
+        </h3>
         {/* <p className="mb-4 mt-2 text-sm text-muted-foreground">
           You have not added any podcasts. Add one below.
         </p> */}
@@ -61,5 +62,5 @@ export function Live() {
         </Dialog>
       </div>
     </div>
-  )
+  );
 }

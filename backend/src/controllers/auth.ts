@@ -1,9 +1,9 @@
-import { User } from "@/models/user";
-import { Request, Response } from "express";
-import bcrypt from "bcryptjs";
-import passport from "passport";
-import { Strategy as LocalStrategy } from "passport-local";
-import { z } from "zod";
+import { User } from '@/models/user';
+import { Request, Response } from 'express';
+import bcrypt from 'bcryptjs';
+import passport from 'passport';
+import { Strategy as LocalStrategy } from 'passport-local';
+import { z } from 'zod';
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -13,8 +13,8 @@ const loginSchema = z.object({
 passport.use(
   new LocalStrategy(
     {
-      usernameField: "email",
-      passwordField: "password",
+      usernameField: 'email',
+      passwordField: 'password',
     },
     async (email, password, done) => {
       try {
@@ -29,13 +29,13 @@ passport.use(
         });
 
         if (!user) {
-          return done(null, false, { message: "Email not found." });
+          return done(null, false, { message: 'Email not found.' });
         }
 
         const validPassword = await bcrypt.compare(password, user.password);
 
         if (!validPassword) {
-          return done(null, false, { message: "Password is incorrect." });
+          return done(null, false, { message: 'Password is incorrect.' });
         }
 
         return done(null, user);
@@ -47,21 +47,21 @@ passport.use(
   )
 );
 
-passport.serializeUser((user: any, done) => {
+passport.serializeUser((user: Express.User, done) => {
   done(null, user);
 });
 
-passport.deserializeUser((user: any, done) => {
+passport.deserializeUser((user: Express.User, done) => {
   done(null, user);
 });
 
 const signIn = async (req: Request, res: Response): Promise<void> => {
-  passport.authenticate("local")(req, res, () => {
-    res.cookie("email", req.body.email, {
+  passport.authenticate('local')(req, res, () => {
+    res.cookie('email', req.body.email, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: process.env.NODE_ENV === 'production',
     });
-    res.status(200).json({ message: "Sign in" });
+    res.status(200).json({ message: 'Sign in' });
   });
 };
 
@@ -70,19 +70,19 @@ const signUpSchema = z
     email: z.string().email(),
     password: z
       .string()
-      .min(8, "Password must be at least 8 characters")
+      .min(8, 'Password must be at least 8 characters')
       .regex(
         new RegExp(/[A-Z]/),
-        "Password must contain at least one uppercase letter"
+        'Password must contain at least one uppercase letter'
       )
       .regex(
         new RegExp(/[a-z]/),
-        "Password must contain at least one lowercase letter"
+        'Password must contain at least one lowercase letter'
       )
-      .regex(new RegExp(/[0-9]/), "Password must contain at least one number")
+      .regex(new RegExp(/[0-9]/), 'Password must contain at least one number')
       .regex(
         new RegExp(/[^a-zA-Z0-9]/),
-        "Password must contain at least one special character"
+        'Password must contain at least one special character'
       ),
     confirmPassword: z.string(),
     image: z.string(),
@@ -96,8 +96,8 @@ const signUpSchema = z
     street: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
+    message: 'Passwords do not match',
+    path: ['confirmPassword'],
   });
 
 const signUp = async (req: Request, res: Response): Promise<void> => {
@@ -116,7 +116,7 @@ const signUp = async (req: Request, res: Response): Promise<void> => {
     });
 
     if (user) {
-      res.status(400).json({ message: "Email already exists." });
+      res.status(400).json({ message: 'Email already exists.' });
       return;
     }
 
@@ -126,10 +126,10 @@ const signUp = async (req: Request, res: Response): Promise<void> => {
       email: email,
       password: hashedPassword,
     });
-    res.status(201).json({ message: "User created", user: newUser });
+    res.status(201).json({ message: 'User created', user: newUser });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({ message: 'Internal server error' });
   }
 };
 
@@ -137,10 +137,10 @@ const signOut = async (req: Request, res: Response): Promise<void> => {
   req.logOut(function (err) {
     if (err) {
       console.error(err);
-      res.status(500).json({ message: "Internal server error" });
+      res.status(500).json({ message: 'Internal server error' });
     }
   });
-  res.status(200).json({ message: "Sign out" });
+  res.status(200).json({ message: 'Sign out' });
 };
 
 const getSession = async (req: Request, res: Response): Promise<void> => {

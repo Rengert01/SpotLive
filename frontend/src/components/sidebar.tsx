@@ -49,7 +49,7 @@ export function Sidebar({ className }: SidebarProps) {
     };
 
     fetchSession();
-  }, []);
+  }, [setUser]);
 
   const handleLogout = async () => {
     axios
@@ -60,7 +60,6 @@ export function Sidebar({ className }: SidebarProps) {
           title: 'Logout Successful',
           description: 'You have successfully logged out!',
         });
-        // localStorage.clear();
         clearUser();
       })
 

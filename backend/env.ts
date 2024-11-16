@@ -10,7 +10,9 @@ const envSchema = z.object({
   POSTGRES_PASSWORD: z.string(),
   POSTGRES_PORT: z.string(),
   POSTGRES_HOST: z.string(),
-  NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
+  NODE_ENV: z
+    .enum(['development', 'production', 'test'])
+    .default('development'),
   DB_LOGGING: z.enum(['true', 'false']).default('true'),
   SESSION_SECRET: z.string(),
 });
@@ -19,8 +21,10 @@ export type Env = z.infer<typeof envSchema>;
 
 const parsedEnv = envSchema.safeParse(process.env);
 
-if(!parsedEnv.success) {
-  throw new Error(`❌ Invalid environment variables: ${JSON.stringify(parsedEnv.error.format(), null, 4)}`);
+if (!parsedEnv.success) {
+  throw new Error(
+    `❌ Invalid environment variables: ${JSON.stringify(parsedEnv.error.format(), null, 4)}`
+  );
 }
 
 export default parsedEnv.data;

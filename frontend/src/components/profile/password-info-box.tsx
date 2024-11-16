@@ -89,7 +89,7 @@ const PasswordInfoBox = () => {
   };
 
   return (
-    <div className="bg-white p-6">
+    <div className="bg-white p-6 pb-0">
       {/* Title and Edit/Save Buttons */}
       <div className="flex justify-between items-center mb-4">
         <p className="text-lg font-semibold">Change Password</p>

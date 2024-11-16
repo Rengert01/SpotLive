@@ -1,52 +1,80 @@
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { useEffect, useState } from "react"
-import axios from "@/config/axios"
-import { Link } from "react-router-dom"
+import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { useEffect } from 'react';
+import axios from '@/config/axios';
+import { Link, useNavigate } from 'react-router-dom';
+import { toast } from '@/hooks/use-toast';
+import { useUserStore } from '@/store';
 
-type SidebarProps = React.HTMLAttributes<HTMLDivElement>
+type SidebarProps = React.HTMLAttributes<HTMLDivElement>;
 
 const playlists = [
-  "Recently Added",
-  "Recently Played",
-  "Top Songs",
-  "Top Albums",
-  "Top Artists",
-  "Logic Discography",
-  "Bedtime Beats",
-  "Feeling Happy",
-  "I miss Y2K Pop",
-  "Runtober",
-  "Mellow Days",
-  "Eminem Essentials",
-]
+  'Recently Added',
+  'Recently Played',
+  'Top Songs',
+  'Top Albums',
+  'Top Artists',
+  'Logic Discography',
+  'Bedtime Beats',
+  'Feeling Happy',
+  'I miss Y2K Pop',
+  'Runtober',
+  'Mellow Days',
+  'Eminem Essentials',
+];
 
 export function Sidebar({ className }: SidebarProps) {
-  const [user, setUser] = useState(null)
+  const navigate = useNavigate();
+  const { user, setUser, clearUser } = useUserStore();
+  const port = 'http://localhost:3001';
 
   useEffect(() => {
     //Todo: Convert this to a custom auth hook
     const fetchSession = async () => {
       try {
-        console.log("Fetching session")
-        const res = await axios.get("/api/auth/session")
-
-        setUser(res.data.user.email)
+        console.log('Fetching session');
+        const res = await axios.get('/api/auth/session');
+        setUser(res.data.user);
       } catch (err) {
-        console.error(err)
+        console.error(err);
       }
-    }
+    };
 
-    fetchSession()
-  }, [])
+    fetchSession();
+  }, []);
+
+  const handleLogout = async () => {
+    axios
+      .post('/api/auth/signOut')
+      .then(() => {
+        navigate('/login');
+        toast({
+          title: 'Logout Successful',
+          description: 'You have successfully logged out!',
+        });
+        // localStorage.clear();
+        clearUser();
+      })
+
+      .catch((error) => {
+        toast({
+          title: 'Operation Failed',
+          description: error.response.data.message,
+        });
+      });
+  };
 
   return (
-    <div className={cn("", className)}>
+    <div className={cn('', className)}>
       <div className="h-full space-y-4 pt-4 flex flex-col justify-between">
-
         <div className="flex flex-col h-full">
           <div className="px-3 py-2 flex-initial">
             <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
@@ -218,7 +246,7 @@ export function Sidebar({ className }: SidebarProps) {
                 </svg>
                 My Albums
               </Button>
-              <Link className="w-full justify-start" to={"/profile"}>
+              {/* <Link className="w-full justify-start" to={"/profile"}>
                 <Button variant="ghost" className="w-full justify-start">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -235,10 +263,9 @@ export function Sidebar({ className }: SidebarProps) {
                   </svg>
                   Profile
                 </Button>
-              </Link>
+              </Link> */}
             </div>
           </div>
-
         </div>
 
         <div className="h-16 border-y">
@@ -246,22 +273,32 @@ export function Sidebar({ className }: SidebarProps) {
             <DropdownMenuTrigger className="h-full w-full flex justify-center p-3">
               <div className=" flex gap-4 items-center">
                 <Avatar>
-                  <AvatarImage src="https://github.com/shadcn.png" />
+                  <AvatarImage src={`${port}${user?.image}`} />
                   <AvatarFallback>CN</AvatarFallback>
                 </Avatar>
                 <div className="space-y-0">
-                  <p className="text-start text-sm font-semibold">Username</p>
-                  <p className="text-start text-sm text-muted-foreground">{user}</p>
+                  <p className="text-start text-sm font-semibold">
+                    {user?.username || 'Hello'}
+                  </p>
+                  <p className="text-start text-sm text-muted-foreground">
+                    {user?.email}
+                  </p>
                 </div>
               </div>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-[250px]">
-              <DropdownMenuItem>Profile</DropdownMenuItem>
-              <DropdownMenuItem>Log Out</DropdownMenuItem>
+              <DropdownMenuItem>
+                <Link className="w-full justify-start" to={'/profile'}>
+                  Profile
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleLogout}>
+                Log Out
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
       </div>
-    </div >
-  )
+    </div>
+  );
 }

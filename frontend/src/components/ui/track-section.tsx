@@ -2,7 +2,7 @@
 import tracks from '@/data/tracks.json';
 import Track from '@/components/ui/track'; // Adjust the import path as necessary
 
-type TrackType = typeof tracks[0];
+type TrackType = (typeof tracks)[0];
 
 interface TrackSectionProps {
   title: string;

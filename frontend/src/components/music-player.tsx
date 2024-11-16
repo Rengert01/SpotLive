@@ -42,12 +42,15 @@ export default function MusicPlayer() {
   };
 
   useEffect(() => {
+    let audioRefValue = null;
+
     if (audioRef.current) {
-      audioRef.current.addEventListener('timeupdate', updateDuration);
+      audioRefValue = audioRef.current;
+      audioRefValue.addEventListener('timeupdate', updateDuration);
     }
     return () => {
-      if (audioRef.current) {
-        audioRef.current.removeEventListener('timeupdate', updateDuration);
+      if (audioRefValue) {
+        audioRefValue.removeEventListener('timeupdate', updateDuration);
       }
     };
   }, []);

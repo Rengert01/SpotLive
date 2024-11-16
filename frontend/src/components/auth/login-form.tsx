@@ -59,14 +59,16 @@ export function LoginForm() {
   });
 
   async function onSubmit(data: z.infer<typeof loginSchema>) {
-    axios.post("/api/auth/signIn", data).then(() => {
-      toast({
-        title: "Login Successful",
-        description: "You have successfully logged in!"
+    axios
+      .post('/api/auth/signIn', data)
+      .then(() => {
+        toast({
+          title: 'Login Successful',
+          description: 'You have successfully logged in!',
+        });
+        localStorage.setItem('email', JSON.stringify(data.email));
+        return navigate('/');
       })
-      localStorage.setItem("email", JSON.stringify(data.email))
-      return navigate("/")
-    })
       .catch((error) => {
         toast({
           title: 'Login Failed',

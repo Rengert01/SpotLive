@@ -143,7 +143,6 @@ const ProfileReusableLayout = ({
             </li>
           ))}
         </ul>
-
       </div>
     </div>
   );

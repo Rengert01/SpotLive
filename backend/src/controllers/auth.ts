@@ -141,7 +141,10 @@ const getSession = async (req: Request, res: Response): Promise<void> => {
   res.status(200).json({ user: req.user });
 };
 
-const deleteAccount = async (req: ExtendedRequest, res: Response): Promise<void> => {
+const deleteAccount = async (
+  req: ExtendedRequest,
+  res: Response
+): Promise<void> => {
   const email = req.body.email;
   try {
     const rowsDeleted = await User.destroy({
@@ -153,15 +156,17 @@ const deleteAccount = async (req: ExtendedRequest, res: Response): Promise<void>
 
     if (rowsDeleted === 0) {
       // If no rows were deleted, send a 404 response
-      res.status(404).json({ message: "User not found" });
+      res.status(404).json({ message: 'User not found' });
     } else {
       // If deletion was successful, send a 200 response
-      res.status(200).json({ message: "Account deleted successfully" });
+      res.status(200).json({ message: 'Account deleted successfully' });
     }
   } catch (error) {
     // Handle any other errors that may have occurred
-    console.error("Error deleting account:", error);
-    res.status(500).json({ message: "An error occurred while deleting the account" });
+    console.error('Error deleting account:', error);
+    res
+      .status(500)
+      .json({ message: 'An error occurred while deleting the account' });
   }
 };
 

@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useEffect, useState } from 'react';
 import axios from '@/config/axios';
-import { Link } from "react-router-dom"
+import { Link } from 'react-router-dom';
 
 type SidebarProps = React.HTMLAttributes<HTMLDivElement>;
 
@@ -222,7 +222,7 @@ export function Sidebar({ className }: SidebarProps) {
                 </svg>
                 My Albums
               </Button>
-              <Link className="w-full justify-start" to={"/profile"}>
+              <Link className="w-full justify-start" to={'/profile'}>
                 <Button variant="ghost" className="w-full justify-start">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"

@@ -1,15 +1,12 @@
-import HomePage from '@/pages/homepage.tsx';
-import ProfilePage from '@/pages/profile-page';
-import Layout from '@/layout/layout';
-import {
-  createBrowserRouter,
-  redirect,
-  RouterProvider,
-} from 'react-router-dom';
-import LoginPage from '@/pages/auth/login';
-import RegisterPage from '@/pages/auth/register';
-import { Toaster } from '@/components/ui/toaster';
-import axios from '@/config/axios';
+import HomePage from "@/pages/homepage.tsx";
+import ProfilePage from "@/components/profile-page.tsx";
+import Layout from "@/layout/layout";
+import { createBrowserRouter, redirect, RouterProvider } from "react-router-dom";
+import LoginPage from "@/pages/auth/login";
+import RegisterPage from "@/pages/auth/register";
+import { Toaster } from "@/components/ui/toaster";
+import axios from "@/config/axios";
+import UserProfile from "@/pages/user-page"; // Ensure this import is correct
 
 const router = createBrowserRouter([
   {
@@ -23,6 +20,10 @@ const router = createBrowserRouter([
       {
         path: '/profile',
         element: <ProfilePage />,
+      },
+      {
+        path: `/user/:id`,
+        element: <UserProfile />
       },
     ],
     loader: async () => {
@@ -52,5 +53,5 @@ export default function App() {
       <RouterProvider router={router} />
       <Toaster />
     </div>
-  );
+  )
 }

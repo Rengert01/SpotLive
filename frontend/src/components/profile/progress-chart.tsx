@@ -44,7 +44,7 @@ export function ProgressChart({ totalVal }: ProgressChartProp) {
           <RadialBarChart
             data={chartData}
             startAngle={0}
-            endAngle={250}
+            endAngle={360 * (totalVal / 100)}
             innerRadius={80}
             outerRadius={110}
           >

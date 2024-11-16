@@ -8,9 +8,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import axios from '@/config/axios';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { toast } from '@/hooks/use-toast';
+import { useUserStore } from '@/store';
 
 type SidebarProps = React.HTMLAttributes<HTMLDivElement>;
 
@@ -30,7 +32,9 @@ const playlists = [
 ];
 
 export function Sidebar({ className }: SidebarProps) {
-  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
+  const { user, setUser, clearUser } = useUserStore();
+  const port = 'http://localhost:3001';
 
   useEffect(() => {
     //Todo: Convert this to a custom auth hook
@@ -38,15 +42,34 @@ export function Sidebar({ className }: SidebarProps) {
       try {
         console.log('Fetching session');
         const res = await axios.get('/api/auth/session');
-
-        setUser(res.data.user.email);
+        setUser(res.data.user);
       } catch (err) {
         console.error(err);
       }
     };
 
     fetchSession();
-  }, []);
+  }, [setUser]);
+
+  const handleLogout = async () => {
+    axios
+      .post('/api/auth/signOut')
+      .then(() => {
+        navigate('/login');
+        toast({
+          title: 'Logout Successful',
+          description: 'You have successfully logged out!',
+        });
+        clearUser();
+      })
+
+      .catch((error) => {
+        toast({
+          title: 'Operation Failed',
+          description: error.response.data.message,
+        });
+      });
+  };
 
   return (
     <div className={cn('', className)}>
@@ -222,7 +245,7 @@ export function Sidebar({ className }: SidebarProps) {
                 </svg>
                 My Albums
               </Button>
-              <Link className="w-full justify-start" to={'/profile'}>
+              {/* <Link className="w-full justify-start" to={"/profile"}>
                 <Button variant="ghost" className="w-full justify-start">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -239,7 +262,7 @@ export function Sidebar({ className }: SidebarProps) {
                   </svg>
                   Profile
                 </Button>
-              </Link>
+              </Link> */}
             </div>
           </div>
         </div>
@@ -249,20 +272,28 @@ export function Sidebar({ className }: SidebarProps) {
             <DropdownMenuTrigger className="h-full w-full flex justify-center p-3">
               <div className=" flex gap-4 items-center">
                 <Avatar>
-                  <AvatarImage src="https://github.com/shadcn.png" />
+                  <AvatarImage src={`${port}${user?.image}`} />
                   <AvatarFallback>CN</AvatarFallback>
                 </Avatar>
                 <div className="space-y-0">
-                  <p className="text-start text-sm font-semibold">Username</p>
+                  <p className="text-start text-sm font-semibold">
+                    {user?.username || 'Hello'}
+                  </p>
                   <p className="text-start text-sm text-muted-foreground">
-                    {user}
+                    {user?.email}
                   </p>
                 </div>
               </div>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-[250px]">
-              <DropdownMenuItem>Profile</DropdownMenuItem>
-              <DropdownMenuItem>Log Out</DropdownMenuItem>
+              <DropdownMenuItem>
+                <Link className="w-full justify-start" to={'/profile'}>
+                  Profile
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleLogout}>
+                Log Out
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

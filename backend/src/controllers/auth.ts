@@ -1,10 +1,8 @@
 import { User } from '@/models/user';
 import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
-
 import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
-
 import { z } from 'zod';
 
 const loginSchema = z.object({
@@ -12,10 +10,6 @@ const loginSchema = z.object({
   password: z.string(),
 });
 
-// Extend the Express Request type to include the `email` field
-interface ExtendedRequest extends Request {
-  email?: string;
-}
 passport.use(
   new LocalStrategy(
     {
@@ -63,6 +57,10 @@ passport.deserializeUser((user: Express.User, done) => {
 
 const signIn = async (req: Request, res: Response): Promise<void> => {
   passport.authenticate('local')(req, res, () => {
+    res.cookie('email', req.body.email, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+    });
     res.status(200).json({ message: 'Sign in' });
   });
 };
@@ -87,6 +85,15 @@ const signUpSchema = z
         'Password must contain at least one special character'
       ),
     confirmPassword: z.string(),
+    image: z.string(),
+    gender: z.string(),
+    username: z.string(),
+    phone: z.string(),
+    country: z.string(),
+    state: z.string(),
+    date_of_birth: z.string(),
+    city: z.string(),
+    street: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: 'Passwords do not match',
@@ -119,7 +126,6 @@ const signUp = async (req: Request, res: Response): Promise<void> => {
       email: email,
       password: hashedPassword,
     });
-
     res.status(201).json({ message: 'User created', user: newUser });
   } catch (err) {
     console.error(err);
@@ -141,33 +147,9 @@ const getSession = async (req: Request, res: Response): Promise<void> => {
   res.status(200).json({ user: req.user });
 };
 
-const deleteAccount = async (
-  req: ExtendedRequest,
-  res: Response
-): Promise<void> => {
-  const email = req.body.email;
-  try {
-    const rowsDeleted = await User.destroy({
-      where: {
-        email: email,
-      },
-      force: true,
-    });
-
-    if (rowsDeleted === 0) {
-      // If no rows were deleted, send a 404 response
-      res.status(404).json({ message: 'User not found' });
-    } else {
-      // If deletion was successful, send a 200 response
-      res.status(200).json({ message: 'Account deleted successfully' });
-    }
-  } catch (error) {
-    // Handle any other errors that may have occurred
-    console.error('Error deleting account:', error);
-    res
-      .status(500)
-      .json({ message: 'An error occurred while deleting the account' });
-  }
+export default {
+  signIn,
+  signUp,
+  signOut,
+  getSession,
 };
-
-export default { signIn, signUp, signOut, deleteAccount, getSession };

@@ -12,10 +12,9 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { useForm } from 'react-hook-form';
-import { formSchema, passwordSchema } from '@/lib/profile-schema';
+import { passwordSchema } from '@/lib/profile-schema';
 import { z } from 'zod';
 import { Pencil } from 'lucide-react';
-
 import {
   Dialog,
   DialogClose,
@@ -28,35 +27,50 @@ import {
 import TogglePassword from '../toggle-password';
 import { useNavigate } from 'react-router-dom';
 import { toast } from '@/hooks/use-toast';
+import { useUserStore } from '@/store';
 
-const PasswordInfoBox: React.FC = () => {
+const PasswordInfoBox = () => {
+  const { user, setUser } = useUserStore();
   const [editState, setEditState] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
-  const userEmail = localStorage.getItem('email');
-  const email = userEmail ? JSON.parse(userEmail) : null;
 
   const dummy = {
-    current_password: 'OldPassword123!', // Dummy current password
-    password: 'NewPassword456!', // Dummy new password
-    password_confirmation: 'NewPassword456!', // Dummy password confirmation
+    new_password: '',
+    password_confirmation: '',
+    email: user.email,
   };
 
   // Declare form
   const form = useForm<z.infer<typeof passwordSchema>>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(passwordSchema),
     defaultValues: dummy,
   });
 
   // Declare Handle sumbit
-  function onSubmit(values: z.infer<typeof passwordSchema>) {
-    console.log(values);
-  }
+  const onSubmit = async (values: z.infer<typeof passwordSchema>) => {
+    // console.log(values);
+    try {
+      const res = await axios.put('/api/auth/editProfile', {
+        new_password: values.new_password,
+      });
+      // localStorage.setItem('user', JSON.stringify(res.data.user));
+      setUser(res.data.user);
+      toast({
+        title: 'Profile updated successfully!',
+        description: 'Your password has been updated.',
+      });
+      setEditState(false);
+      form.reset(values); // Sync form with updated values
+    } catch (error) {
+      toast({ title: 'Profile update failed', description: `${error}` });
+    }
+  };
 
   const handleDelete = async () => {
     axios
       .post('/api/auth/deleteAccount', {
-        email,
+        email: user.email,
       })
       .then(() => {
         toast({
@@ -75,7 +89,7 @@ const PasswordInfoBox: React.FC = () => {
   };
 
   return (
-    <div className="bg-white p-6">
+    <div className="bg-white p-6 pb-0">
       {/* Title and Edit/Save Buttons */}
       <div className="flex justify-between items-center mb-4">
         <p className="text-lg font-semibold">Change Password</p>
@@ -111,7 +125,7 @@ const PasswordInfoBox: React.FC = () => {
                 <div className="relative p-2">
                   <FormField
                     control={form.control}
-                    name="password"
+                    name="new_password"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Password</FormLabel>
@@ -165,40 +179,7 @@ const PasswordInfoBox: React.FC = () => {
             </Form>
           </>
         ) : (
-          <>
-            <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="flex flex-col gap-2 w-full"
-              >
-                <div className="relative p-2">
-                  <FormField
-                    control={form.control}
-                    name="password"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Password</FormLabel>
-                        <FormControl>
-                          <Input
-                            disabled={false}
-                            placeholder="Input Password"
-                            type={'password'}
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <TogglePassword
-                    showPassword={showPassword}
-                    setShowPassword={() => setShowPassword(false)}
-                    className="top-10 p-2"
-                  />
-                </div>
-              </form>
-            </Form>
-          </>
+          <></>
         )}
       </div>
       <div className="mt-10">

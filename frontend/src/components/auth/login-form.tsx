@@ -24,6 +24,7 @@ import { Link, useNavigate } from 'react-router-dom';
 
 import { z } from 'zod';
 import { useToast } from '@/hooks/use-toast';
+import { useUserStore } from '@/store';
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -49,7 +50,7 @@ export function LoginForm() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [showPassword, setShowPassword] = useState(false);
-
+  const { setUser } = useUserStore();
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -59,22 +60,37 @@ export function LoginForm() {
   });
 
   async function onSubmit(data: z.infer<typeof loginSchema>) {
-    axios
-      .post('/api/auth/signIn', data)
-      .then(() => {
+    try {
+      // Attempt to log in
+      const loginResponse = await axios.post('/api/auth/signIn', data);
+
+      if (loginResponse.status === 200) {
+        // Login was successful, proceed to fetch session
+        console.log('Fetching session');
+        const sessionResponse = await axios.get('/api/auth/session');
+
+        // Set user data
+        setUser(sessionResponse.data.user);
+
+        // Show success toast
         toast({
           title: 'Login Successful',
           description: 'You have successfully logged in!',
         });
-        localStorage.setItem('email', JSON.stringify(data.email));
-        return navigate('/');
-      })
-      .catch((error) => {
-        toast({
-          title: 'Login Failed',
-          description: error.response.data.message,
-        });
+
+        // Navigate to the home page
+        navigate('/');
+      } else {
+        // Handle unexpected status codes
+        throw new Error('Unexpected response status during login.');
+      }
+    } catch (error) {
+      // Handle errors
+      toast({
+        title: 'Login Failed',
       });
+      console.error('Error during login:', error);
+    }
   }
 
   return (

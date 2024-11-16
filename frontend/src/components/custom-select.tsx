@@ -15,7 +15,7 @@ import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 type CustomSelectType = {
   loading?: boolean;
   mainClass?: string;
-  options: Record<string, any>[];
+  options: Record<string, string>[];
   id?: string | number;
   selected: string;
   selectTwo?: string;
@@ -27,10 +27,10 @@ type CustomSelectType = {
   placeholder?: string;
   canSearch?: boolean;
   emptyStateText?: string;
-  setSelected: (event: any) => void;
+  setSelected: (event: string) => void;
   onBlur?: (event: React.FocusEvent<HTMLButtonElement>) => void;
-  touched?: any;
-  error?: any;
+  touched?: boolean;
+  error?: boolean;
 };
 
 export default function CustomSelect({
@@ -59,10 +59,7 @@ export default function CustomSelect({
       {label && (
         <label
           htmlFor={label}
-          className={cn(
-            'block font-normal text-sm pb-1 text-[#616161] relative',
-            labelClass
-          )}
+          className={cn('block font-normal text-sm pb-1  relative', labelClass)}
         >
           {label}
           {isRequired && (

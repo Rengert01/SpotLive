@@ -45,6 +45,15 @@ const registerSchema = z
         'Password must contain at least one special character'
       ),
     confirmPassword: z.string(),
+    image: z.string(),
+    gender: z.string(),
+    username: z.string(),
+    phone: z.string(),
+    country: z.string(),
+    state: z.string(),
+    date_of_birth: z.string(),
+    city: z.string(),
+    street: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: 'Passwords do not match',
@@ -63,6 +72,15 @@ export function RegisterForm() {
       email: '',
       password: '',
       confirmPassword: '',
+      image: '',
+      gender: '',
+      username: '',
+      phone: '',
+      country: '',
+      state: '',
+      date_of_birth: '',
+      city: '',
+      street: '',
     },
   });
 

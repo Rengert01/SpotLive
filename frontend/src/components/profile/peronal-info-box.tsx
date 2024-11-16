@@ -225,16 +225,12 @@ const PersonalInfoBox = () => {
             <div className="flex justify-between">
               <p className="text-primary ">Username</p>
               <p>
-                {defaultValues?.username === ''
-                  ? '---'
-                  : defaultValues?.username}
+                {!defaultValues?.username ? '---' : defaultValues?.username}
               </p>
             </div>
             <div className="flex justify-between">
               <p className="text-primary ">Gender</p>
-              <p>
-                {defaultValues?.gender === '' ? '---' : defaultValues?.gender}
-              </p>
+              <p>{!defaultValues?.gender ? '---' : defaultValues?.gender}</p>
             </div>
             {/* <div className="flex justify-between">
               <p className="text-primary ">DOB</p> */}
@@ -246,15 +242,11 @@ const PersonalInfoBox = () => {
             {/* </div> */}
             <div className="flex justify-between">
               <p className="text-primary ">Email</p>
-              <p>
-                {defaultValues?.email === '' ? '---' : defaultValues?.email}
-              </p>
+              <p>{!defaultValues?.email ? '---' : defaultValues?.email}</p>
             </div>
             <div className="flex justify-between">
               <p className="text-primary ">Phone Number</p>
-              <p>
-                {defaultValues?.phone === '' ? '---' : defaultValues?.phone}
-              </p>
+              <p>{!defaultValues?.phone ? '---' : defaultValues?.phone}</p>
             </div>
           </div>
         )}

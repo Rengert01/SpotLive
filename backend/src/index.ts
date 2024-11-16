@@ -52,11 +52,13 @@ app.use(async (req: Request, res: Response, next: NextFunction) => {
 import authRoutes from "@/routes/auth";
 import isAuthenticated from "@/middleware/auth";
 import { User } from "./models/user";
+import profileRouter from "./routes/profile";
 
 app.use("/api/auth", authRoutes);
+app.use("/api/auth", profileRouter);
 
 // Static images folder
-app.use("/images", express.static("src/images"));
+app.use("/uploads/images", express.static("src/uploads/images"));
 
 // Everything below this line will require authentication
 app.use(isAuthenticated);

@@ -8,7 +8,7 @@ const storage = multer.diskStorage({
     cb: (error: Error | null, destination: string) => void
   ) => {
     // Set the destination path for image uploads
-    cb(null, path.join(__dirname, "../images"));
+    cb(null, path.join(__dirname, "../uploads/images"));
   },
   filename: (
     req: Request,

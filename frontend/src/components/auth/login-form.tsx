@@ -88,7 +88,6 @@ export function LoginForm() {
       // Handle errors
       toast({
         title: 'Login Failed',
-        description: `${error}`,
       });
       console.error('Error during login:', error);
     }

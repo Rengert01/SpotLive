@@ -71,7 +71,7 @@ const updateProfile = async (req: Request, res: Response): Promise<void> => {
       if (user.image) {
         const oldImagePath = path.join(
           __dirname,
-          "../images",
+          "../uploads/images",
           path.basename(user.image)
         );
         fs.unlink(oldImagePath, (err) => {
@@ -80,7 +80,7 @@ const updateProfile = async (req: Request, res: Response): Promise<void> => {
       }
 
       // Set the new image path
-      newImage = `/images/${req.file.filename}`;
+      newImage = `/uploads/images/${req.file.filename}`;
     }
 
     // Prepare the updated fields, only including provided values

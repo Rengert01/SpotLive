@@ -1,6 +1,5 @@
 import { DataTypes, Model, Optional, UUIDV4 } from "sequelize";
 import sequelize from "@/config/sequelize";
-import path from "path";
 
 interface UserAttributes {
   id: string;
@@ -112,7 +111,7 @@ User.init(
     image: {
       type: DataTypes.STRING,
       allowNull: true,
-      defaultValue: "/images/profile.jpg",
+      defaultValue: "/uploads/images/profile.jpg",
     },
     gender: {
       type: DataTypes.STRING,

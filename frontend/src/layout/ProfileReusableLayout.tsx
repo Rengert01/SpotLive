@@ -79,7 +79,7 @@ const ProfileReusableLayout = ({ children }: ProfileReusableLayoutProps) => {
     }
   };
   return (
-    <div className="flex flex-col lg:flex-row gap-6 p-4">
+    <div className="flex flex-col lg:flex-row gap-6">
       {/* Left Section */}
       <div className="lg:w-2/3 bg-white rounded-lg shadow-md border-[1px] border-gray p-6">
         <h2 className="text-xl font-semibold mb-4">Your Profile Picture</h2>

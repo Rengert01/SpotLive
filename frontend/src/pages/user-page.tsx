@@ -12,7 +12,7 @@ const UserProfile = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-black-900 to-white text-black">
+    <section className="min-h-screen bg-gradient-to-b from-black-900 to-white text-black">
       <div className="relative">
         <div className="absolute inset-0 bg-gradient-to-t from-white to-transparent" />
         <img
@@ -25,25 +25,25 @@ const UserProfile = () => {
           <p className="text-black-300">1,234,567 monthly listeners</p>
         </div>
       </div>
-      
+
       <div className="p-8">
         <div className="flex items-center gap-4 mb-8">
           <Button variant="outline" className="text-Black border-white hover:bg-white/10">
             Follow
           </Button>
         </div>
-        
+
         {/* <div className="max-w-3xl"> */}
-          {/* <h2 className="text-black-2xl font-bold mb-4">About</h2> */}
-          {/* <p className="text-black-300 leading-relaxed">{curr.bio}</p> */}
+        {/* <h2 className="text-black-2xl font-bold mb-4">About</h2> */}
+        {/* <p className="text-black-300 leading-relaxed">{curr.bio}</p> */}
         {/* </div> */}
-        
+
         <TrackSection
-            title={`From ${curr.artist}`}
-            filterFunction={(track) => track.artist === curr.artist}
+          title={`From ${curr.artist}`}
+          filterFunction={(track) => track.artist === curr.artist}
         />
       </div>
-    </div>
+    </section>
   );
 }
 

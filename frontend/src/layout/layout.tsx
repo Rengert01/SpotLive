@@ -8,7 +8,7 @@ export default function Layout() {
       <Sidebar className="col-span-1" />
       <div className="col-span-1 lg:col-span-1 lg:border-l h-[100%] overflow-hidden">
         <div className="h-full grid grid-rows-[1fr,4rem]">
-          <div className="group px-4 py-6 has-[section]:p-0 lg:px-8 row-span-1 overflow-x-hidden overflow-y-scroll hide-scrollbar">
+          <div className="px-4 py-6 has-[section]:p-0 lg:px-8 row-span-1 overflow-x-hidden overflow-y-scroll hide-scrollbar">
             <Outlet />
           </div>
           <div className="row-span-1 border-t px-4 lg:px-8">

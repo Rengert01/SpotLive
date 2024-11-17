@@ -16,7 +16,7 @@ export default function TrackSection({
   const filteredTracks = tracks.filter(filterFunction);
 
   return (
-    <section className="">
+    <div className="">
       <h2 className="text-3xl font-bold mb-6 text-black">{title}</h2>
       <div className="relative">
         <div
@@ -28,6 +28,6 @@ export default function TrackSection({
           ))}
         </div>
       </div>
-    </section>
+    </div>
   );
 }

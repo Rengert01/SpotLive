@@ -7,6 +7,15 @@ export default function MusicPlayer() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [volume, setVolume] = useState(50);
+  const [currentSongIndex, setCurrentSongIndex] = useState(0);
+
+  const playlist = [
+    "/public/test.mp3",
+    "/public/song1.mp3",
+    "/public/song2.mp3",
+    "/public/song3.mp3",
+  ];
+
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const togglePlayPause = () => {
@@ -19,11 +28,37 @@ export default function MusicPlayer() {
   };
 
   const handleSkipBack = () => {
-    console.log("Skipped to previous song");
+    if (audioRef.current) {
+      const currentTime = audioRef.current.currentTime;
+  
+      if (currentTime > 10) {
+        // Restart the current song
+        audioRef.current.currentTime = 0;
+      } else {
+        // Skip to the previous song
+        let newIndex = currentSongIndex - 1;
+        if (newIndex < 0) newIndex = playlist.length - 1; // Wrap to the last song
+        setCurrentSongIndex(newIndex);
+        loadSong(newIndex);
+      }
+    }
   };
 
   const handleSkipForward = () => {
     console.log("Skipped to next song");
+    let newIndex = (currentSongIndex + 1) % playlist.length; 
+    setCurrentSongIndex(newIndex);
+    loadSong(newIndex);
+  };
+
+  const loadSong = (index: number) => {
+    if (audioRef.current) {
+      audioRef.current.src = playlist[index];
+      audioRef.current.load();
+      if (isPlaying) {
+        audioRef.current.play();
+      }
+    }
   };
 
   const handleProgressChange = (value: number) => {

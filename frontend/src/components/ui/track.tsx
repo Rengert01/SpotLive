@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button'; // Adjust the import path as necessary
-import { Play, PlusCircle } from 'lucide-react'; // Adjust the import path as necessary
+import { Pause, Play, PlusCircle } from 'lucide-react'; // Adjust the import path as necessary
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuSeparator, ContextMenuSub, ContextMenuSubContent, ContextMenuSubTrigger, ContextMenuTrigger } from '@/components/ui/context-menu';
+import { useAudioStore } from '@/stores/audio-store';
 
 interface TrackProps {
   id: string;
@@ -35,6 +36,7 @@ function TrackItem({
   track: TrackType;
   onClick: (track: TrackType) => void;
 }) {
+  const { audio } = useAudioStore();
   return (
 
     <div key={track.id} className="group relative flex-shrink-0 w-48">
@@ -53,7 +55,11 @@ function TrackItem({
                 variant="secondary"
                 className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 group-hover:translate-y-0"
               >
-                <Play className="w-4 h-4" />
+                {audio.isPlaying ? (
+                  <Pause className="stroke-black" />
+                ) : (
+                  <Play className="stroke-black" />
+                )}
                 <span className="sr-only">Play {track.title}</span>
               </Button>
             </div>

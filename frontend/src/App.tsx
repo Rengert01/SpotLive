@@ -70,6 +70,7 @@ export default function App() {
 
   const handleKeyPress = (e: KeyboardEvent) => {
     if (e.code === PAUSE_KEY) {
+      console.log('Space pressed', e.code);
       togglePlayPause();
     }
   };

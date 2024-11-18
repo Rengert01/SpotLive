@@ -47,7 +47,7 @@ export const useAudioStore = create<AudioState>((set) => ({
           /(?:(?:^|.*;\s*)volume\s*=\s*([^;]*).*$)|^.*$/,
           '$1'
         )
-      ) * 100,
+      ) / 100,
     duration: Number(
       document.cookie.replace(
         /(?:(?:^|.*;\s*)duration\s*=\s*([^;]*).*$)|^.*$/,
@@ -88,10 +88,6 @@ export const useAudioStore = create<AudioState>((set) => ({
           state.audio.ref.current.pause();
           document.cookie = `playbackPosition=${state.audio.ref.current.currentTime}; SameSite=None; Secure`;
         } else {
-          console.log(
-            state.audio.ref.current.src ===
-              'http://localhost:3001/api/music/stream/' + state.audio.audioSrc
-          );
           if (
             state.audio.ref.current.src !==
             'http://localhost:3001/api/music/stream/' + state.audio.audioSrc

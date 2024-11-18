@@ -1,181 +1,247 @@
-import React, { useState } from "react";
-import CustomSelect from "@/components/custom-select";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Dictionary } from "@/@types/dictionary";
-import { COUNTRIES_STATES } from "@/lib/data";
+import { useEffect, useState } from 'react';
+import CustomSelect from '@/components/custom-select';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { COUNTRIES_STATES } from '@/lib/data';
 import { Pencil } from 'lucide-react';
-import { Controller } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod"
+import { Controller, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "@/components/ui/form"
-import { useForm } from "react-hook-form"
-import { addressSchema, formSchema } from '@/lib/profile-schema';
-import { z } from "zod"
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { addressSchema } from '@/lib/profile-schema';
+import { z } from 'zod';
+import axios from '@/config/axios';
+import { toast } from '@/hooks/use-toast';
+import { useUserStore } from '@/stores/user-store';
+import { ProfileLoader } from '../profile-loader';
 
+const AddressInfoBox = () => {
+  const { user, setUser } = useUserStore();
+  const [editState, setEditState] = useState(false);
+  const [selectedCountryData, setSelectedCountryData] = useState<Country>();
+  const [loading, setLoading] = useState(true);
 
-const AddressInfoBox: React.FC = () => {
-    const [editState, setEditState] = useState(false);
-    const [selectedCountryData, setSelectedCountryData] = useState<Dictionary>({});
+  const defaults = {
+    country: '',
+    street: '',
+    city: '',
+    state: '',
+  };
 
+  const form = useForm<z.infer<typeof addressSchema>>({
+    resolver: zodResolver(addressSchema),
+    defaultValues: defaults,
+  });
 
-    const dummyProfile = {
-        contact_information: {
-            address: "123 Main St",
-            city: "New York",
-            state: "NY",
-            country: "USA",
-        },
-        personal_information: {
-            first_name: "John",
-            last_name: "Doe",
-            profilePicture: "https://via.placeholder.com/150",
-        },
-    };
+  const { control, handleSubmit, watch, reset } = form;
 
-    // Declare form
-    const form = useForm<z.infer<typeof addressSchema>>({
-        resolver: zodResolver(formSchema),
-        defaultValues: dummyProfile?.contact_information,
-    })
+  const selectedCountry = watch('country');
+  const { defaultValues } = form.formState;
 
-    const { defaultValues } = form?.formState
-
-    // Declare Handle sumbit
-    function onSubmit(values: z.infer<typeof addressSchema>) {
-        console.log(values)
+  // Update state options when country changes
+  useEffect(() => {
+    if (user) {
+      form.reset({
+        country: user?.country || '',
+        street: user?.street || '',
+        city: user?.city || '',
+        state: user?.state || '',
+      });
+      setLoading(false);
     }
+  }, [user, form]);
 
-    const handleEdit = () => {
-        if (defaultValues?.country) {
-            const countryData = COUNTRIES_STATES.find((f: Dictionary) => f.name === defaultValues?.country);
-            setSelectedCountryData(countryData || {});
-        }
-        setEditState(true);
-    };
+  // Update country-specific states when country changes
+  useEffect(() => {
+    if (selectedCountry) {
+      const countryData = COUNTRIES_STATES.find(
+        (f) => f.name === selectedCountry
+      );
+      setSelectedCountryData(countryData);
+    }
+  }, [selectedCountry]);
 
+  const onSubmit = async (values: z.infer<typeof addressSchema>) => {
+    setLoading(true);
+    try {
+      const res = await axios.put('/api/auth/editProfile', values);
+      setUser(res.data.user);
+      toast({
+        title: 'Profile updated successfully!',
+        description: 'Your address information has been updated.',
+      });
+      setEditState(false);
+      setLoading(false);
+      reset(values); // Sync form with updated values
+    } catch (error) {
+      setLoading(false);
+      toast({ title: 'Profile update failed', description: `${error}` });
+    }
+  };
 
-    return (
-        <div className="bg-white p-6 space-y-6 ">
-            {/* Title and action buttons */}
-            <div className="flex justify-between items-center border-b pb-4">
-                <p className="text-lg font-semibold">Address Information</p>
-                {editState ? (
-                    <div className="flex space-x-4">
-                        <div onClick={() => setEditState(false)} className="flex items-center cursor-pointer text-primary">
-                            <p className="mr-1">View Mode</p>
-                        </div>
+  const handleEdit = () => setEditState(true);
 
-                    </div>
-                ) : (
-                    <div onClick={handleEdit} className="flex items-center cursor-pointer text-primary">
-                        <p className="mr-1">Edit</p>
-                        <figure><Pencil className='w-[1rem]' /></figure>
-                    </div>
-                )}
-            </div>
+  if (loading) {
+    return <ProfileLoader />; // Show loading state while user data is being fetched
+  }
 
-            {/* Content display */}
-            <div className="space-y-6 w-full">
-                {editState ? (
-                    <>
+  return (
+    <div className="bg-white p-6 space-y-6">
+      {/* Header */}
+      <div className="flex justify-between items-center border-b pb-4">
+        <p className="text-lg font-semibold">Address Information</p>
+        {!editState ? (
+          <div
+            onClick={handleEdit}
+            className="flex items-center cursor-pointer text-primary"
+          >
+            <p className="mr-1">Edit</p>
+            <Pencil className="w-4 h-4" />
+          </div>
+        ) : (
+          <div
+            onClick={() => setEditState(false)}
+            className="flex items-center cursor-pointer text-primary"
+          >
+            <p className="mr-1">View Mode</p>
+          </div>
+        )}
+      </div>
 
-                        <Form {...form}>
-                            <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4 sm:grid-cols-2 w-full overflow-hidden">
+      {/* Form */}
+      {editState ? (
+        <Form {...form}>
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="grid gap-4 sm:grid-cols-2"
+          >
+            {/* Country Field */}
+            <Controller
+              control={control}
+              name="country"
+              render={({ field, fieldState }) => (
+                <FormItem>
+                  <CustomSelect
+                    label="Country"
+                    options={[
+                      { label: 'Select Country', value: '' },
+                      ...COUNTRIES_STATES.map((item) => ({
+                        label: item.name,
+                        value: item.name,
+                      })),
+                    ]}
+                    selected={field.value}
+                    setSelected={field.onChange}
+                    error={!!fieldState.error}
+                    touched={!!fieldState.isTouched}
+                    placeholder="Select Country"
+                  />
+                  <FormMessage>{fieldState?.error?.message}</FormMessage>
+                </FormItem>
+              )}
+            />
 
-                                <Controller
-                                    control={form.control}
-                                    name="country"
-                                    render={({ field }) => (
-                                        <CustomSelect
-                                            label="Country"
-                                            options={selectedCountryData?.stateProvinces?.map((item: Dictionary) => ({ label: item.name, value: item.name })) || []}
-                                            selected={field.value}
-                                            setSelected={(value) => field.onChange(value)}
-                                            placeholder="Select gender"
-                                            className="w-full p-2 border border-gray-300 rounded-md"
-                                        />
-                                    )}
-                                />
-                                <Controller
-                                    control={form.control}
-                                    name="state"
-                                    render={({ field }) => (
-                                        <CustomSelect
-                                            label="State"
-                                            options={[
-                                                { label: "Select country", value: "" },
-                                                ...COUNTRIES_STATES.map((item) => ({ label: item.name, value: item.name })),
-                                            ]}
-                                            selected={field.value}
-                                            setSelected={(value) => field.onChange(value)}
-                                            placeholder="Select State"
-                                            disabled={!defaultValues?.country}
-                                            className="w-full p-2 border border-gray-300 rounded-md"
-                                        />
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="city"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>City</FormLabel>
-                                            <FormControl>
-                                                <Input placeholder="City" {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="address"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Address</FormLabel>
-                                            <FormControl>
-                                                <Input placeholder="Enter address" {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
+            {/* State Field */}
+            <Controller
+              control={control}
+              name="state"
+              render={({ field, fieldState }) => (
+                <FormItem>
+                  <CustomSelect
+                    label="State"
+                    options={
+                      selectedCountryData?.stateProvinces?.map(
+                        (item: StateProvince) => ({
+                          label: item.name,
+                          value: item.name,
+                        })
+                      ) || []
+                    }
+                    selected={field.value}
+                    setSelected={field.onChange}
+                    disabled={!selectedCountry}
+                    error={!!fieldState.error}
+                    touched={!!fieldState.isTouched}
+                    placeholder="Select State"
+                  />
+                  <FormMessage>{fieldState?.error?.message}</FormMessage>
+                </FormItem>
+              )}
+            />
 
+            {/* City Field */}
+            <FormField
+              control={control}
+              name="city"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>City</FormLabel>
+                  <FormControl>
+                    <Input placeholder="City" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-                                <Button type="submit" className="w-fit ">Submit</Button>
-                            </form>
-                        </Form>
-                    </>
-                ) : (
-                    <div className="grid gap-4 sm:grid-cols-2">
-                        <div className="flex justify-between">
-                            <p className="font-medium text-gray-700">Country</p>
-                            <p className="text-gray-600">{defaultValues?.country || "---"}</p>
-                        </div>
-                        <div className="flex justify-between">
-                            <p className="font-medium text-gray-700">State</p>
-                            <p className="text-gray-600">{defaultValues?.state || "---"}</p>
-                        </div>
-                        <div className="flex justify-between">
-                            <p className="font-medium text-gray-700">City</p>
-                            <p className="text-gray-600">{defaultValues?.city || "---"}</p>
-                        </div>
-                        <div className="flex justify-between">
-                            <p className="font-medium text-gray-700">Street</p>
-                            <p className="text-gray-600">{defaultValues?.address || "---"}</p>
-                        </div>
-                    </div>
-                )}
-            </div>
+            {/* Street Field */}
+            <FormField
+              control={control}
+              name="street"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Street</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter your street address" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Submit Button */}
+            <Button type="submit" className="col-span-2 sm:col-span-1">
+              Submit
+            </Button>
+          </form>
+        </Form>
+      ) : (
+        // Display read-only address information
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div className="flex justify-between">
+            <p className="font-medium text-gray-700 capitalize">Country</p>
+            <p className="text-gray-600">
+              {defaultValues?.country === '' ? '---' : defaultValues?.country}
+            </p>
+          </div>
+          <div className="flex justify-between">
+            <p className="font-medium text-gray-700 capitalize">State</p>
+            <p className="text-gray-600">
+              {defaultValues?.state === '' ? '---' : defaultValues?.state}
+            </p>
+          </div>
+          <div className="flex justify-between">
+            <p className="font-medium text-gray-700 capitalize">City</p>
+            <p className="text-gray-600">
+              {defaultValues?.city === '' ? '---' : defaultValues?.city}
+            </p>
+          </div>
+          <div className="flex justify-between">
+            <p className="font-medium text-gray-700 capitalize">Street</p>
+            <p className="text-gray-600">
+              {defaultValues?.street === '' ? '---' : defaultValues?.street}
+            </p>
+          </div>
         </div>
-    );
+      )}
+    </div>
+  );
 };
 
 export default AddressInfoBox;

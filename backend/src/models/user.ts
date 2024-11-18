@@ -1,6 +1,5 @@
 import { DataTypes, Model, Optional, UUIDV4 } from 'sequelize';
 import sequelize from '@/config/sequelize';
-// import { Music } from '@/models/music';
 
 interface UserAttributes {
   id: string;
@@ -21,10 +20,7 @@ interface UserAttributes {
 
 type UserCreationAttributes = Optional<UserAttributes, 'id'>;
 
-class User
-  extends Model<UserAttributes, UserCreationAttributes>
-  implements UserAttributes
-{
+class User extends Model<UserAttributes, UserCreationAttributes> {
   public id!: string;
   public email!: string;
   public password!: string;
@@ -45,6 +41,7 @@ class User
     contactInformation: boolean;
     workInformation: boolean;
   };
+
   public calculateCompletionPercentage(): number {
     const fields = [
       this.email,
@@ -93,9 +90,6 @@ class User
     };
   }
 }
-
-// A User has many Music
-// User.hasMany(Music);
 
 User.init(
   {

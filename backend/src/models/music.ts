@@ -1,4 +1,13 @@
-import { DataTypes, Model, Optional } from 'sequelize';
+import {
+  CreationOptional,
+  DataTypes,
+  ForeignKey,
+  InferAttributes,
+  InferCreationAttributes,
+  Model,
+  NonAttribute,
+  Optional,
+} from 'sequelize';
 import sequelize from '@/config/sequelize';
 import { User } from '@/models/user';
 
@@ -15,19 +24,25 @@ interface MusicAttributes {
 
 type MusicCreationAttributes = Optional<MusicAttributes, 'id'>;
 
-class Music
-  extends Model<MusicAttributes, MusicCreationAttributes>
-  implements MusicAttributes
-{
-  public id!: string;
-  public title!: string;
-  public cover!: string;
-  public artistId!: string;
-  public albumId!: string | null;
-  public path!: string;
-  public duration!: number;
-  public public!: boolean;
+class Music extends Model<
+  InferAttributes<Music>,
+  InferCreationAttributes<Music>
+> {
+  declare id: CreationOptional<string>;
+  declare title: string;
+  declare cover: string;
+
+  declare artistId: ForeignKey<User['id']>;
+  declare artist?: NonAttribute<User>;
+
+  declare albumId: string | null;
+  declare path: string;
+  declare duration: number;
+  declare public: boolean;
 }
+
+// A music belongs to an artist
+Music.belongsTo(User);
 
 Music.init(
   {
@@ -42,10 +57,6 @@ Music.init(
     },
     cover: {
       type: DataTypes.STRING,
-      allowNull: false,
-    },
-    artistId: {
-      type: DataTypes.UUID,
       allowNull: false,
     },
     albumId: {
@@ -69,11 +80,5 @@ Music.init(
     sequelize,
   }
 );
-
-// A music belongs to an artist
-Music.belongsTo(User, {
-  as: 'artist',
-  foreignKey: 'artistId',
-});
 
 export { Music, MusicAttributes, MusicCreationAttributes };

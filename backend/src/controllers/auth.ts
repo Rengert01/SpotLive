@@ -126,6 +126,7 @@ const signUp = async (req: Request, res: Response): Promise<void> => {
       email: email,
       password: hashedPassword,
     });
+
     res.status(201).json({ message: 'User created', user: newUser });
   } catch (err) {
     console.error(err);

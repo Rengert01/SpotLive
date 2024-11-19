@@ -7,10 +7,11 @@ import cors from 'cors';
 import corsOptions from '@/config/cors';
 import authRoutes from '@/routes/auth';
 import isAuthenticated from '@/middleware/auth';
-import { User } from '@/models/user';
 import profileRouter from '@/routes/profile';
 import musicRoutes from '@/routes/music';
-import { testConnection } from '@/config/sequelize';
+import { db } from '@/db';
+import { eq } from 'drizzle-orm';
+import { users } from '@/db/schema';
 
 const app: Express = express();
 const port = env.BACKEND_API_PORT ?? 3001;
@@ -36,8 +37,8 @@ app.use(async (req: Request, res: Response, next: NextFunction) => {
 
     if (email) {
       // Fetch the user by email
-      const user = await User.findOne({
-        where: { email },
+      const user = await db.query.users.findFirst({
+        where: eq(users.email, email),
       });
 
       if (user) {
@@ -56,7 +57,6 @@ app.use(async (req: Request, res: Response, next: NextFunction) => {
 });
 
 app.use('/api/auth', authRoutes);
-app.use('/api/auth', profileRouter);
 
 // Static images folder
 app.use('/uploads/image', express.static('src/uploads/image'));
@@ -64,9 +64,9 @@ app.use('/uploads/image', express.static('src/uploads/image'));
 // Everything below this line will require authentication
 app.use(isAuthenticated);
 
+app.use('/api/auth', profileRouter);
 app.use('/api/music', musicRoutes);
 
 app.listen(port, async () => {
-  await testConnection();
   console.log(`[server]: Server is running at http://localhost:${port}`);
 });

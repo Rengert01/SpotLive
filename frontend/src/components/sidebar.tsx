@@ -209,11 +209,11 @@ export function Sidebar({ className }: SidebarProps) {
               <div className=" flex gap-4 items-center">
                 <Avatar>
                   <AvatarImage src={`${port}${user?.image}`} />
-                  <AvatarFallback>{user.username?.[0].toUpperCase()}</AvatarFallback>
+                  <AvatarFallback>{user.username !== "" ? user.username?.[0].toUpperCase() : ''}</AvatarFallback>
                 </Avatar>
                 <div className="space-y-0">
                   <p className="text-start text-sm font-semibold">
-                    {user?.username || 'Hello'}
+                    {user?.username || 'User'}
                   </p>
                   <p className="text-start text-sm text-muted-foreground">
                     {user?.email}
@@ -222,11 +222,11 @@ export function Sidebar({ className }: SidebarProps) {
               </div>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-[250px]">
-              <DropdownMenuItem>
-                <Link className="w-full justify-start" to={'/profile'}>
+              <Link className="w-full justify-start" to={'/profile'}>
+                <DropdownMenuItem>
                   Profile
-                </Link>
-              </DropdownMenuItem>
+                </DropdownMenuItem>
+              </Link>
               <DropdownMenuItem onClick={handleLogout}>
                 Log Out
               </DropdownMenuItem>

@@ -1,176 +1,78 @@
-import { DataTypes, Model, Optional, UUIDV4 } from 'sequelize';
-import sequelize from '@/config/sequelize';
+import { musics } from '@/db/schema';
+import { relations } from 'drizzle-orm';
+import { date, integer, json, pgTable, varchar } from 'drizzle-orm/pg-core';
 
-interface UserAttributes {
-  id: string;
-  email: string;
-  password: string;
-  image?: string;
-  gender?: string;
-  username?: string;
-  phone?: string;
-  country?: string;
-  state?: string;
-  street?: string;
-  date_of_birth?: string;
-  city?: string;
-  completionPercentage?: number;
-  checklist?: object;
-}
+export const users = pgTable('user', {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  email: varchar().notNull(),
+  password: varchar().notNull(),
+  image: varchar().notNull().default('/uploads/image/profile.jpg'),
+  gender: varchar().default(''),
+  username: varchar().default(''),
+  phone: varchar().default(''),
+  country: varchar().default(''),
+  state: varchar().default(''),
+  date_of_birth: date().defaultNow(),
+  city: varchar().default(''),
+  street: varchar().default(''),
+  completionPercentage: integer().default(0),
+  checklist: json().default({
+    setupAccount: false,
+    personalInformation: false,
+    uploadPhoto: false,
+    contactInformation: false,
+    workInformation: false,
+  }),
+});
 
-type UserCreationAttributes = Optional<UserAttributes, 'id'>;
+export const userRelations = relations(users, ({ many }) => ({
+  musics: many(musics),
+}));
 
-class User extends Model<UserAttributes, UserCreationAttributes> {
-  public id!: string;
-  public email!: string;
-  public password!: string;
-  public image!: string;
-  public gender!: string;
-  public username!: string;
-  public phone!: string;
-  public country!: string;
-  public state!: string;
-  public street!: string;
-  public date_of_birth!: string;
-  public city!: string;
-  public completionPercentage!: number;
-  public checklist!: {
-    setupAccount: boolean;
-    personalInformation: boolean;
-    uploadPhoto: boolean;
-    contactInformation: boolean;
-    workInformation: boolean;
+export const updateChecklist = (user: typeof users.$inferSelect): void => {
+  user.checklist = {
+    setupAccount: !!user.email && !!user.password,
+    personalInformation:
+      !!user.username &&
+      !!user.phone &&
+      !!user.country &&
+      !!user.state &&
+      !!user.city &&
+      !!user.street,
+    uploadPhoto: !!user.image,
+    contactInformation:
+      !!user.phone && !!user.country && !!user.state && !!user.city,
+    workInformation: !!user.username,
   };
+};
 
-  public calculateCompletionPercentage(): number {
-    const fields = [
-      this.email,
-      this.password,
-      this.username,
-      this.phone,
-      this.country,
-      this.state,
-      this.city,
-      this.street,
-      this.date_of_birth,
-      this.image,
-    ];
+export const calculateCompletionPercentage = (
+  user: typeof users.$inferSelect
+): number => {
+  const fields = [
+    user.email,
+    user.password,
+    user.username,
+    user.image,
+    user.phone,
+    user.country,
+    user.state,
+    user.city,
+    user.street,
+    user.date_of_birth,
+    user.image,
+  ];
 
-    let filledFields = 0;
+  let fieldsFilled = 0;
 
-    // Count the filled fields
-    fields.forEach((field) => {
-      if (field && field !== '') {
-        filledFields++;
-      }
-    });
-
-    // Calculate percentage
-    const totalFields = fields.length;
-    const percentage = (filledFields / totalFields) * 100;
-
-    return Math.round(percentage);
+  for (const field of fields) {
+    if (field) {
+      fieldsFilled++;
+    }
   }
 
-  // Add method to check checklist status
-  public updateChecklist(): void {
-    this.checklist = {
-      setupAccount: !!this.email && !!this.password,
-      personalInformation:
-        !!this.username &&
-        !!this.phone &&
-        !!this.country &&
-        !!this.state &&
-        !!this.city &&
-        !!this.street,
-      uploadPhoto: !!this.image,
-      contactInformation:
-        !!this.phone && !!this.country && !!this.state && !!this.city,
-      workInformation: !!this.username, // Assuming username is part of work information
-    };
-  }
-}
+  const totalFields = fields.length;
+  const percentage = (fieldsFilled / totalFields) * 100;
 
-User.init(
-  {
-    id: {
-      type: DataTypes.UUID,
-      defaultValue: UUIDV4,
-      primaryKey: true,
-    },
-    email: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    password: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    image: {
-      type: DataTypes.STRING,
-      allowNull: true,
-      defaultValue: '/uploads/image/profile.jpg',
-    },
-    gender: {
-      type: DataTypes.STRING,
-      allowNull: true,
-      defaultValue: '',
-    },
-    username: {
-      type: DataTypes.STRING,
-      allowNull: true,
-      defaultValue: '',
-    },
-    phone: {
-      type: DataTypes.STRING,
-      allowNull: true,
-      defaultValue: '',
-    },
-    country: {
-      type: DataTypes.STRING,
-      allowNull: true,
-      defaultValue: '',
-    },
-    state: {
-      type: DataTypes.STRING,
-      allowNull: true,
-      defaultValue: '',
-    },
-    date_of_birth: {
-      type: DataTypes.DATE,
-      allowNull: true,
-    },
-    city: {
-      type: DataTypes.STRING,
-      allowNull: true,
-      defaultValue: '',
-    },
-    street: {
-      type: DataTypes.STRING,
-      allowNull: true,
-      defaultValue: '',
-    },
-    // Add profile completion fields
-    completionPercentage: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      defaultValue: 0,
-    },
-    checklist: {
-      type: DataTypes.JSONB, // JSONB type to store the checklist (PostgreSQL)
-      allowNull: false,
-      defaultValue: {
-        setupAccount: false,
-        personalInformation: false,
-        uploadPhoto: false,
-        contactInformation: false,
-        workInformation: false,
-      },
-    },
-  },
-  {
-    sequelize,
-  }
-);
-
-export { User, UserAttributes, UserCreationAttributes };
+  return Math.round(percentage);
+};

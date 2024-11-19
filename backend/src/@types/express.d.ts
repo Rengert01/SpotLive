@@ -8,20 +8,19 @@ export declare global {
     }
 
     interface User {
-      id: string;
       email: string;
-      password: string;
-      image?: string;
-      gender?: string;
-      username?: string;
-      phone?: string;
-      country?: string;
-      state?: string;
-      street?: string;
-      date_of_birth?: string;
-      city?: string;
-      completionPercentage?: number;
-      checklist?: object;
+      id: number;
+      image: string;
+      gender: string | null;
+      username: string | null;
+      phone: string | null;
+      country: string | null;
+      state: string | null;
+      street: string | null;
+      date_of_birth: string | null;
+      city: string | null;
+      completionPercentage: number | null;
+      checklist: unknown;
     }
   }
 }

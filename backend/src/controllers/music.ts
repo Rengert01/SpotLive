@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
-import { Music, MusicAttributes } from '@/models/music';
 import path from 'path';
 import fs from 'fs';
-import { Op, WhereOptions } from 'sequelize';
 import { z } from 'zod';
-import { User } from '@/models/user';
 import getAudioDurationInSeconds from 'get-audio-duration';
+import { and, asc, desc, eq, ilike, SQLWrapper } from 'drizzle-orm';
+import { musics, users } from '@/db/schema';
+import { db } from '@/db';
 
 const getMusicInfo = async (req: Request, res: Response): Promise<void> => {
   const { id } = req.params;
@@ -15,8 +15,8 @@ const getMusicInfo = async (req: Request, res: Response): Promise<void> => {
     return;
   }
 
-  const music = await Music.findOne({
-    where: { id: id },
+  const music = await db.query.musics.findFirst({
+    where: eq(musics.id, Number(id)),
   });
 
   if (!music) {
@@ -28,7 +28,7 @@ const getMusicInfo = async (req: Request, res: Response): Promise<void> => {
 };
 
 const streamSchema = z.object({
-  id: z.string().uuid(),
+  id: z.string(),
 });
 
 const streamMusic = async (req: Request, res: Response): Promise<void> => {
@@ -38,6 +38,7 @@ const streamMusic = async (req: Request, res: Response): Promise<void> => {
     res.status(400).json({ message: 'Invalid music Id' });
     return;
   }
+
   const { id } = params.data;
 
   if (!id) {
@@ -45,8 +46,8 @@ const streamMusic = async (req: Request, res: Response): Promise<void> => {
     return;
   }
 
-  const music = await Music.findOne({
-    where: { id: id },
+  const music = await db.query.musics.findFirst({
+    where: eq(musics.id, Number(id)),
   });
 
   if (!music) {
@@ -115,16 +116,15 @@ const getMusicList = async (req: Request, res: Response): Promise<void> => {
   } = filtersSchema.parse(req.query);
 
   const offset = (Number(page) - 1) * Number(limit);
-  const whereClause: WhereOptions<MusicAttributes> = {
-    title: {
-      [Op.iLike]: `%${search}%`,
-    },
-  };
+
+  const whereClauses: (SQLWrapper | undefined)[] = [
+    ilike(musics.title, `%${search}%`),
+  ];
 
   if (isPrivate === 'true') {
-    whereClause.public = false;
+    whereClauses.push(eq(musics.public, false));
   } else {
-    whereClause.public = true;
+    whereClauses.push(eq(musics.public, true));
   }
 
   if (isPersonal === 'true') {
@@ -135,8 +135,8 @@ const getMusicList = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const user = await User.findOne({
-      where: { email: email },
+    const user = await db.query.users.findFirst({
+      where: eq(users.email, email),
     });
 
     if (!user) {
@@ -144,20 +144,23 @@ const getMusicList = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    whereClause.artistId = user.id;
+    // whereClause.artistId = user.id;
+    whereClauses.push(eq(musics.artistId, user.id));
   }
 
-  console.log('Where clause:', whereClause);
-
-  const musicList = await Music.findAll({
-    order: [[sortBy, order]],
+  const musicList = await db.query.musics.findMany({
+    orderBy: [order === 'ASC' ? asc(musics[sortBy]) : desc(musics[sortBy])],
     limit: Number(limit),
-    offset,
-    where: whereClause,
-    include: {
-      model: User,
-      attributes: ['id', 'username'],
-      as: 'artist',
+    offset: offset,
+    where: and(...whereClauses),
+    with: {
+      artist: {
+        columns: {
+          email: true,
+          username: true,
+          image: true,
+        },
+      },
     },
   });
 
@@ -186,8 +189,8 @@ const uploadMusic = async (req: Request, res: Response): Promise<void> => {
     return;
   }
 
-  const user = await User.findOne({
-    where: { email: email },
+  const user = await db.query.users.findFirst({
+    where: eq(users.email, email),
   });
 
   if (!user) {
@@ -208,16 +211,28 @@ const uploadMusic = async (req: Request, res: Response): Promise<void> => {
 
   const imageFile = files.image[0];
 
-  const music = await Music.create({
-    title: name,
-    public: isPublic === 'true',
-    artistId: user.id,
-    cover: imageFile.filename,
-    path: musicFile.filename,
-    duration: duration,
-  });
+  // const music = await Music.create({
+  //   title: name,
+  //   public: isPublic === 'true',
+  //   artistId: user.id,
+  //   cover: imageFile.filename,
+  //   path: musicFile.filename,
+  //   duration: duration,
+  // });
 
-  if (!music) {
+  const music = await db
+    .insert(musics)
+    .values({
+      title: name,
+      public: isPublic === 'true',
+      artistId: user.id,
+      cover: imageFile.filename,
+      path: musicFile.filename,
+      duration: duration.toString(),
+    })
+    .returning();
+
+  if (!music.length) {
     res.status(500).json({ message: 'Failed to upload music' });
     return;
   }

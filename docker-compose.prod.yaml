@@ -67,7 +67,7 @@ services:
       - "traefik.http.services.api.loadbalancer.server.port=${BACKEND_API_PORT}"
     expose:
       - "${BACKEND_API_PORT}"
-    command: npm run start
+    command: npm run start2
     deploy:
       mode: replicated
       replicas: 3

@@ -1,12 +1,45 @@
-import RecentlyReleasedTracks from "@/components/homepage-components/recently-released.tsx";
-import MadeForYouTracks from "@/components/homepage-components/made-for-you.tsx";
+import { useState } from 'react';
+import RecentlyReleasedTracks from '@/components/homepage-components/recently-released.tsx';
+import MadeForYouTracks from '@/components/homepage-components/made-for-you.tsx';
+import { Live } from '@/pages/live';
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+} from '@/components/ui/tabs.tsx';
+import { Button } from '@/components/ui/button';
+import { PlusCircle } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export default function HomePage() {
-    return (
-        <div>
-            {/*<h1>Home Page</h1>*/}
-            <RecentlyReleasedTracks />
-            <MadeForYouTracks />
+  const [activeTab, setActiveTab] = useState('Music');
+
+  return (
+    <div>
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <div className="space-between flex items-center">
+          <TabsList>
+            <TabsTrigger value="Music">Music</TabsTrigger>
+            <TabsTrigger value="Live">Live</TabsTrigger>
+          </TabsList>
+          <div className="ml-auto">
+            <Link to="/songs/upload">
+              <Button>
+                <PlusCircle className="h-4 w-4 mr-2" />
+                Upload Track
+              </Button>
+            </Link>
+          </div>
         </div>
-    );
+        <TabsContent value="Music" className="space-y-6">
+          <RecentlyReleasedTracks />
+          <MadeForYouTracks />
+        </TabsContent>
+        <TabsContent value="Live">
+          <Live />
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
 }

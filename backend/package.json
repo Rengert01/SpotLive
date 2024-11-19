@@ -16,10 +16,8 @@
     "ext": "ts"
   },
   "scripts": {
-    "build1": "npx tsc -p tsconfig.json",
-    "start1": "node -r tsconfig-paths/register -r ts-node/register src/index.ts",
-    "build2": "npx tsc",
-    "start2": "node dist/index.js",
+    "start": "node -r tsconfig-paths/register -r ts-node/register src/index.ts",
+    "build": "npx tsc",
     "dev": "nodemon src/index.ts",
     "tests": "jest --setupFiles=dotenv/config",
     "prettier:write": "npx prettier --write .",

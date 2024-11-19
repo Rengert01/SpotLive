@@ -3,7 +3,6 @@ import { Separator } from '@/components/ui/separator';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { useAudioStore } from '@/stores/audio-store';
 
-
 interface TrackSectionProps {
   title: string;
   subtitle: string;
@@ -25,7 +24,7 @@ export default function TrackSection({
       audioTitle: track.title,
       audioArtist: track.artist.username,
       audioCoverSrc: track.cover,
-      duration: track.duration
+      duration: track.duration,
     });
 
     togglePlayPause();

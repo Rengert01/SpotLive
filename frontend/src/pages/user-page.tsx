@@ -1,7 +1,6 @@
 import tracks from '@/data/tracks.json';
 import { useParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import TrackSection from '@/components/ui/track-section';
 
 const UserProfile = () => {
   const { id } = useParams();

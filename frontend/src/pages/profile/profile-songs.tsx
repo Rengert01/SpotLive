@@ -1,4 +1,3 @@
-
 import TrackSection from '@/components/ui/track-section';
 import { useEffect, useState } from 'react';
 import axios from '@/config/axios';
@@ -44,7 +43,7 @@ export default function ProfileSongs() {
       .catch((err) => {
         console.error(err);
       });
-  }
+  };
 
   useEffect(() => {
     Promise.all([fetchReleasedTracks(), fetchUnreleasedTracks()]);
@@ -63,6 +62,5 @@ export default function ProfileSongs() {
         tracks={unreleasedTracks}
       />
     </>
-
   );
 }

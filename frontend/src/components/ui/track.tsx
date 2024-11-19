@@ -1,18 +1,17 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button'; // Adjust the import path as necessary
 import { Pause, Play, PlusCircle } from 'lucide-react'; // Adjust the import path as necessary
-import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuSeparator, ContextMenuSub, ContextMenuSubContent, ContextMenuSubTrigger, ContextMenuTrigger } from '@/components/ui/context-menu';
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuSeparator,
+  ContextMenuSub,
+  ContextMenuSubContent,
+  ContextMenuSubTrigger,
+  ContextMenuTrigger,
+} from '@/components/ui/context-menu';
 import { useAudioStore } from '@/stores/audio-store';
-
-interface TrackProps {
-  id: string;
-  cover: string;
-  title: string;
-  artist: {
-    id: string;
-    username: string;
-  };
-}
 
 const playlists = [
   'Recently Added',
@@ -38,7 +37,6 @@ function TrackItem({
 }) {
   const { audio } = useAudioStore();
   return (
-
     <div key={track.id} className="group relative flex-shrink-0 w-48">
       <ContextMenu>
         <ContextMenuTrigger>

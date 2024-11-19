@@ -84,7 +84,10 @@ export function Sidebar({ className }: SidebarProps) {
             </h2>
             <div className="space-y-1">
               <Link to="/">
-                <Button variant={location.pathname === '/' ? "secondary" : "ghost"} className="w-full justify-start">
+                <Button
+                  variant={location.pathname === '/' ? 'secondary' : 'ghost'}
+                  className="w-full justify-start"
+                >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
@@ -113,8 +116,11 @@ export function Sidebar({ className }: SidebarProps) {
                 {playlists?.map((playlist, i) => (
                   <Button
                     key={`${playlist}-${i}`}
-
-                    variant={location.pathname === `/playlist/${playlist}` ? "secondary" : "ghost"}
+                    variant={
+                      location.pathname === `/playlist/${playlist}`
+                        ? 'secondary'
+                        : 'ghost'
+                    }
                     className="w-full justify-start font-normal"
                   >
                     <svg
@@ -142,7 +148,10 @@ export function Sidebar({ className }: SidebarProps) {
 
           <div className="px-3 py-1 flex-auto content-end">
             <div className="space-y-1">
-              <Button variant={location.pathname === '/live' ? "secondary" : "ghost"} className="w-full justify-start">
+              <Button
+                variant={location.pathname === '/live' ? 'secondary' : 'ghost'}
+                className="w-full justify-start"
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
@@ -163,7 +172,14 @@ export function Sidebar({ className }: SidebarProps) {
               </Button>
 
               <Link to="/profile/songs">
-                <Button variant={location.pathname === '/profile/songs' ? "secondary" : "ghost"} className="w-full justify-start">
+                <Button
+                  variant={
+                    location.pathname === '/profile/songs'
+                      ? 'secondary'
+                      : 'ghost'
+                  }
+                  className="w-full justify-start"
+                >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
@@ -181,7 +197,14 @@ export function Sidebar({ className }: SidebarProps) {
                 </Button>
               </Link>
 
-              <Button variant={location.pathname === '/profile/albums' ? "secondary" : "ghost"} className="w-full justify-start">
+              <Button
+                variant={
+                  location.pathname === '/profile/albums'
+                    ? 'secondary'
+                    : 'ghost'
+                }
+                className="w-full justify-start"
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
@@ -209,7 +232,11 @@ export function Sidebar({ className }: SidebarProps) {
               <div className=" flex gap-4 items-center">
                 <Avatar>
                   <AvatarImage src={`${port}${user?.image}`} />
-                  <AvatarFallback>{user.username !== "" ? user.username?.[0].toUpperCase() : ''}</AvatarFallback>
+                  <AvatarFallback>
+                    {user.username !== ''
+                      ? user.username?.[0].toUpperCase()
+                      : ''}
+                  </AvatarFallback>
                 </Avatar>
                 <div className="space-y-0">
                   <p className="text-start text-sm font-semibold">
@@ -223,9 +250,7 @@ export function Sidebar({ className }: SidebarProps) {
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-[250px]">
               <Link className="w-full justify-start" to={'/profile'}>
-                <DropdownMenuItem>
-                  Profile
-                </DropdownMenuItem>
+                <DropdownMenuItem>Profile</DropdownMenuItem>
               </Link>
               <DropdownMenuItem onClick={handleLogout}>
                 Log Out

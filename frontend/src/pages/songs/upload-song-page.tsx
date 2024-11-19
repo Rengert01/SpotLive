@@ -64,7 +64,7 @@ export default function UploadSongPage() {
   const imageRef = form.register('trackCover');
 
   const onSubmit = async (data: z.infer<typeof trackSchema>) => {
-    console.log("data", data);
+    console.log('data', data);
 
     const formData = new FormData();
     formData.append('name', data.name);
@@ -72,15 +72,18 @@ export default function UploadSongPage() {
     formData.append('image', data.trackCover);
     formData.append('music', data.trackFile);
 
-    axios.post('/api/music/upload', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    }).then((res) => {
-      console.log(res);
-    }).catch((err) => {
-      console.error(err);
-    });
+    axios
+      .post('/api/music/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
   };
 
   // Handlers for drag-and-drop
@@ -128,10 +131,7 @@ export default function UploadSongPage() {
                     Cancel
                   </Button>
                 </Link>
-                <Button
-                  disabled={form.formState.isSubmitting}
-                  type="submit"
-                >
+                <Button disabled={form.formState.isSubmitting} type="submit">
                   {form.formState.isSubmitting ? (
                     <Loader className="h-5 w-5 animate-spin" />
                   ) : (
@@ -211,7 +211,9 @@ export default function UploadSongPage() {
                     <FormField
                       control={form.control}
                       name="trackFile"
-                      render={({ field: { value, onChange, ...fieldProps } }) => (
+                      render={({
+                        field: { value, onChange, ...fieldProps },
+                      }) => (
                         <FormItem>
                           <FormControl>
                             <Input
@@ -482,8 +484,9 @@ export default function UploadSongPage() {
                   </CardHeader>
                   <CardContent>
                     <div
-                      className={`grid gap-2 border-2 border-dashed p-2 rounded-xl cursor-pointer ${isDragging ? 'border-primary' : 'border-gray-300'
-                        }`}
+                      className={`grid gap-2 border-2 border-dashed p-2 rounded-xl cursor-pointer ${
+                        isDragging ? 'border-primary' : 'border-gray-300'
+                      }`}
                       onDragOver={handleDragOver}
                       onDragLeave={handleDragLeave}
                       onDrop={handleDrop}
@@ -505,7 +508,7 @@ export default function UploadSongPage() {
                         control={form.control}
                         name="trackCover"
                         render={({ field }) => (
-                          <FormItem >
+                          <FormItem>
                             <FormControl className="hidden">
                               <Input
                                 disabled={form.formState.isSubmitting}
@@ -655,9 +658,7 @@ export default function UploadSongPage() {
               <Button variant="outline" asChild type="button">
                 <Link to="/">Cancel</Link>
               </Button>
-              <Button type="submit">
-                Upload Track
-              </Button>
+              <Button type="submit">Upload Track</Button>
             </div>
           </div>
         </form>

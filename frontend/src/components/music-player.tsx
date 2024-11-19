@@ -12,7 +12,13 @@ import {
 import { useAudioStore } from '@/stores/audio-store';
 
 export default function MusicPlayer() {
-  const { audio, togglePlayPause, handleVolumeChange, handleSeek, updatePlaybackPosition } = useAudioStore();
+  const {
+    audio,
+    togglePlayPause,
+    handleVolumeChange,
+    handleSeek,
+    updatePlaybackPosition,
+  } = useAudioStore();
 
   const [currentSongIndex, setCurrentSongIndex] = useState(0);
 

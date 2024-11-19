@@ -2,7 +2,6 @@ import TrackSection from '@/components/ui/track-section';
 import { useEffect, useState } from 'react';
 import axios from '@/config/axios';
 
-
 export default function RecentlyReleased() {
   const [tracks, setTracks] = useState<TrackType[]>([]);
 

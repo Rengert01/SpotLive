@@ -1,10 +1,12 @@
-import { defineConfig } from 'vite';
+import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 
 // https://vitejs.dev/config/
-export default defineConfig(() => {
-  const VITE_APP_PORT = process.env.VITE_APP_PORT;
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd());
+
+  console.log(env);
 
   return {
     plugins: [react()],
@@ -15,10 +17,16 @@ export default defineConfig(() => {
     },
     server: {
       host: true,
-      port: parseInt(VITE_APP_PORT ?? '3000'),
+      port: parseInt(env.VITE_APP_PORT ?? '3000'),
       watch: {
         usePolling: true,
       },
+    },
+    preview: {
+      port: parseInt(env.VITE_APP_PORT ?? '3000'),
+    },
+    define: {
+      __APP_ENV__: JSON.stringify(env.APP_ENV),
     },
   };
 });

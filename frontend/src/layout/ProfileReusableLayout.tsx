@@ -5,7 +5,7 @@ import { Pencil } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar';
 import axios from '@/config/axios';
 import { Input } from '@/components/ui/input';
-import { useUserStore } from '@/store';
+import { useUserStore } from '@/stores/user-store';
 
 const port = 'http://localhost:3001';
 interface ProfileReusableLayoutProps {

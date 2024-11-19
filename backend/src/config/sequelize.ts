@@ -13,16 +13,14 @@ const sequelize = new Sequelize(
   }
 );
 
-async function testConnection() {
+export async function testConnection() {
   try {
     await sequelize.authenticate();
-    await sequelize.sync();
+    await sequelize.sync({ alter: true });
     console.log('Connection to sequelize has been established successfully.');
   } catch (error) {
     console.log(error);
   }
 }
-
-testConnection();
 
 export default sequelize;

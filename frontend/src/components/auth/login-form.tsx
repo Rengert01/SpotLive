@@ -24,7 +24,7 @@ import { Link, useNavigate } from 'react-router-dom';
 
 import { z } from 'zod';
 import { useToast } from '@/hooks/use-toast';
-import { useUserStore } from '@/store';
+import { useUserStore } from '@/stores/user-store';
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -66,7 +66,6 @@ export function LoginForm() {
 
       if (loginResponse.status === 200) {
         // Login was successful, proceed to fetch session
-        console.log('Fetching session');
         const sessionResponse = await axios.get('/api/auth/session');
 
         // Set user data

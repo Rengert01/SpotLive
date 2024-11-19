@@ -8,6 +8,9 @@ import {
   TabsTrigger,
   TabsContent,
 } from '@/components/ui/tabs.tsx';
+import { Button } from '@/components/ui/button';
+import { PlusCircle } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export default function HomePage() {
   const [activeTab, setActiveTab] = useState('Music');
@@ -15,11 +18,21 @@ export default function HomePage() {
   return (
     <div>
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList>
-          <TabsTrigger value="Music">Music</TabsTrigger>
-          <TabsTrigger value="Live">Live</TabsTrigger>
-        </TabsList>
-        <TabsContent value="Music">
+        <div className="space-between flex items-center">
+          <TabsList>
+            <TabsTrigger value="Music">Music</TabsTrigger>
+            <TabsTrigger value="Live">Live</TabsTrigger>
+          </TabsList>
+          <div className="ml-auto">
+            <Link to="/songs/upload">
+              <Button>
+                <PlusCircle className="h-4 w-4 mr-2" />
+                Upload Track
+              </Button>
+            </Link>
+          </div>
+        </div>
+        <TabsContent value="Music" className="space-y-6">
           <RecentlyReleasedTracks />
           <MadeForYouTracks />
         </TabsContent>

@@ -1,8 +1,12 @@
-import { User } from '@/models/user';
 import { Request, Response } from 'express';
 import path from 'path';
 import fs from 'fs';
 import bcrypt from 'bcryptjs';
+import { db } from '@/db';
+import { users } from '@/db/schema';
+import { eq } from 'drizzle-orm';
+import { calculateCompletionPercentage, updateChecklist } from '@/models/user';
+import { z } from 'zod';
 
 // Extend the Express Request type to include the `email` field
 interface ExtendedRequest extends Request {
@@ -15,14 +19,9 @@ const deleteAccount = async (
 ): Promise<void> => {
   const email = req.body.email;
   try {
-    const rowsDeleted = await User.destroy({
-      where: {
-        email: email,
-      },
-      force: true,
-    });
+    const rowsDeleted = await db.delete(users).where(eq(users.email, email));
 
-    if (rowsDeleted === 0) {
+    if (rowsDeleted.rowCount === 0) {
       // If no rows were deleted, send a 404 response
       res.status(404).json({ message: 'User not found' });
     } else {
@@ -37,6 +36,18 @@ const deleteAccount = async (
       .json({ message: 'An error occurred while deleting the account' });
   }
 };
+
+const updateProfileSchema = z.object({
+  gender: z.string().optional(),
+  username: z.string().optional(),
+  phone: z.string().optional(),
+  country: z.string().optional(),
+  state: z.string().optional(),
+  street: z.string().optional(),
+  date_of_birth: z.string().optional(),
+  city: z.string().optional(),
+  new_password: z.string().optional(),
+});
 
 const updateProfile = async (req: Request, res: Response): Promise<void> => {
   // Extract email from cookie
@@ -53,10 +64,11 @@ const updateProfile = async (req: Request, res: Response): Promise<void> => {
       date_of_birth,
       city,
       new_password,
-    } = req.body;
+    } = updateProfileSchema.parse(req.body);
+
     // Find the user in the database by email
-    const user = await User.findOne({
-      where: { email: email },
+    const user = await db.query.users.findFirst({
+      where: eq(users.email, email),
     });
 
     if (!user) {
@@ -71,7 +83,7 @@ const updateProfile = async (req: Request, res: Response): Promise<void> => {
       if (user.image) {
         const oldImagePath = path.join(
           __dirname,
-          '../uploads/images',
+          '../uploads/image',
           path.basename(user.image)
         );
         fs.unlink(oldImagePath, (err) => {
@@ -80,7 +92,7 @@ const updateProfile = async (req: Request, res: Response): Promise<void> => {
       }
 
       // Set the new image path
-      newImage = `/uploads/images/${req.file.filename}`;
+      newImage = `/uploads/image/${req.file.filename}`;
     }
 
     // Prepare the updated fields, only including provided values
@@ -103,13 +115,28 @@ const updateProfile = async (req: Request, res: Response): Promise<void> => {
     // Set the image if a new one is uploaded; otherwise, keep the existing image
     updatedFields.image = newImage || user.image;
 
-    // Update the user with the specified fields
-    await user.update(updatedFields);
-    user.updateChecklist();
-    user.completionPercentage = user.calculateCompletionPercentage();
+    // // Update the user with the specified fields
+    // await user.update(updatedFields);
+    // user.updateChecklist();
+    // user.completionPercentage = user.calculateCompletionPercentage();
 
-    // Save the updated profile completion
-    await user.save();
+    // // Save the updated profile completion
+    // await user.save();
+
+    // Update the user with the specified fields
+    console.log(updatedFields);
+    updateChecklist(user);
+    user.completionPercentage = calculateCompletionPercentage(user);
+
+    // Send the updated user details and profile completion
+    await db
+      .update(users)
+      .set({
+        ...updatedFields,
+        completionPercentage: user.completionPercentage,
+        checklist: user.checklist,
+      })
+      .where(eq(users.email, email));
 
     res.status(201).json({
       message: 'User details updated successfully',

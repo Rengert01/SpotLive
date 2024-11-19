@@ -28,7 +28,7 @@ import { formSchema } from '@/lib/profile-schema';
 import { z } from 'zod';
 import axios from '@/config/axios';
 import { toast } from '@/hooks/use-toast';
-import { useUserStore } from '@/store';
+import { useUserStore } from '@/stores/user-store';
 import { ProfileLoader } from '../profile-loader';
 
 const PersonalInfoBox = () => {

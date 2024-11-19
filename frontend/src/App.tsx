@@ -10,7 +10,13 @@ import RegisterPage from '@/pages/auth/register';
 import { Toaster } from '@/components/ui/toaster';
 import axios from '@/config/axios';
 import UserProfile from '@/pages/user-page';
-import ProfilePage from '@/pages/profile-page';
+import ProfilePage from '@/pages/profile/profile-page';
+import UploadSongPage from '@/pages/songs/upload-song-page';
+import ProfileSongs from '@/pages/profile/profile-songs';
+import { useAudioStore } from '@/stores/audio-store';
+import { useEffect } from 'react';
+
+const PAUSE_KEY = 'Space';
 
 const router = createBrowserRouter([
   {
@@ -26,8 +32,16 @@ const router = createBrowserRouter([
         element: <ProfilePage />,
       },
       {
+        path: '/profile/songs',
+        element: <ProfileSongs />,
+      },
+      {
         path: `/user/:id`,
         element: <UserProfile />,
+      },
+      {
+        path: '/songs/upload',
+        element: <UploadSongPage />,
       },
     ],
     loader: async () => {
@@ -52,6 +66,23 @@ const router = createBrowserRouter([
 ]);
 
 export default function App() {
+  const { togglePlayPause } = useAudioStore();
+
+  const handleKeyPress = (e: KeyboardEvent) => {
+    if (e.code === PAUSE_KEY) {
+      console.log('Space pressed', e.code);
+      togglePlayPause();
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('keydown', handleKeyPress);
+    return () => {
+      document.removeEventListener('keydown', handleKeyPress);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background">
       <RouterProvider router={router} />

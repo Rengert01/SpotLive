@@ -1,9 +1,11 @@
-import { User } from '@/models/user';
 import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
 import { z } from 'zod';
+import { db } from '@/db';
+import { eq } from 'drizzle-orm';
+import { users } from '@/db/schema';
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -24,8 +26,8 @@ passport.use(
           return done(null, false, { message: result.error.errors[0].message });
         }
 
-        const user = await User.findOne({
-          where: { email: email },
+        const user = await db.query.users.findFirst({
+          where: eq(users.email, email),
         });
 
         if (!user) {
@@ -34,11 +36,14 @@ passport.use(
 
         const validPassword = await bcrypt.compare(password, user.password);
 
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { password: omitted, ...userWithoutPassword } = user;
+
         if (!validPassword) {
           return done(null, false, { message: 'Password is incorrect.' });
         }
 
-        return done(null, user);
+        return done(null, userWithoutPassword);
       } catch (err) {
         console.error(err);
         return done(err);
@@ -111,8 +116,8 @@ const signUp = async (req: Request, res: Response): Promise<void> => {
 
     const { email, password } = result.data;
 
-    const user = await User.findOne({
-      where: { email: email },
+    const user = await db.query.users.findFirst({
+      where: eq(users.email, email),
     });
 
     if (user) {
@@ -122,10 +127,11 @@ const signUp = async (req: Request, res: Response): Promise<void> => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const newUser = await User.create({
+    const newUser = await db.insert(users).values({
       email: email,
       password: hashedPassword,
     });
+
     res.status(201).json({ message: 'User created', user: newUser });
   } catch (err) {
     console.error(err);

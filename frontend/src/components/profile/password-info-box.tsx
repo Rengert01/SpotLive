@@ -27,7 +27,7 @@ import {
 import TogglePassword from '../toggle-password';
 import { useNavigate } from 'react-router-dom';
 import { toast } from '@/hooks/use-toast';
-import { useUserStore } from '@/store';
+import { useUserStore } from '@/stores/user-store';
 
 const PasswordInfoBox = () => {
   const { user, setUser } = useUserStore();

@@ -4,6 +4,10 @@ import { upload } from '@/middleware/uploads';
 const ProfileRouter = express.Router();
 
 ProfileRouter.post('/deleteAccount', profileController.deleteAccount);
-ProfileRouter.put('/editProfile', upload, profileController.updateProfile);
+ProfileRouter.put(
+  '/editProfile',
+  upload.single('image'),
+  profileController.updateProfile
+);
 
 export default ProfileRouter;

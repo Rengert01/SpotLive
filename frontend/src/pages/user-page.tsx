@@ -1,7 +1,6 @@
 import tracks from '@/data/tracks.json';
 import { useParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import TrackSection from '@/components/ui/track-section';
 
 const UserProfile = () => {
   const { id } = useParams();
@@ -41,10 +40,11 @@ const UserProfile = () => {
         {/* <p className="text-black-300 leading-relaxed">{curr.bio}</p> */}
         {/* </div> */}
 
-        <TrackSection
+        {/* TODO */}
+        {/* <TrackSection
           title={`From ${curr.artist}`}
           filterFunction={(track) => track.artist === curr.artist}
-        />
+        /> */}
       </div>
     </section>
   );

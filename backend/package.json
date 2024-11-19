@@ -21,12 +21,12 @@
     "build2": "npx tsc",
     "start2": "node dist/index.js",
     "dev": "nodemon src/index.ts",
-    "tests": "DOTENV_CONFIG_PATH=../.env jest --setupFiles=dotenv/config",
+    "tests": "jest --setupFiles=dotenv/config",
     "prettier:write": "npx prettier --write .",
     "prettier:check": "npx prettier --check .",
     "lint": "eslint .",
-    "db:push": "DOTENV_CONFIG_PATH=../.env POSTGRES_HOST=localhost npx drizzle-kit push",
-    "db:studio": "DOTENV_CONFIG_PATH=../.env POSTGRES_HOST=localhost npx drizzle-kit studio"
+    "db:push": "POSTGRES_HOST=localhost npx drizzle-kit push",
+    "db:studio": "POSTGRES_HOST=localhost npx drizzle-kit studio"
   },
   "keywords": [],
   "author": "",

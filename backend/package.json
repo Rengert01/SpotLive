@@ -23,8 +23,8 @@
     "prettier:write": "npx prettier --write .",
     "prettier:check": "npx prettier --check .",
     "lint": "eslint .",
-    "db:push": "POSTGRES_HOST=localhost npx drizzle-kit push",
-    "db:studio": "POSTGRES_HOST=localhost npx drizzle-kit studio"
+    "db:push": "cross-env POSTGRES_HOST=localhost npx drizzle-kit push",
+    "db:studio": "cross-env POSTGRES_HOST=localhost npx drizzle-kit studio"
   },
   "keywords": [],
   "author": "",
@@ -65,6 +65,7 @@
     "@types/passport-local": "^1.0.38",
     "@types/pg": "^8.11.10",
     "@types/supertest": "^6.0.2",
+    "cross-env": "^7.0.3",
     "drizzle-kit": "^0.28.1",
     "eslint": "9.14.0",
     "get-audio-duration": "^4.0.1",

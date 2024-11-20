@@ -1,7 +1,7 @@
 import express, { Express, Request, Response, NextFunction } from 'express';
 import env from '../env';
 import cookieParser from 'cookie-parser';
-import session from 'cookie-session';
+import session from 'express-session';
 import passport from 'passport';
 import cors from 'cors';
 import corsOptions from '@/config/cors';
@@ -23,6 +23,8 @@ app.use(express.json());
 app.use(
   session({
     secret: env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
   })
 );
 

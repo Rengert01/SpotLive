@@ -81,3 +81,11 @@
     @apply bg-background text-foreground;
   }
 }
+/* For most modern browsers */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+}

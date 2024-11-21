@@ -4,7 +4,7 @@ import fs from 'fs';
 import { z } from 'zod';
 import getAudioDurationInSeconds from 'get-audio-duration';
 import { and, asc, desc, eq, ilike, SQLWrapper } from 'drizzle-orm';
-import { musics, sessions, users } from '@/db/schema';
+import { musics, sessions } from '@/db/schema';
 import { db } from '@/db';
 
 const getMusicInfo = async (req: Request, res: Response): Promise<void> => {

@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import {
@@ -45,7 +44,7 @@ export default function MusicPlayer() {
     });
 
     togglePlayPause();
-  }
+  };
 
   const handleSkipForward = async () => {
     // random ID between 4 and 7
@@ -70,7 +69,7 @@ export default function MusicPlayer() {
     });
 
     togglePlayPause();
-  }
+  };
 
   return (
     <div className="flex items-center justify-between text-white h-full">

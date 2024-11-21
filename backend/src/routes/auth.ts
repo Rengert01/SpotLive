@@ -1,7 +1,5 @@
 import express from 'express';
 import authController from '@/controllers/auth';
-import isAuthenticated from '@/middleware/auth';
-import passport from 'passport';
 const router = express.Router();
 
 router.post('/signIn', authController.signIn);

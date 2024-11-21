@@ -12,7 +12,7 @@ export const sessions = pgTable('session', {
   id: serial().primaryKey(),
   user_id: integer()
     .notNull()
-    .references(() => users.id, { onDelete: 'cascade'}),
+    .references(() => users.id, { onDelete: 'cascade' }),
   created_at: timestamp().defaultNow().notNull(),
   expires_at: timestamp().notNull(),
   session_id: varchar().notNull(),

@@ -47,7 +47,6 @@ const loginSchema = z.object({
 });
 
 export function LoginForm() {
-
   const navigate = useNavigate();
 
   const { toast } = useToast();
@@ -64,11 +63,13 @@ export function LoginForm() {
   });
 
   async function onSubmit(data: z.infer<typeof loginSchema>) {
-    axios.post('/api/auth/signIn', data, { withCredentials: true })
+    axios
+      .post('/api/auth/signIn', data, { withCredentials: true })
       .then((res) => {
         setUser(res.data.user);
         navigate('/');
-      }).catch((err) => {
+      })
+      .catch((err) => {
         toast({
           title: 'Error',
           description: err.response.data.message,

@@ -25,7 +25,6 @@ import { Link } from 'react-router-dom';
 
 import { z } from 'zod';
 import { useToast } from '@/hooks/use-toast';
-import { description } from '@/components/profile/progress-chart';
 
 const ACCEPTED_IMAGE_TYPES = [
   'image/jpeg',
@@ -84,13 +83,14 @@ export default function UploadSongPage() {
         console.log(res.data);
         toast({
           title: 'Track uploaded successfully!',
-        })
+        });
       })
       .catch((err) => {
         console.error(err);
         toast({
           title: 'Something went wrong',
-          description: 'There was an error uploading your track. Please try again.',
+          description:
+            'There was an error uploading your track. Please try again.',
         });
       });
   };

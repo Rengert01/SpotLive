@@ -493,8 +493,9 @@ export default function UploadSongPage() {
                   </CardHeader>
                   <CardContent>
                     <div
-                      className={`grid gap-2 border-2 border-dashed p-2 rounded-xl cursor-pointer ${isDragging ? 'border-primary' : 'border-gray-300'
-                        }`}
+                      className={`grid gap-2 border-2 border-dashed p-2 rounded-xl cursor-pointer ${
+                        isDragging ? 'border-primary' : 'border-gray-300'
+                      }`}
                       onDragOver={handleDragOver}
                       onDragLeave={handleDragLeave}
                       onDrop={handleDrop}

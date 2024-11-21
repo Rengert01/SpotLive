@@ -19,12 +19,13 @@ export default function TrackSection({
   const handleTrackClick = (track: TrackType) => {
     setAudio({
       ...audio,
-      isPlaying: false,
+      isPlaying: audio.audioSrc === track.id && audio.isPlaying,
       audioSrc: track.id,
       audioTitle: track.title,
       audioArtist: track.artist.username,
       audioCoverSrc: track.cover,
       duration: track.duration,
+      playbackPosition: 0,
     });
 
     togglePlayPause();

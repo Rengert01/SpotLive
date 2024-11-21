@@ -24,6 +24,8 @@ import { useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 
 import { z } from 'zod';
+import { useToast } from '@/hooks/use-toast';
+import { description } from '@/components/profile/progress-chart';
 
 const ACCEPTED_IMAGE_TYPES = [
   'image/jpeg',
@@ -53,6 +55,8 @@ export default function UploadSongPage() {
   const [imageSrc, setImageSrc] = useState('/placeholder.svg');
   const [isDragging, setIsDragging] = useState(false);
 
+  const { toast } = useToast();
+
   const form = useForm<z.infer<typeof trackSchema>>({
     resolver: zodResolver(trackSchema),
     defaultValues: {
@@ -64,8 +68,6 @@ export default function UploadSongPage() {
   const imageRef = form.register('trackCover');
 
   const onSubmit = async (data: z.infer<typeof trackSchema>) => {
-    console.log('data', data);
-
     const formData = new FormData();
     formData.append('name', data.name);
     formData.append('public', data.public === 'public' ? 'true' : 'false');
@@ -79,10 +81,17 @@ export default function UploadSongPage() {
         },
       })
       .then((res) => {
-        console.log(res);
+        console.log(res.data);
+        toast({
+          title: 'Track uploaded successfully!',
+        })
       })
       .catch((err) => {
         console.error(err);
+        toast({
+          title: 'Something went wrong',
+          description: 'There was an error uploading your track. Please try again.',
+        });
       });
   };
 
@@ -484,9 +493,8 @@ export default function UploadSongPage() {
                   </CardHeader>
                   <CardContent>
                     <div
-                      className={`grid gap-2 border-2 border-dashed p-2 rounded-xl cursor-pointer ${
-                        isDragging ? 'border-primary' : 'border-gray-300'
-                      }`}
+                      className={`grid gap-2 border-2 border-dashed p-2 rounded-xl cursor-pointer ${isDragging ? 'border-primary' : 'border-gray-300'
+                        }`}
                       onDragOver={handleDragOver}
                       onDragLeave={handleDragLeave}
                       onDrop={handleDrop}

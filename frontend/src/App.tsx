@@ -66,7 +66,6 @@ const router = createBrowserRouter([
 ]);
 
 export default function App() {
-  console.log(import.meta.env);
   const { togglePlayPause } = useAudioStore();
 
   const handleKeyPress = (e: KeyboardEvent) => {

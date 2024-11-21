@@ -47,10 +47,14 @@ const loginSchema = z.object({
 });
 
 export function LoginForm() {
+
   const navigate = useNavigate();
+
   const { toast } = useToast();
   const [showPassword, setShowPassword] = useState(false);
+
   const { setUser } = useUserStore();
+
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -60,38 +64,16 @@ export function LoginForm() {
   });
 
   async function onSubmit(data: z.infer<typeof loginSchema>) {
-    try {
-      // Attempt to log in
-      console.log(import.meta.env.VITE_APP_API_URL);
-
-      const loginResponse = await axios.post('/api/auth/signIn', data);
-
-      if (loginResponse.status === 200) {
-        // Login was successful, proceed to fetch session
-        const sessionResponse = await axios.get('/api/auth/session');
-
-        // Set user data
-        setUser(sessionResponse.data.user);
-
-        // Show success toast
-        toast({
-          title: 'Login Successful',
-          description: 'You have successfully logged in!',
-        });
-
-        // Navigate to the home page
+    axios.post('/api/auth/signIn', data, { withCredentials: true })
+      .then((res) => {
+        setUser(res.data.user);
         navigate('/');
-      } else {
-        // Handle unexpected status codes
-        throw new Error('Unexpected response status during login.');
-      }
-    } catch (error) {
-      // Handle errors
-      toast({
-        title: 'Login Failed',
+      }).catch((err) => {
+        toast({
+          title: 'Error',
+          description: err.response.data.message,
+        });
       });
-      console.error('Error during login:', error);
-    }
   }
 
   return (

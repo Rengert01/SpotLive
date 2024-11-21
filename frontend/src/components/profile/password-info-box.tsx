@@ -75,7 +75,6 @@ const PasswordInfoBox = () => {
       .then(() => {
         toast({
           title: 'Account Deleted Successfully',
-          description: 'You have successfully logged in!',
         });
 
         navigate('/login');

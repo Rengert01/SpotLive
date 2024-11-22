@@ -19,7 +19,7 @@ export const musics = pgTable('music', {
   duration: decimal().notNull(),
   artistId: integer()
     .notNull()
-    .references(() => users.id),
+    .references(() => users.id, { onDelete: 'cascade' }),
   createdAt: timestamp().notNull().defaultNow(),
 });
 

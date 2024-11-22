@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import {
@@ -10,56 +9,66 @@ import {
   Volume2,
 } from 'lucide-react';
 import { useAudioStore } from '@/stores/audio-store';
+import axios from '@/config/axios';
 
 export default function MusicPlayer() {
   const {
     audio,
+    setAudio,
     togglePlayPause,
     handleVolumeChange,
     handleSeek,
     updatePlaybackPosition,
   } = useAudioStore();
 
-  const [currentSongIndex, setCurrentSongIndex] = useState(0);
-
-  const playlist = [
-    '/public/test.mp3',
-    '/public/song1.mp3',
-    '/public/song2.mp3',
-    '/public/song3.mp3',
-  ];
-
-  const handleSkipBack = () => {
-    if (audio.ref.current) {
-      const currentTime = audio.ref.current.currentTime;
-
-      if (currentTime > 10) {
-        // Restart the current song
-        audio.ref.current.currentTime = 0;
-      } else {
-        // Skip to the previous song
-        let newIndex = currentSongIndex - 1;
-        if (newIndex < 0) newIndex = playlist.length - 1; // Wrap to the last song
-        setCurrentSongIndex(newIndex);
-        loadSong(newIndex);
-      }
+  const handleSkipBack = async () => {
+    // random ID between 4 and 7
+    let randomId = Math.floor(Math.random() * (7 - 4) + 4);
+    while (randomId === Number(audio.audioSrc)) {
+      randomId = Math.floor(Math.random() * (7 - 4) + 4);
     }
+
+    const music = await axios.get(`/api/music/info/${randomId}`);
+
+    console.log(music.data.music);
+
+    setAudio({
+      ...audio,
+      isPlaying: false,
+      audioSrc: randomId.toString(),
+      audioTitle: music.data.music.title,
+      audioArtist: music.data.music.artist.username,
+      audioCoverSrc: music.data.music.cover,
+      duration: music.data.music.duration,
+      playbackPosition: 0,
+    });
+
+    togglePlayPause();
   };
 
-  const handleSkipForward = () => {
-    const newIndex = (currentSongIndex + 1) % playlist.length;
-    setCurrentSongIndex(newIndex);
-    loadSong(newIndex);
-  };
-
-  const loadSong = (index: number) => {
-    if (audio.ref.current) {
-      audio.ref.current.src = playlist[index];
-      audio.ref.current.load();
-      if (audio.isPlaying) {
-        audio.ref.current.play();
-      }
+  const handleSkipForward = async () => {
+    // random ID between 4 and 7
+    let randomId = Math.floor(Math.random() * (7 - 4) + 4);
+    while (randomId === Number(audio.audioSrc)) {
+      randomId = Math.floor(Math.random() * (7 - 4) + 4);
     }
+
+    const music = await axios.get(`/api/music/info/${randomId}`);
+
+    console.log(music.data.music);
+
+    setAudio({
+      ...audio,
+      isPlaying: false,
+      audioSrc: randomId.toString(),
+      audioTitle: music.data.music.title,
+      audioArtist: music.data.music.artist.username,
+      audioCoverSrc: music.data.music.cover,
+      duration: music.data.music.duration,
+      playbackPosition: 0,
+    });
+
+    togglePlayPause();
   };
 
   return (

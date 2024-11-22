@@ -53,7 +53,7 @@ function TrackItem({
                 variant="secondary"
                 className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 group-hover:translate-y-0"
               >
-                {audio.isPlaying ? (
+                {audio.isPlaying && audio.audioSrc === track.id ? (
                   <Pause className="stroke-black" />
                 ) : (
                   <Play className="stroke-black" />

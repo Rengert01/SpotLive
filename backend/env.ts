@@ -16,6 +16,7 @@ const envSchema = z.object({
     .default('development'),
   DB_LOGGING: z.enum(['true', 'false']).default('true'),
   SESSION_SECRET: z.string(),
+  CORS_WHITELIST: z.string(),
 });
 
 export type Env = z.infer<typeof envSchema>;

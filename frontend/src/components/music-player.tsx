@@ -79,7 +79,7 @@ export default function MusicPlayer() {
         onEnded={handleSkipForward}
       />
 
-      <div className="flex items-center space-x-3">
+      <div className="hidden md:flex items-center space-x-3">
         <img
           src={`http://localhost:3001/uploads/image/${audio.audioCoverSrc}`}
           alt="Song Image"

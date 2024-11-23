@@ -11,35 +11,37 @@ import {
 import { Button } from '@/components/ui/button';
 import { PlusCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { SidebarTrigger } from '@/components/ui/sidebar';
+import { Separator } from '@/components/ui/separator';
 
 export default function HomePage() {
   const [activeTab, setActiveTab] = useState('Music');
 
   return (
-    <div>
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <div className="space-between flex items-center">
-          <TabsList>
-            <TabsTrigger value="Music">Music</TabsTrigger>
-            <TabsTrigger value="Live">Live</TabsTrigger>
-          </TabsList>
-          <div className="ml-auto">
-            <Link to="/songs/upload">
-              <Button>
-                <PlusCircle className="h-4 w-4 mr-2" />
-                Upload Track
-              </Button>
-            </Link>
-          </div>
+    <Tabs value={activeTab} onValueChange={setActiveTab}>
+      <div className="flex items-center">
+        <SidebarTrigger className="h-9 w-9 p-0 md:hidden" />
+        <Separator orientation="vertical" className="md:hidden" />
+        <TabsList>
+          <TabsTrigger value="Music">Music</TabsTrigger>
+          <TabsTrigger value="Live">Live</TabsTrigger>
+        </TabsList>
+        <div className="ml-auto">
+          <Link to="/songs/upload">
+            <Button>
+              <PlusCircle className="h-4 w-4 mr-2" />
+              Upload Track
+            </Button>
+          </Link>
         </div>
-        <TabsContent value="Music" className="space-y-6">
-          <RecentlyReleasedTracks />
-          <MadeForYouTracks />
-        </TabsContent>
-        <TabsContent value="Live">
-          <Live />
-        </TabsContent>
-      </Tabs>
-    </div>
+      </div>
+      <TabsContent value="Music" className="space-y-6">
+        <RecentlyReleasedTracks />
+        <MadeForYouTracks />
+      </TabsContent>
+      <TabsContent value="Live">
+        <Live />
+      </TabsContent>
+    </Tabs>
   );
 }

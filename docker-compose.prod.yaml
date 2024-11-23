@@ -37,7 +37,6 @@ services:
       - "traefik.http.routers.spotlive.entrypoints=websecure"
       - "traefik.http.routers.spotlive.tls.certresolver=myresolver"
       - "traefik.http.services.spotlive.loadbalancer.server.port=80"
-    command: npm run preview
     deploy:
       mode: replicated
       replicas: 3

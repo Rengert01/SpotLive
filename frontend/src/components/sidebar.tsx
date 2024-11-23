@@ -35,7 +35,6 @@ const playlists = [
 export function AppSidebar({ className }: SidebarProps) {
   const navigate = useNavigate();
   const { user, setUser, clearUser } = useUserStore();
-  const port = 'http://localhost:3001';
 
   useEffect(() => {
     //Todo: Convert this to a custom auth hook
@@ -232,7 +231,7 @@ export function AppSidebar({ className }: SidebarProps) {
             <DropdownMenuTrigger className="h-full w-full flex justify-center p-3">
               <div className=" flex gap-4 items-center">
                 <Avatar>
-                  <AvatarImage src={`${port}${user?.image}`} />
+                  <AvatarImage src={`${import.meta.env.VITE_APP_API_URL}${user?.image}`} />
                   <AvatarFallback>
                     {user.username !== ''
                       ? user.username?.[0].toUpperCase()

@@ -18,7 +18,6 @@ export default function HomePage() {
   const [activeTab, setActiveTab] = useState('Music');
 
   return (
-
     <Tabs value={activeTab} onValueChange={setActiveTab}>
       <div className="flex items-center">
         <SidebarTrigger className="h-9 w-9 p-0 md:hidden" />
@@ -44,6 +43,5 @@ export default function HomePage() {
         <Live />
       </TabsContent>
     </Tabs>
-
   );
 }

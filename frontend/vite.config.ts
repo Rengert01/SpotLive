@@ -21,7 +21,7 @@ export default defineConfig(({ mode }) => {
       },
     },
     preview: {
-      port: parseInt(env.VITE_APP_PORT ?? '3000'),
+      port: parseInt(env.VITE_APP_PORT ?? '80'),
     },
     define: {
       __APP_ENV__: JSON.stringify(env.APP_ENV),

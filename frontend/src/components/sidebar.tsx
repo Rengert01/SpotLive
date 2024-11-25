@@ -13,6 +13,7 @@ import axios from '@/config/axios';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { toast } from '@/hooks/use-toast';
 import { useUserStore } from '@/stores/user-store';
+import { Sidebar } from '@/components/ui/sidebar';
 
 type SidebarProps = React.HTMLAttributes<HTMLDivElement>;
 
@@ -31,7 +32,7 @@ const playlists = [
   'Eminem Essentials',
 ];
 
-export function Sidebar({ className }: SidebarProps) {
+export function AppSidebar({ className }: SidebarProps) {
   const navigate = useNavigate();
   const { user, setUser, clearUser } = useUserStore();
   const port = 'http://localhost:3001';
@@ -75,7 +76,7 @@ export function Sidebar({ className }: SidebarProps) {
   console.log(location.pathname);
 
   return (
-    <div className={cn('', className)}>
+    <Sidebar className={cn('', className)}>
       <div className="h-full space-y-4 pt-4 flex flex-col justify-between">
         <div className="flex flex-col h-full">
           <div className="px-3 py-2 flex-initial">
@@ -111,7 +112,7 @@ export function Sidebar({ className }: SidebarProps) {
             <h2 className="relative px-7 text-lg font-semibold tracking-tight mb-1">
               Playlists
             </h2>
-            <ScrollArea className="px-1">
+            <ScrollArea className="px-1 h-[350px]">
               <div className="space-y-1 p-2">
                 {playlists?.map((playlist, i) => (
                   <Button
@@ -259,6 +260,6 @@ export function Sidebar({ className }: SidebarProps) {
           </DropdownMenu>
         </div>
       </div>
-    </div>
+    </Sidebar>
   );
 }

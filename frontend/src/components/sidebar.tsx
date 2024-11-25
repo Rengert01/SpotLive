@@ -14,6 +14,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { toast } from '@/hooks/use-toast';
 import { useUserStore } from '@/stores/user-store';
 import { Sidebar } from '@/components/ui/sidebar';
+import { Plus } from 'lucide-react';
 
 type SidebarProps = React.HTMLAttributes<HTMLDivElement>;
 
@@ -109,9 +110,16 @@ export function AppSidebar({ className }: SidebarProps) {
           </div>
 
           <div className="py-2 flex-initial">
-            <h2 className="relative px-7 text-lg font-semibold tracking-tight mb-1">
-              Playlists
-            </h2>
+            <div className="flex">
+              <h2 className="relative px-7 text-lg font-semibold tracking-tight mb-1">
+                Playlists
+              </h2>
+              <Link to="/playlists">
+                <Button>
+                  <Plus />
+                </Button>
+              </Link>
+            </div>
             <ScrollArea className="px-1 h-[350px]">
               <div className="space-y-1 p-2">
                 {playlists?.map((playlist, i) => (

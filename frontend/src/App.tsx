@@ -15,6 +15,7 @@ import UploadSongPage from '@/pages/songs/upload-song-page';
 import ProfileSongs from '@/pages/profile/profile-songs';
 import { useAudioStore } from '@/stores/audio-store';
 import { useEffect } from 'react';
+import CreatePlaylist from './pages/playlists/page';
 
 const PAUSE_KEY = 'Space';
 
@@ -42,6 +43,10 @@ const router = createBrowserRouter([
       {
         path: '/songs/upload',
         element: <UploadSongPage />,
+      },
+      {
+        path: '/playlists',
+        element: <CreatePlaylist />,
       },
     ],
     loader: async () => {

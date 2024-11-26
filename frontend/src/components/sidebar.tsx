@@ -231,7 +231,9 @@ export function AppSidebar({ className }: SidebarProps) {
             <DropdownMenuTrigger className="h-full w-full flex justify-center p-3">
               <div className=" flex gap-4 items-center">
                 <Avatar>
-                  <AvatarImage src={`${import.meta.env.VITE_APP_API_URL}${user?.image}`} />
+                  <AvatarImage
+                    src={`${import.meta.env.VITE_APP_API_URL}${user?.image}`}
+                  />
                   <AvatarFallback>
                     {user.username !== ''
                       ? user.username?.[0].toUpperCase()

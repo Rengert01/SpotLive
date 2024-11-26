@@ -95,7 +95,10 @@ const ProfileReusableLayout = ({ children }: ProfileReusableLayoutProps) => {
             <div className="w-24 h-24 rounded-full overflow-hidden border border-gray-300">
               <Avatar className="flex text-center m-auto items-center justify-center w-full h-full">
                 <AvatarImage
-                  src={previewUrl || `${import.meta.env.VITE_APP_API_URL}${personalInformation?.image}`}
+                  src={
+                    previewUrl ||
+                    `${import.meta.env.VITE_APP_API_URL}${personalInformation?.image}`
+                  }
                 />
                 <AvatarFallback className="text-center ">NO</AvatarFallback>
               </Avatar>

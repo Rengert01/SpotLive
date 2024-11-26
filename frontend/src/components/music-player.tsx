@@ -81,7 +81,7 @@ export default function MusicPlayer() {
 
       <div className="hidden md:flex items-center space-x-3">
         <img
-          src={`${import.meta.env.VITE_APP_API_URL}/uploads/image/${audio.audioCoverSrc}`}
+          src={`${import.meta.env.VITE_APP_API_URL}/api/uploads/image/${audio.audioCoverSrc}`}
           alt="Song Image"
           className="w-12 h-12 rounded-md object-cover"
         />

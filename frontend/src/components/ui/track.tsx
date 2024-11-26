@@ -42,7 +42,7 @@ function TrackItem({
         <ContextMenuTrigger>
           <div className="aspect-square overflow-hidden rounded-lg bg-transparent">
             <img
-              src={`${import.meta.env.VITE_APP_API_URL}/uploads/image/${track.cover}`}
+              src={`${import.meta.env.VITE_APP_API_URL}/api/uploads/image/${track.cover}`}
               alt={`${track.title} by ${track.artist.username}`}
               className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-110"
             />

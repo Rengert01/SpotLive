@@ -51,10 +51,10 @@ services:
         condition: service_healthy
     volumes:
       - ./backend:/app/backend
+      - ./backend/src:/app/backend/src
+      - ./backend/package.json:/app/backend/package.json
+      - ./backend/package-lock.json:/app/frontend/package-lock.json
     command: npm run start
-    deploy:
-      mode: replicated
-      replicas: 3
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.api.rule=Host(`les-test.francecentral.cloudapp.azure.com`) && PathPrefix(`/api`)"

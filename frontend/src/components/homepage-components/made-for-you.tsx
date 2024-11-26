@@ -11,7 +11,6 @@ export default function MadeForYou() {
       axios
         .get('/api/music/list')
         .then((res) => {
-          console.log(res);
           setTracks(
             res.data.musicList.map((track: TrackType) => ({
               id: track.id,

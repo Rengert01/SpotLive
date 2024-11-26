@@ -3,7 +3,5 @@ dist
 
 .env
 
-src/uploads
-
 /drizzle
 /sessions

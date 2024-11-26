@@ -1,19 +1,28 @@
 import { useLocation } from 'react-router-dom';
-import TracksSearchResults from '@/components/search-components/tracks-search-results';
-import ArtistSearchResults from '@/components/search-components/artist-search-results';
+import FilteredTracks from '@/components/filtered-tracks';
 
-// function useQuery() {
-//     return new URLSearchParams(useLocation().search);
-// }
+function useQuery() {
+    return new URLSearchParams(useLocation().search);
+}
 
 export default function Search() {
-    // const query = useQuery();
-    // const searchQuery = query.get('query') || '';
+    const query = useQuery();
+    const searchQuery = query.get('query') || '';
 
     return (
         <div>
-            <TracksSearchResults />
-            <ArtistSearchResults />
+            <FilteredTracks
+                title="Tracks"
+                subtitle={`Tracks matching "${searchQuery}"`}
+                searchQuery={searchQuery}
+                filterType="title"
+            />
+            <FilteredTracks
+                title="Artists"
+                subtitle={`Artists matching "${searchQuery}"`}
+                searchQuery={searchQuery}
+                filterType="artist"
+            />
         </div>
     );
 }

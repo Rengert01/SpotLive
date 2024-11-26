@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import RecentlyReleasedTracks from '@/components/homepage-components/recently-released.tsx';
-import MadeForYouTracks from '@/components/homepage-components/made-for-you.tsx';
+// import RecentlyReleasedTracks from '@/components/homepage-components/recently-released.tsx';
+// import MadeForYouTracks from '@/components/homepage-components/made-for-you.tsx';
+import FilteredTracks from '@/components/filtered-tracks';
 import { Live } from '@/pages/live';
 import {
   Tabs,
@@ -53,8 +54,15 @@ export default function HomePage() {
         </div>
       </div>
       <TabsContent value="Music" className="space-y-6">
-        <RecentlyReleasedTracks />
-        <MadeForYouTracks />
+        <FilteredTracks 
+          title="Recently Released"
+          subtitle="Tracks that were recently released"
+          showRecent={true}
+        />
+        <FilteredTracks 
+          title="Made For You"
+          subtitle="Tracks that we think you'll love"
+        />
       </TabsContent>
       <TabsContent value="Live">
         <Live />

@@ -96,7 +96,7 @@ const updateProfile = async (req: Request, res: Response): Promise<void> => {
       }
 
       // Set the new image path
-      newImage = `/uploads/image/${req.file.filename}`;
+      newImage = `/api/uploads/image/${req.file.filename}`;
     }
 
     // Prepare the updated fields, only including provided values

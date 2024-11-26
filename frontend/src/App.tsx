@@ -15,6 +15,7 @@ import UploadSongPage from '@/pages/songs/upload-song-page';
 import ProfileSongs from '@/pages/profile/profile-songs';
 import { useAudioStore } from '@/stores/audio-store';
 import { useEffect } from 'react';
+import Search from './pages/search';
 
 const PAUSE_KEY = 'Space';
 
@@ -43,17 +44,21 @@ const router = createBrowserRouter([
         path: '/songs/upload',
         element: <UploadSongPage />,
       },
-    ],
-    loader: async () => {
-      // TODO: This can be a custom hook to set user information (an auth provider)
-      try {
-        await axios.get('/api/auth/session');
-        return true;
-      } catch (err) {
-        console.error(err);
-        return redirect('/login');
+      {
+        path: '/search',
+        element: <Search />,
       }
-    },
+    ],
+    // loader: async () => {
+    //   // TODO: This can be a custom hook to set user information (an auth provider)
+    //   try {
+    //     await axios.get('/api/auth/session');
+    //     return true;
+    //   } catch (err) {
+    //     console.error(err);
+    //     return redirect('/login');
+    //   }
+    // },
   },
   {
     path: '/login',

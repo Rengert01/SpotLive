@@ -10,12 +10,21 @@ import {
 } from '@/components/ui/tabs.tsx';
 import { Button } from '@/components/ui/button';
 import { PlusCircle } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { Separator } from '@/components/ui/separator';
+import { Input } from '@/components/ui/input';
 
 export default function HomePage() {
   const [activeTab, setActiveTab] = useState('Music');
+  const [searchQuery, setSearchQuery] = useState('');
+  const navigate = useNavigate();
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      navigate(`/search?query=${searchQuery}`);
+    }
+  };
 
   return (
     <Tabs value={activeTab} onValueChange={setActiveTab}>
@@ -26,6 +35,14 @@ export default function HomePage() {
           <TabsTrigger value="Music">Music</TabsTrigger>
           <TabsTrigger value="Live">Live</TabsTrigger>
         </TabsList>
+        <div className="ml-auto">
+            <Input
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="Search..."
+            />
+        </div>
         <div className="ml-auto">
           <Link to="/songs/upload">
             <Button>

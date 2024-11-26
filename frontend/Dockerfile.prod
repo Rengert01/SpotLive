@@ -6,9 +6,9 @@ RUN npm install
 COPY . .
 RUN npm run build
 
-FROM nginx:alpine
+#FROM nginx:alpine
 
-COPY --from=base /app/frontend/build /usr/share/nginx/html
-COPY --from=base /app/frontend/nginx.conf /etc/nginx/conf.d/default.conf
+#COPY --from=base /app/frontend/dist /usr/share/nginx/html
+#COPY --from=base /app/frontend/nginx.conf /etc/nginx/conf.d/default.conf
 
-CMD ["nginx", "-g", "daemon off;"]
+#CMD ["nginx", "-g", "daemon off;"]

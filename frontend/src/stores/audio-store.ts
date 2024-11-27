@@ -90,10 +90,14 @@ export const useAudioStore = create<AudioState>((set) => ({
         } else {
           if (
             state.audio.ref.current.src !==
-            'http://localhost:3001/api/music/stream/' + state.audio.audioSrc
+            import.meta.env.VITE_APP_API_URL +
+              '/api/music/stream/' +
+              state.audio.audioSrc
           ) {
             state.audio.ref.current.src =
-              'http://localhost:3001/api/music/stream/' + state.audio.audioSrc;
+              import.meta.env.VITE_APP_API_URL +
+              '/api/music/stream/' +
+              state.audio.audioSrc;
           }
 
           state.audio.ref.current.currentTime = state.audio.playbackPosition;

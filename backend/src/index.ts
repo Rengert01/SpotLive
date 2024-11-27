@@ -33,7 +33,7 @@ app.use(
 app.use('/api/auth', authRoutes);
 
 // Static images folder
-app.use('/uploads/image', express.static('src/uploads/image'));
+app.use('/api/uploads/image', express.static('src/uploads/image'));
 
 // Everything below this line will require authentication
 app.use(isAuthenticated);

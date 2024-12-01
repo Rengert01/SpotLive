@@ -6,21 +6,20 @@ import { Link } from 'react-router-dom';
 import { PlusCircle } from 'lucide-react';
 
 export default function ProfileSongs() {
-  const [releasedTracks, setReleasedTracks] = useState<TrackType[]>([]);
-  const [unreleasedTracks, setUnreleasedTracks] = useState<TrackType[]>([]);
+  const [releasedAlbums, setReleasedAlbums] = useState<AlbumType[]>([]);
+  const [unreleasedAlbums, setUnreleasedAlbums] = useState<AlbumType[]>([]);
 
-  // Fetch recently released tracks
-  const fetchReleasedTracks = async () => {
+  // Fetch recently released albums
+  const fetchReleasedAlbums = async () => {
     axios
       .get('/api/music/list?private=false&personal=true')
       .then((res) => {
-        setReleasedTracks(
-          res.data.musicList.map((track: TrackType) => ({
-            id: track.id,
-            title: track.title,
-            artist: track.artist,
-            cover: track.cover,
-            duration: track.duration,
+        setReleasedAlbums(
+          res.data.musicList.map((album: AlbumType) => ({
+            id: album.id,
+            title: album.title,
+            artist: album.artist,
+            cover: album.cover,
           }))
         );
       })
@@ -29,17 +28,16 @@ export default function ProfileSongs() {
       });
   };
 
-  const fetchUnreleasedTracks = async () => {
+  const fetchUnreleasedAlbums = async () => {
     axios
       .get('/api/music/list?private=true&personal=true')
       .then((res) => {
-        setUnreleasedTracks(
-          res.data.musicList.map((track: TrackType) => ({
-            id: track.id,
-            title: track.title,
-            artist: track.artist,
-            cover: track.cover,
-            duration: track.duration,
+        setUnreleasedAlbums(
+          res.data.musicList.map((album: AlbumType) => ({
+            id: album.id,
+            title: album.title,
+            artist: album.artist,
+            cover: album.cover,
           }))
         );
       })
@@ -49,7 +47,7 @@ export default function ProfileSongs() {
   };
 
   useEffect(() => {
-    Promise.all([fetchReleasedTracks(), fetchUnreleasedTracks()]);
+    Promise.all([fetchReleasedAlbums(), fetchUnreleasedAlbums()]);
   }, []);
 
   return (
@@ -64,13 +62,13 @@ export default function ProfileSongs() {
       </div>
       <TrackSection
         title="Your Released Songs"
-        subtitle="Tracks that you have released"
-        tracks={releasedTracks}
+        subtitle="Albums that you have released"
+        tracks={releasedAlbums}
       />
       <TrackSection
         title="Your Private Songs"
-        subtitle="Tracks that you have set to private"
-        tracks={unreleasedTracks}
+        subtitle="Albums that you have set to private"
+        tracks={unreleasedAlbums}
       />
     </>
   );

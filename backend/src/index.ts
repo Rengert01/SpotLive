@@ -9,6 +9,7 @@ import authRoutes from '@/routes/auth';
 import isAuthenticated from '@/middleware/auth';
 import profileRouter from '@/routes/profile';
 import musicRoutes from '@/routes/music';
+import albumRouter from '@/routes/album';
 
 import FileStore from 'session-file-store';
 const fileStoreOptions = {};
@@ -17,6 +18,7 @@ const app: Express = express();
 const port = env.BACKEND_API_PORT ?? 3001;
 
 app.use(cors(corsOptions));
+app.options('*', cors())
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.json());
@@ -40,6 +42,7 @@ app.use(isAuthenticated);
 
 app.use('/api/auth', profileRouter);
 app.use('/api/music', musicRoutes);
+app.use('/api/album', albumRouter);
 
 app.listen(port, async () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);

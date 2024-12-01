@@ -1,4 +1,4 @@
-import TrackSection from '@/components/ui/track-section';
+import AlbumSection from '@/components/ui/album-section';
 import { useEffect, useState } from 'react';
 import axios from '@/config/axios';
 import { Button } from '@/components/ui/button';
@@ -9,7 +9,6 @@ export default function ProfileSongs() {
   const [releasedAlbums, setReleasedAlbums] = useState<AlbumType[]>([]);
   const [unreleasedAlbums, setUnreleasedAlbums] = useState<AlbumType[]>([]);
 
-  // Fetch recently released albums
   const fetchReleasedAlbums = async () => {
     axios
       .get('/api/music/list?private=false&personal=true')
@@ -60,15 +59,15 @@ export default function ProfileSongs() {
             </Button>
           </Link>
       </div>
-      <TrackSection
-        title="Your Released Songs"
+      <AlbumSection
+        title="Released Albums"
         subtitle="Albums that you have released"
-        tracks={releasedAlbums}
+        albums={releasedAlbums}
       />
-      <TrackSection
-        title="Your Private Songs"
+      <AlbumSection
+        title="Private Albums"
         subtitle="Albums that you have set to private"
-        tracks={unreleasedAlbums}
+        albums={unreleasedAlbums}
       />
     </>
   );

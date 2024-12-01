@@ -1,10 +1,10 @@
 import { followUser, unfollowUser } from '@/controllers/followers';
 import express from 'express';
 
-const FollowersRouter = express.Router();
+const followersRouter = express.Router();
 
-FollowersRouter.post("/follow",followUser);
-FollowersRouter.post("/unfollow",unfollowUser);
+followersRouter.post("/follow",followUser);
+followersRouter.post("/unfollow",unfollowUser);
 
 
-export default FollowersRouter;
+export default followersRouter;

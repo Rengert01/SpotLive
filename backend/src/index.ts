@@ -11,6 +11,8 @@ import profileRouter from '@/routes/profile';
 import musicRoutes from '@/routes/music';
 
 import FileStore from 'session-file-store';
+import followersRouter from './routes/followers';
+import notificationsRouter from './routes/notifications';
 const fileStoreOptions = {};
 
 const app: Express = express();
@@ -40,6 +42,8 @@ app.use(isAuthenticated);
 
 app.use('/api/auth', profileRouter);
 app.use('/api/music', musicRoutes);
+app.use('/api/user', followersRouter);
+app.use('/api/nofitication', notificationsRouter);
 
 app.listen(port, async () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);

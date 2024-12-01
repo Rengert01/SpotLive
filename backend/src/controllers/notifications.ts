@@ -41,3 +41,76 @@ export const notifyAllFollowers = async (
 
   await db.insert(notifications).values(notificationsData);
 };
+
+export const markNotificationAsRead = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const { id } = req.params;
+
+  // Validate input
+  if (!id) {
+    res.status(400).json({ message: 'Notification ID is required' });
+    return;
+  }
+
+  try {
+    // Update the notification's read status
+    const updatedNotification = await db
+      .update(notifications)
+      .set({ read: true })
+      .where(eq(notifications.id, Number(id)))
+      .returning();
+
+    if (!updatedNotification.length) {
+      res.status(404).json({ message: 'Notification not found' });
+      return;
+    }
+
+    res.status(200).json({
+      message: 'Notification marked as read successfully',
+      notification: updatedNotification[0],
+    });
+  } catch (error) {
+    console.error('Error marking notification as read:', error);
+    res
+      .status(500)
+      .json({ message: 'An error occurred while updating the notification' });
+  }
+};
+
+export const deleteNotification = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const { id } = req.params;
+
+  // Validate input
+  if (!id) {
+    res.status(400).json({ message: 'Notification ID is required' });
+    return;
+  }
+
+  try {
+    // Attempt to delete the notification
+    const deletedNotification = await db
+      .delete(notifications)
+      .where(eq(notifications.id, Number(id)))
+      .returning();
+
+    if (!deletedNotification.length) {
+      res.status(404).json({ message: 'Notification not found' });
+      return;
+    }
+
+    res.status(200).json({
+      message: 'Notification deleted successfully',
+      notification: deletedNotification[0],
+    });
+  } catch (error) {
+    console.error('Error deleting notification:', error);
+    res
+      .status(500)
+      .json({ message: 'An error occurred while deleting the notification' });
+  }
+};

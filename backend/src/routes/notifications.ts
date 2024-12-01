@@ -1,8 +1,10 @@
 import { getNotifications } from '@/controllers/notifications';
 import express from 'express';
 
-const NotificationsRouter = express.Router();
+const notificationsRouter = express.Router();
 
-NotificationsRouter.get('/notifications', getNotifications);
+notificationsRouter.get('/notifications', getNotifications);
+notificationsRouter.put('/readNotification', getNotifications);
+notificationsRouter.post('/deleteNotification', getNotifications);
 
-export default NotificationsRouter;
+export default notificationsRouter;

@@ -1,0 +1,33 @@
+import { users } from '@/models/user';
+import { relations } from 'drizzle-orm';
+import {
+  boolean,
+  decimal,
+  integer,
+  pgTable,
+  timestamp,
+  varchar,
+} from 'drizzle-orm/pg-core';
+
+export const followers = pgTable('followers', {
+    id: integer().primaryKey().generatedAlwaysAsIdentity(),
+    followerId: integer()
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    followedId: integer()
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    createdAt: timestamp().notNull().defaultNow(),
+  });
+  
+  export const followerRelations = relations(followers, ({ one }) => ({
+    follower: one(users, {
+      fields: [followers.followerId],
+      references: [users.id],
+    }),
+    followed: one(users, {
+      fields: [followers.followedId],
+      references: [users.id],
+    }),
+  }));
+  

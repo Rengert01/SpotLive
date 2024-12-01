@@ -198,6 +198,7 @@ export function AppSidebar({ className }: SidebarProps) {
                 </Button>
               </Link>
 
+              <Link to="/profile/albums">
               <Button
                 variant={
                   location.pathname === '/profile/albums'
@@ -223,6 +224,7 @@ export function AppSidebar({ className }: SidebarProps) {
                 </svg>
                 My Albums
               </Button>
+              </Link>
             </div>
           </div>
         </div>

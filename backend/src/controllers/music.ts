@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import path from 'path';
 import fs from 'fs';
 import { z } from 'zod';
-import getAudioDurationInSeconds from 'get-audio-duration';
+// import getAudioDurationInSeconds from 'get-audio-duration';
 import { and, asc, desc, ilike, SQLWrapper, eq } from 'drizzle-orm';
 import { followers, musics, sessions } from '@/db/schema';
 import { db } from '@/db';
@@ -48,9 +48,12 @@ const getMusicInfo = async (req: Request, res: Response): Promise<void> => {
       ),
     });
     res.status(200).json({
-      music,
-      isFollowing: !!isFollowing, // Convert to boolean for clarity
+      music: {
+        ...music,
+        isFollowing: !!isFollowing, // Include `isFollowing` directly in the `music` object
+      },
     });
+    return;
   }
   res.status(200).json({ music });
 };
@@ -232,7 +235,7 @@ const uploadMusic = async (req: Request, res: Response): Promise<void> => {
 
   const musicFile = files.music[0];
 
-  const duration = await getAudioDurationInSeconds(musicFile.path);
+  // const duration = await getAudioDurationInSeconds(musicFile.path);
 
   const imageFile = files.image[0];
 
@@ -253,7 +256,7 @@ const uploadMusic = async (req: Request, res: Response): Promise<void> => {
       artistId: session.user.id,
       cover: imageFile.filename,
       path: musicFile.filename,
-      duration: duration.toString(),
+      duration: '0',
     })
     .returning();
 

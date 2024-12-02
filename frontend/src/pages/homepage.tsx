@@ -37,12 +37,12 @@ export default function HomePage() {
           <TabsTrigger value="Live">Live</TabsTrigger>
         </TabsList>
         <div className="ml-auto">
-            <Input
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder="Search..."
-            />
+          <Input
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="Search..."
+          />
         </div>
         <div className="ml-auto">
           <Link to="/songs/upload">
@@ -54,12 +54,12 @@ export default function HomePage() {
         </div>
       </div>
       <TabsContent value="Music" className="space-y-6">
-        <FilteredTracks 
+        <FilteredTracks
           title="Recently Released"
           subtitle="Tracks that were recently released"
           showRecent={true}
         />
-        <FilteredTracks 
+        <FilteredTracks
           title="Made For You"
           subtitle="Tracks that we think you'll love"
         />

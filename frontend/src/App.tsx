@@ -47,7 +47,7 @@ const router = createBrowserRouter([
       {
         path: '/search',
         element: <Search />,
-      }
+      },
     ],
     loader: async () => {
       // TODO: This can be a custom hook to set user information (an auth provider)

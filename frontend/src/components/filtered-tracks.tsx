@@ -34,7 +34,9 @@ export default function FilteredTracks({
           if (searchQuery) {
             if (filterType === 'artist') {
               filteredTracks = filteredTracks.filter((track: TrackType) =>
-                track.artist.username.toLowerCase().includes(searchQuery.toLowerCase())
+                track.artist.username
+                  .toLowerCase()
+                  .includes(searchQuery.toLowerCase())
               );
             } else if (filterType === 'title') {
               filteredTracks = filteredTracks.filter((track: TrackType) =>

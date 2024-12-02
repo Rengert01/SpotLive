@@ -38,6 +38,7 @@ export default function Notifications() {
 
   useEffect(() => {
     fetchNotifications();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setLoading, setNotifications]);
 
   const markRead = async (id: number) => {

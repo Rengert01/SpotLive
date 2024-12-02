@@ -28,7 +28,9 @@ const UserProfile = () => {
   };
   useEffect(() => {
     fetchSession(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, setMusic, clearMusic]);
+
   const handleFollowToggle = async () => {
     if (!music) return;
 

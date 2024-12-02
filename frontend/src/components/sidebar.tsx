@@ -118,7 +118,7 @@ export function AppSidebar({ className }: SidebarProps) {
             <h2 className="relative px-7 text-lg font-semibold tracking-tight mb-1">
               Playlists
             </h2>
-            <ScrollArea className="px-1 h-[300px]">
+            <ScrollArea className="px-1 h-[calc(100vh-400px)]">
               <div className="space-y-1 p-2">
                 {playlists?.map((playlist, i) => (
                   <Button

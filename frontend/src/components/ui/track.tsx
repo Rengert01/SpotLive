@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import { Button } from '@/components/ui/button'; // Adjust the import path as necessary
 import { Pause, Play, PlusCircle } from 'lucide-react'; // Adjust the import path as necessary
 import {

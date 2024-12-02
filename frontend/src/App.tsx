@@ -3,8 +3,8 @@ import Layout from '@/layout/layout';
 import {
   createBrowserRouter,
   redirect,
-  RouterProvider,
-} from 'react-router-dom';
+} from 'react-router';
+import { RouterProvider } from 'react-router/dom';
 import LoginPage from '@/pages/auth/login';
 import RegisterPage from '@/pages/auth/register';
 import { Toaster } from '@/components/ui/toaster';

@@ -1,5 +1,5 @@
 import tracks from '@/data/tracks.json';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import { Button } from '@/components/ui/button';
 
 const UserProfile = () => {

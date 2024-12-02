@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useEffect } from 'react';
 import axios from '@/config/axios';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router';
 import { toast } from '@/hooks/use-toast';
 import { useUserStore } from '@/stores/user-store';
 import { Sidebar } from '@/components/ui/sidebar';

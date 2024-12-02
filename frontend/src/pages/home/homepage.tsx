@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/tabs.tsx';
 import { Button } from '@/components/ui/button';
 import { PlusCircle } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { Separator } from '@/components/ui/separator';
 

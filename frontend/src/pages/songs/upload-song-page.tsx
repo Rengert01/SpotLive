@@ -21,7 +21,7 @@ import axios from '@/config/axios';
 import { ChevronLeft, Loader } from 'lucide-react';
 import { DragEventHandler, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 
 import { z } from 'zod';
 import { useToast } from '@/hooks/use-toast';

@@ -9,6 +9,7 @@ export const livestream = pgTable('livestream', {
     .references(() => users.id, { onDelete: 'cascade' }),
   title: varchar().notNull(),
   createdAt: timestamp().notNull().defaultNow(),
+  createdBy: varchar().notNull(),
 });
 
 export const livestreamRelations = relations(livestream, ({ one }) => ({

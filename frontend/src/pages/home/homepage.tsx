@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import RecentlyReleasedTracks from '@/components/homepage-components/recently-released.tsx';
 import MadeForYouTracks from '@/components/homepage-components/made-for-you.tsx';
-import { Live } from '@/pages/live';
+import { Live } from '@/pages/home/live';
 import {
   Tabs,
   TabsList,

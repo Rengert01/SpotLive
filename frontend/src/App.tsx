@@ -1,4 +1,4 @@
-import HomePage from '@/pages/homepage.tsx';
+import HomePage from '@/pages/home/homepage';
 import Layout from '@/layout/layout';
 import {
   createBrowserRouter,
@@ -15,6 +15,7 @@ import UploadSongPage from '@/pages/songs/upload-song-page';
 import ProfileSongs from '@/pages/profile/profile-songs';
 import { useAudioStore } from '@/stores/audio-store';
 import { useEffect } from 'react';
+import StartLivestreamPage from '@/pages/start-livestream';
 
 const PAUSE_KEY = 'Space';
 
@@ -43,6 +44,10 @@ const router = createBrowserRouter([
         path: '/songs/upload',
         element: <UploadSongPage />,
       },
+      {
+        path: '/live',
+        element: <StartLivestreamPage />,
+      }
     ],
     loader: async () => {
       // TODO: This can be a custom hook to set user information (an auth provider)

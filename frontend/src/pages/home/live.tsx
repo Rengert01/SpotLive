@@ -33,33 +33,6 @@ export function Live() {
         <h3 className="mt-4 text-lg font-semibold">
           No Live Performances right now
         </h3>
-        {/* <p className="mb-4 mt-2 text-sm text-muted-foreground">
-          You have not added any podcasts. Add one below.
-        </p> */}
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button size="sm" className="relative">
-              Go Live
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Livestream</DialogTitle>
-              <DialogDescription>
-                Copy and paste the livestream feed URL to import.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="grid gap-2">
-                <Label htmlFor="url">Livestream URL</Label>
-                <Input id="url" placeholder="https://example.com/feed.xml" />
-              </div>
-            </div>
-            <DialogFooter>
-              <Button>Go Live</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
       </div>
     </div>
   );

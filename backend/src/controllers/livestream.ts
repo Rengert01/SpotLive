@@ -4,7 +4,9 @@ import corsOptions from '@/config/cors';
 import { db } from '@/db';
 import { livestream } from '@/models/livestream';
 // import session from 'express-session';
-import { eq } from 'drizzle-orm';
+import { and, asc, desc, eq, ilike, SQLWrapper } from 'drizzle-orm';
+import { Request, Response } from 'express';
+import z from 'zod';
 
 // type sessionMiddleware = typeof session;
 
@@ -30,50 +32,47 @@ const initializeSocketIO = (
       console.log(socket.id + ' disconnected from the livestream namespace');
     });
 
-    socket.on(
-      'start-livestream',
-      async (title: string, userId: string, ack) => {
-        if (!title) {
-          socket.emit('error', 'Missing required livestream title');
-          return;
-        }
-
-        if (!userId) {
-          socket.emit('error', 'Missing required user to start livestream');
-          return;
-        }
-
-        const live = await db
-          .insert(livestream)
-          .values({
-            userId: Number(userId),
-            title: title,
-            createdAt: new Date(),
-            createdBy: socket.id,
-          })
-          .returning();
-
-        if (!live.length) {
-          socket.emit('error', 'Could not start livestream');
-          return;
-        }
-
-        socket.join(live[0].id.toString());
-        socket.to(live[0].id.toString()).emit('start-livestream', live[0].id);
-
-        console.log(`Livestream ${live[0].id} started by ${socket.id}`);
-
-        ack({
-          success: true,
-          id: live[0].id,
-          title: live[0].title,
-        });
+    socket.on('start-livestream', async (title: string, userId: string) => {
+      if (!title) {
+        socket.emit(
+          'error-start-livestream',
+          'Missing required livestream title'
+        );
+        return;
       }
-    );
+
+      if (!userId) {
+        socket.emit(
+          'error-start-livestream',
+          'Missing required user to start livestream'
+        );
+        return;
+      }
+
+      const live = await db
+        .insert(livestream)
+        .values({
+          userId: Number(userId),
+          title: title,
+          createdAt: new Date(),
+          createdBy: socket.id,
+        })
+        .returning();
+
+      if (!live.length) {
+        socket.emit('error-start-livestream', 'Could not start livestream');
+        return;
+      }
+
+      socket.join(live[0].id.toString());
+      socket.emit('success-start-livestream', live[0].id.toString());
+
+      console.log(`Livestream ${live[0].id} started by ${socket.id}`);
+    });
 
     socket.on('end-livestream', async (livestreamId: string) => {
       if (!livestreamId) {
-        socket.emit('error', 'Missing Livestream ID');
+        socket.emit('error-end-livestream', 'Missing Livestream ID');
         return;
       }
 
@@ -83,18 +82,20 @@ const initializeSocketIO = (
         .returning();
 
       if (!endedLivestream.length) {
-        socket.emit('error', 'Invalid Livestream ID');
+        socket.emit('error-end-livestream', 'Invalid Livestream ID');
         return;
       }
 
       socket.to(livestreamId).emit('end-livestream');
       socket.leave(livestreamId);
-      console.log(`User left livestream ${livestreamId}`);
+      socket.emit('success-end-livestream');
+
+      console.log(`User ended livestream ${livestreamId}`);
     });
 
     socket.on('join-livestream', async (livestreamId: string) => {
       if (!livestreamId) {
-        socket.emit('error', 'Missing Livestream ID');
+        socket.emit('error-join-livestream', 'Missing Livestream ID');
         return;
       }
 
@@ -103,45 +104,93 @@ const initializeSocketIO = (
       });
 
       if (!live) {
-        socket.emit('error', 'Livestream not found');
+        socket.emit('error-join-livestream', 'Livestream not found');
         return;
       }
 
       socket.join(livestreamId);
-      socket.emit('livestream-data', live.id, live.title);
+      socket.emit('sucess-join-livestream', live.id, live.title);
+
       console.log(`User joined livestream ${livestreamId}`);
     });
 
     socket.on('leave-livestream', (livestreamId: string) => {
       if (!livestreamId) {
-        socket.emit('error', 'Missing Livestream ID');
+        socket.emit('error-leave-livestream', 'Missing Livestream ID');
         return;
       }
 
       socket.leave(livestreamId);
+      socket.emit('success-leave-livestream');
       console.log(`User left livestream ${livestreamId}`);
     });
 
     socket.on('audio-data', (livestreamId: string, audioData: ArrayBuffer) => {
       if (!audioData) {
-        socket.emit('error', 'Missing audio data');
+        socket.emit('error-audio-data', 'Missing audio data');
         return;
       }
 
       if (!livestreamId) {
-        socket.emit('error', 'Missing Livestream ID');
+        socket.emit('error-audio-data', 'Missing Livestream ID');
         return;
       }
 
       socket.to(livestreamId).emit('audio-data', audioData);
+      socket.emit('success-audio-data');
+      console.log('received audio data');
     });
   });
+};
 
-  // livestreamNamespace.on('disconnect', async (socket: Socket) => {
-  //   await db.delete(livestream).where(eq(livestream.createdBy, socket.id));
-  // });
+const filtersSchema = z.object({
+  page: z.number().optional(),
+  limit: z.number().optional(),
+  search: z.string().optional(),
+  sortBy: z.enum(['createdAt', 'title']).optional(),
+  order: z.enum(['ASC', 'DESC']).optional(),
+});
+
+const getLivestreamsList = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const {
+    page = 1,
+    limit = 10,
+    search = '',
+    sortBy = 'createdAt',
+    order = 'ASC',
+  } = filtersSchema.parse(req.query);
+
+  const offset = (Number(page) - 1) * Number(limit);
+
+  const whereClauses: (SQLWrapper | undefined)[] = [
+    ilike(livestream.title, `%${search}%`),
+  ];
+
+  const livestreamList = await db.query.livestream.findMany({
+    orderBy: [
+      order === 'ASC' ? asc(livestream[sortBy]) : desc(livestream[sortBy]),
+    ],
+    limit: Number(limit),
+    offset: offset,
+    where: and(...whereClauses),
+    with: {
+      artist: {
+        columns: {
+          email: true,
+          username: true,
+          image: true,
+        },
+      },
+    },
+  });
+
+  res.status(200).json({ livestreamList });
 };
 
 export default {
   initializeSocketIO,
+  getLivestreamsList,
 };

@@ -75,11 +75,11 @@ export default function UploadSongPage() {
     formData.append('music', data.trackFile);
 
     if (!audioDuration) {
-      form.setError("trackFile", { message: "Error getting audio length" })
-      return
+      form.setError('trackFile', { message: 'Error getting audio length' });
+      return;
     }
 
-    formData.append('duration', JSON.stringify(audioDuration))
+    formData.append('duration', JSON.stringify(audioDuration));
 
     axios
       .post('/api/music/upload', formData, {
@@ -526,8 +526,9 @@ export default function UploadSongPage() {
                   </CardHeader>
                   <CardContent>
                     <div
-                      className={`grid gap-2 border-2 border-dashed p-2 rounded-xl cursor-pointer ${isDragging ? 'border-primary' : 'border-gray-300'
-                        }`}
+                      className={`grid gap-2 border-2 border-dashed p-2 rounded-xl cursor-pointer ${
+                        isDragging ? 'border-primary' : 'border-gray-300'
+                      }`}
                       onDragOver={handleDragOver}
                       onDragLeave={handleDragLeave}
                       onDrop={handleDrop}

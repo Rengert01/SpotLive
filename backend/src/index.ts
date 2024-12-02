@@ -9,6 +9,7 @@ import authRoutes from '@/routes/auth';
 import isAuthenticated from '@/middleware/auth';
 import profileRouter from '@/routes/profile';
 import musicRoutes from '@/routes/music';
+import livestreamRoutes from '@/routes/livestream';
 import livestreamController from '@/controllers/livestream';
 
 import { createServer } from 'http';
@@ -43,6 +44,7 @@ app.use(isAuthenticated);
 
 app.use('/api/auth', profileRouter);
 app.use('/api/music', musicRoutes);
+app.use('/api/livestream', livestreamRoutes);
 
 const server = createServer(app);
 

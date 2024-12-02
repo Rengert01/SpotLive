@@ -13,7 +13,7 @@ export const livestream = pgTable('livestream', {
 });
 
 export const livestreamRelations = relations(livestream, ({ one }) => ({
-  user: one(users, {
+  artist: one(users, {
     fields: [livestream.userId],
     references: [users.id],
   }),

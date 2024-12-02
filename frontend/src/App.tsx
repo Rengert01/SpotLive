@@ -1,9 +1,6 @@
 import HomePage from '@/pages/home/homepage';
 import Layout from '@/layout/layout';
-import {
-  createBrowserRouter,
-  redirect,
-} from 'react-router';
+import { createBrowserRouter, redirect } from 'react-router';
 import { RouterProvider } from 'react-router/dom';
 import LoginPage from '@/pages/auth/login';
 import RegisterPage from '@/pages/auth/register';
@@ -47,7 +44,7 @@ const router = createBrowserRouter([
       {
         path: '/live',
         element: <StartLivestreamPage />,
-      }
+      },
     ],
     loader: async () => {
       // TODO: This can be a custom hook to set user information (an auth provider)

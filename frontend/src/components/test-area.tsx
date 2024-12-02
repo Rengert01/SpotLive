@@ -1,20 +1,19 @@
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Progress } from "@/components/ui/progress";
-import { Separator } from "@/components/ui/separator";
-import { Mic } from "lucide-react";
-import { useEffect, useState, useRef } from "react";
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { Progress } from '@/components/ui/progress';
+import { Separator } from '@/components/ui/separator';
+import { Mic } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 type TestAreaProps = {
-  type: "microphone" | "obs";
+  type: 'microphone' | 'obs';
 };
 
 const TestMic: React.FC = () => {
   const [micLevel, setMicLevel] = useState(0);
   const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
-  const [analyser, setAnalyser] = useState<AnalyserNode | null>(null);
+  const [workletNode, setWorkletNode] = useState<AudioWorkletNode | null>(null);
   const [isTesting, setIsTesting] = useState(false);
-  const animationFrameRef = useRef<number | null>(null);
 
   useEffect(() => {
     return () => {
@@ -27,34 +26,32 @@ const TestMic: React.FC = () => {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
       const context = new AudioContext();
+
+      await context.audioWorklet.addModule('/processor/mic-meter-processor.ts'); // Path to your processor
+
       const source = context.createMediaStreamSource(stream);
+      const worklet = new AudioWorkletNode(context, 'mic-meter-processor', {
+        parameterData: {
+          clipLevel: 0.98,
+          averaging: 0.9,
+          clipLag: 750
+        }
+      });
 
-      const analyserNode = context.createAnalyser();
-      analyserNode.fftSize = 256;
-      source.connect(analyserNode);
+      // Listen for volume updates from the processor
+      worklet.port.onmessage = (event: MessageEvent) => {
+        const volumes = event.data; // Volume is RMS value (0 to 1)
+        setMicLevel(volumes.volume[0].value * 100); // Convert to percentage
+      };
 
+      source.connect(worklet); // Connect the source to the worklet
       setAudioContext(context);
-      setAnalyser(analyserNode);
+      setWorkletNode(worklet);
 
-      // Start measuring audio level
-      monitorMicLevel(analyserNode);
+      console.log('Microphone audio capture started with Audio Worklet');
     } catch (err) {
-      console.error("Error accessing microphone:", err);
+      console.error('Error accessing microphone:', err);
     }
-  };
-
-  const monitorMicLevel = (analyserNode: AnalyserNode) => {
-    const dataArray = new Uint8Array(analyserNode.frequencyBinCount);
-
-    const updateMicLevel = () => {
-      analyserNode.getByteFrequencyData(dataArray);
-      const volume = Math.max(...dataArray) / 255;
-      setMicLevel(volume * 100);
-
-      animationFrameRef.current = requestAnimationFrame(updateMicLevel);
-    };
-
-    updateMicLevel();
   };
 
   const startMicTesting = async () => {
@@ -62,24 +59,20 @@ const TestMic: React.FC = () => {
       await setupMicrophone();
     }
     setIsTesting(true);
-    if (analyser) {
-      monitorMicLevel(analyser);
-    }
   };
 
   const stopMicTesting = () => {
     setIsTesting(false);
     setMicLevel(0);
 
-    if (animationFrameRef.current) {
-      cancelAnimationFrame(animationFrameRef.current);
-      animationFrameRef.current = null;
+    if (workletNode) {
+      workletNode.disconnect();
+      setWorkletNode(null);
     }
 
     if (audioContext) {
       audioContext.close();
       setAudioContext(null);
-      setAnalyser(null);
     }
   };
 
@@ -99,10 +92,10 @@ const TestMic: React.FC = () => {
         <div className="flex gap-2">
           <Button type="button" size="sm" onClick={toggleMicTesting}>
             <Mic className="h-4 w-4 mr-2" />
-            {isTesting ? "Stop Test" : "Test Mic"}
+            {isTesting ? 'Stop Test' : 'Test Mic'}
           </Button>
           <div className="w-full flex flex-col justify-center">
-            <Label className="ml-1 text-muted-foreground leading-6">
+            <Label className="ml-1 text-muted-foreground leading-3 h-4">
               Microphone Level
             </Label>
             <Progress value={micLevel} className="transition-none" />
@@ -128,9 +121,9 @@ const TestOBS: React.FC = () => {
 
 export default function TestArea({ type }: TestAreaProps) {
   switch (type) {
-    case "microphone":
+    case 'microphone':
       return <TestMic />;
-    case "obs":
+    case 'obs':
       return <TestOBS />;
     default:
       return null;

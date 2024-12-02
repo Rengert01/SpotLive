@@ -20,19 +20,19 @@ export default function MusicPlayer() {
     handleSeek,
     updatePlaybackPosition,
     pushToQueue,
-    addToPrevious
+    addToPrevious,
   } = useAudioStore();
 
   const handleSkipBack = async () => {
     if (!audio.previous.length) {
-      addToPrevious([audio.audioSrc])
+      addToPrevious([audio.audioSrc]);
     }
 
-    const previousMusicId = audio.previous.pop()
+    const previousMusicId = audio.previous.pop();
 
     if (!previousMusicId) {
-      console.log("no previous music id")
-      return
+      console.log('no previous music id');
+      return;
     }
 
     const music = await axios.get(`/api/music/info/${previousMusicId}`);
@@ -53,19 +53,19 @@ export default function MusicPlayer() {
 
   const handleSkipForward = async () => {
     if (!audio.queue.length) {
-      const nextIds = await axios.get("/api/music/next")
+      const nextIds = await axios.get('/api/music/next');
 
-      pushToQueue(nextIds.data.nextMusicIds as string[])
+      pushToQueue(nextIds.data.nextMusicIds as string[]);
     }
 
-    let nextMusicId = audio.queue.shift()
+    let nextMusicId = audio.queue.shift();
 
     while (nextMusicId === audio.audioSrc) {
-      nextMusicId = audio.queue.shift()
+      nextMusicId = audio.queue.shift();
     }
 
     if (!nextMusicId) {
-      console.log("No next music id")
+      console.log('No next music id');
       return;
     }
 
@@ -83,7 +83,7 @@ export default function MusicPlayer() {
     });
 
     togglePlayPause();
-    addToPrevious([nextMusicId])
+    addToPrevious([nextMusicId]);
   };
 
   return (

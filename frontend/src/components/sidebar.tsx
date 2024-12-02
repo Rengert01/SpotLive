@@ -149,7 +149,9 @@ export function AppSidebar({ className }: SidebarProps) {
             <div className="space-y-1">
               <Link to="/live">
                 <Button
-                  variant={location.pathname === '/live' ? 'secondary' : 'ghost'}
+                  variant={
+                    location.pathname === '/live' ? 'secondary' : 'ghost'
+                  }
                   className="w-full justify-start"
                 >
                   <svg

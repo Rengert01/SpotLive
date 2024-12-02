@@ -1,6 +1,5 @@
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { DataTableDemo } from '@/components/album-table.tsx';
 import {
   Card,
   CardContent,
@@ -24,7 +23,6 @@ import { ChevronLeft, Loader } from 'lucide-react';
 import { DragEventHandler, useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
-import { trackSchema } from '../songs/upload-song-page.tsx';
 
 import { z } from 'zod';
 import { useToast } from '@/hooks/use-toast';
@@ -45,44 +43,43 @@ const albumSchema = z.object({
         'Invalid image type. Only JPEG, PNG, and WebP images are allowed.',
     }),
   public: z.enum(['public', 'private']).default('private'),
-  tracks: z
-    .array(trackSchema)
-    .min(1, 'At least one track is required'),
+  tracks: z.array(z.number()).refine((value) => value.some((item) => item), {
+    message: 'At least one track is required.',
+  }),
 });
 
 export default function UploadAlbumPage() {
-    const [allTracks, setAllTracks] = useState<TrackType[]>([]);
-    const [selectedTracks, setSelectedTracks] = useState<string[]>([])
+  const [allTracks, setAllTracks] = useState<TrackType[]>([]);
 
-    useEffect(() => {
-        fetchAllTracks();
-    }, []);
+  useEffect(() => {
+    fetchAllTracks();
+  }, []);
 
-    const fetchAllTracks = async () => {
-        try {
-            const [releasedResponse, unreleasedResponse] = await Promise.all([
-            axios.get('/api/music/list?private=false&personal=true'), // Released tracks
-            axios.get('/api/music/list?private=true&personal=true'),  // Unreleased tracks
-        ]);
+  const fetchAllTracks = async () => {
+    try {
+      const [releasedResponse, unreleasedResponse] = await Promise.all([
+        axios.get('/api/music/list?private=false&personal=true'),
+        axios.get('/api/music/list?private=true&personal=true'),
+      ]);
 
-    const allTracks = [
-      ...releasedResponse.data.musicList,
-      ...unreleasedResponse.data.musicList,
-    ];
+      const allTracks = [
+        ...releasedResponse.data.musicList,
+        ...unreleasedResponse.data.musicList,
+      ];
 
-    setAllTracks(
-      allTracks.map((track: TrackType) => ({
-        id: track.id,
-        title: track.title,
-        artist: track.artist,
-        cover: track.cover,
-        duration: track.duration,
-      }))
-    );
+      setAllTracks(
+        allTracks.map((track: TrackType) => ({
+          id: track.id,
+          title: track.title,
+          artist: track.artist,
+          cover: track.cover,
+          duration: track.duration,
+        }))
+      );
     } catch (err) {
-        console.error('Error fetching tracks:', err);
-        }
-    };
+      console.error('Error fetching tracks:', err);
+    }
+  };
 
   const [imageSrc, setImageSrc] = useState('/placeholder.svg');
   const [isDragging, setIsDragging] = useState(false);
@@ -94,6 +91,7 @@ export default function UploadAlbumPage() {
     defaultValues: {
       name: '',
       public: 'private',
+      tracks: [],
     },
   });
 
@@ -104,8 +102,9 @@ export default function UploadAlbumPage() {
     formData.append('name', data.name);
     formData.append('public', data.public === 'public' ? 'true' : 'false');
     formData.append('image', data.albumCover);
-    formData.append('tracks', JSON.stringify(selectedTracks.map((id) => ({ id }))));
+    formData.append('tracks', data.tracks.join(','));
 
+    console.log();
     axios
       .post('/api/album/upload', formData, {
         headers: {
@@ -149,19 +148,13 @@ export default function UploadAlbumPage() {
     }
   };
 
-  const handleTrackSelection = (trackId: string) => {
-    setSelectedTracks((prev) =>
-      prev.includes(trackId)
-        ? prev.filter((id) => id !== trackId)
-        : [...prev, trackId]
-    );
-  };
-
   return (
     <div className="space-y-4">
       <Form {...form}>
         <form
-          onSubmit={form.handleSubmit(onSubmit)}
+          onSubmit={form.handleSubmit(onSubmit, (error) => {
+            console.log(error);
+          })}
           className="grid flex-1 items-start gap-4 sm:py-0 md:gap-8"
         >
           <div className="grid max-w-full flex-1 auto-rows-max gap-4">
@@ -226,7 +219,7 @@ export default function UploadAlbumPage() {
                     </div>
                   </CardContent>
                 </Card>
-                
+
                 {/* Album Tracks*/}
                 <Card>
                   <CardHeader>
@@ -234,35 +227,88 @@ export default function UploadAlbumPage() {
                     <CardDescription>
                       Add the songs you want to insert your album.
                     </CardDescription>
-                  </CardHeader>                  
+                  </CardHeader>
                   <CardContent>
-                    <div className="grid gap-4">
-                      {allTracks.length > 0 ? (
-                        <ul className="divide-y divide-gray-200">
-                          {allTracks.map((track) => (
-                          <li key={track.id} className="flex items-center justify-between py-2">
-                            <div>
-                              <p className="text-sm font-medium">{track.title}</p>
-                              <p className="text-xs text-gray-500">{track.artist.username}</p>
-                            </div>
-                            <Checkbox
-                              checked={selectedTracks.includes(track.id)}
-                              onCheckedChange={() => handleTrackSelection(track.id)}
-                            />
-                          </li>
-                          ))}
-                        </ul>
-                        ) : (
-                          <p className="text-sm text-gray-500">No tracks available.</p>
-                        )}
-                    </div>
+                    <FormField
+                      control={form.control}
+                      name="tracks"
+                      render={() => (
+                        <FormItem>
+                          <div className="grid gap-4">
+                            {allTracks.length > 0 ? (
+                              <ul className="divide-y divide-gray-200">
+                                {allTracks.map((track) => (
+                                  <FormField
+                                    key={track.id}
+                                    control={form.control}
+                                    name="tracks"
+                                    render={({ field }) => (
+                                      <FormItem key={track.id}>
+                                        <FormControl>
+                                          <li
+                                            key={track.id}
+                                            className="flex items-center py-2 gap-4"
+                                          >
+                                            <img
+                                              src={
+                                                import.meta.env
+                                                  .VITE_APP_API_URL +
+                                                '/uploads/image/' +
+                                                track.cover
+                                              }
+                                              className="h-10 rounded"
+                                            />
+                                            <div className="grow flex items-center justify-between">
+                                              <div>
+                                                <p className="font-medium">
+                                                  {track.title}
+                                                </p>
+                                                <p className="text-sm text-gray-500">
+                                                  {track.artist.username}
+                                                </p>
+                                              </div>
+                                              <Checkbox
+                                                checked={field.value?.includes(
+                                                  Number(track.id)
+                                                )}
+                                                onCheckedChange={(checked) => {
+                                                  return checked
+                                                    ? field.onChange([
+                                                        ...field.value,
+                                                        track.id,
+                                                      ])
+                                                    : field.onChange(
+                                                        field.value?.filter(
+                                                          (value) =>
+                                                            value !=
+                                                            Number(track.id)
+                                                        )
+                                                      );
+                                                }}
+                                              />
+                                            </div>
+                                          </li>
+                                        </FormControl>
+                                      </FormItem>
+                                    )}
+                                  />
+                                ))}
+                              </ul>
+                            ) : (
+                              <p className="text-sm text-gray-500">
+                                No tracks available.
+                              </p>
+                            )}
+                          </div>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                   </CardContent>
                 </Card>
-                <div className="flex gap-8">
-                </div>
+                <div className="flex gap-8"></div>
               </div>
               <div className="grid auto-rows-max items-start gap-4 lg:gap-8">
-
                 {/* Album Cover */}
                 <Card className="overflow-hidden">
                   <CardHeader>

@@ -54,19 +54,19 @@ export default function ProfileSongs() {
 
   return (
     <>
-      <div className="flex justify-end mb-4">
-          <Link to="../albums/upload">
-            <Button>
-              <PlusCircle className="h-4 w-4 mr-2" />
-              Upload Album
-            </Button>
-          </Link>
-      </div>
       <TrackSection
         title="Your Released Songs"
         subtitle="Tracks that you have released"
         tracks={releasedTracks}
-      />
+      >
+        <Link to="/songs/upload">
+          <Button>
+            <PlusCircle className="h-4 w-4 mr-2" />
+            Upload Track
+          </Button>
+        </Link>
+      </TrackSection>
+
       <TrackSection
         title="Your Private Songs"
         subtitle="Tracks that you have set to private"

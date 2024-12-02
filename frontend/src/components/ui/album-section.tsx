@@ -1,18 +1,19 @@
-import Track from '@/components/ui/track';
 import { Separator } from '@/components/ui/separator';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
-import { useAudioStore } from '@/stores/audio-store';
+import { ReactNode } from 'react';
 
 interface AlbumSectionProps {
   title: string;
   subtitle: string;
   albums: AlbumType[];
+  children?: ReactNode;
 }
 
 export default function AlbumSection({
   title,
   subtitle,
   albums,
+  children,
 }: AlbumSectionProps) {
   const handleAlbumClick = (album: AlbumType) => {
     console.log('Album clicked:', album);
@@ -21,7 +22,10 @@ export default function AlbumSection({
   return (
     <div>
       <div className="space-y-1">
-        <h2 className="text-3xl font-bold text-black">{title}</h2>
+        <div className="flex justify-between">
+          <h2 className="text-3xl font-bold text-black">{title}</h2>
+          {children}
+        </div>
         <p className="text-sm text-muted-foreground">{subtitle}</p>
       </div>
       <Separator className="my-4" />
@@ -35,7 +39,11 @@ export default function AlbumSection({
             >
               <div className="relative">
                 <img
-                  src={album.cover || '/default-cover.jpg'}
+                  src={
+                    import.meta.env.VITE_APP_API_URL +
+                      '/uploads/image/' +
+                      album.cover || '/default-cover.jpg'
+                  }
                   alt={album.title}
                   className="w-48 h-48 object-cover rounded-lg transition-transform transform group-hover:scale-105"
                 />
@@ -43,7 +51,9 @@ export default function AlbumSection({
               </div>
               <div className="mt-2 text-center">
                 <h3 className="text-lg font-semibold">{album.title}</h3>
-                <p className="text-sm text-muted-foreground">{album.artist.username}</p>
+                <p className="text-sm text-muted-foreground">
+                  {album.artist.username}
+                </p>
               </div>
             </div>
           ))}

@@ -11,10 +11,10 @@ export default function ProfileSongs() {
 
   const fetchReleasedAlbums = async () => {
     axios
-      .get('/api/music/list?private=false&personal=true')
+      .get('/api/album/list?private=false&personal=true')
       .then((res) => {
         setReleasedAlbums(
-          res.data.musicList.map((album: AlbumType) => ({
+          res.data.albumList.map((album: AlbumType) => ({
             id: album.id,
             title: album.title,
             artist: album.artist,
@@ -29,10 +29,10 @@ export default function ProfileSongs() {
 
   const fetchUnreleasedAlbums = async () => {
     axios
-      .get('/api/music/list?private=true&personal=true')
+      .get('/api/album/list?private=true&personal=true')
       .then((res) => {
         setUnreleasedAlbums(
-          res.data.musicList.map((album: AlbumType) => ({
+          res.data.albumList.map((album: AlbumType) => ({
             id: album.id,
             title: album.title,
             artist: album.artist,
@@ -51,19 +51,18 @@ export default function ProfileSongs() {
 
   return (
     <>
-      <div className="flex justify-end mb-4">
-          <Link to="../albums/upload">
-            <Button>
-              <PlusCircle className="h-4 w-4 mr-2" />
-              Upload Album
-            </Button>
-          </Link>
-      </div>
       <AlbumSection
         title="Released Albums"
         subtitle="Albums that you have released"
         albums={releasedAlbums}
-      />
+      >
+        <Link to="/albums/upload">
+          <Button>
+            <PlusCircle className="h-4 w-4 mr-2" />
+            Upload Album
+          </Button>
+        </Link>
+      </AlbumSection>
       <AlbumSection
         title="Private Albums"
         subtitle="Albums that you have set to private"

@@ -46,7 +46,8 @@ export const markNotificationAsRead = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  const { id } = req.params;
+
+  const { id } = req.body;
 
   // Validate input
   if (!id) {
@@ -83,8 +84,8 @@ export const deleteNotification = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  const { id } = req.params;
-
+  const { id } = req.body;
+  console.log(' req.body.params', req.body.params);
   // Validate input
   if (!id) {
     res.status(400).json({ message: 'Notification ID is required' });

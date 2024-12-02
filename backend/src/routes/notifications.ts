@@ -1,10 +1,10 @@
-import { getNotifications } from '@/controllers/notifications';
+import { deleteNotification, getNotifications, markNotificationAsRead } from '@/controllers/notifications';
 import express from 'express';
 
 const notificationsRouter = express.Router();
 
 notificationsRouter.get('/notifications', getNotifications);
-notificationsRouter.put('/readNotification', getNotifications);
-notificationsRouter.post('/deleteNotification', getNotifications);
+notificationsRouter.put('/readNotification', markNotificationAsRead);
+notificationsRouter.post('/deleteNotification', deleteNotification);
 
 export default notificationsRouter;

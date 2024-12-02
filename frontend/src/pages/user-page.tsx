@@ -1,6 +1,7 @@
 import { useParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useEffect, useState } from 'react';
+import { useToast } from '@/hooks/use-toast';
 import axios from '@/config/axios';
 import { useMusicStore } from '@/stores/music-info-store';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -12,6 +13,7 @@ const UserProfile = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { user } = useUserStore();
   const [loading, setLoading] = useState<boolean>(false);
+  const { toast } = useToast();
 
   const fetchSession = async (isload: boolean) => {
     isload && setIsLoading(true);
@@ -45,6 +47,10 @@ const UserProfile = () => {
       }
     } catch (err) {
       console.error(err);
+      toast({
+        title: 'Error',
+        description: 'Oooops...Something went wrongs',
+      });
       setLoading(false);
     }
     fetchSession(false);
@@ -91,20 +97,22 @@ const UserProfile = () => {
       </div>
 
       <div className="p-8">
-        <div className="flex items-center gap-4 mb-8">
-          <Button
-            variant="outline"
-            className={`text-black border-white hover:bg-black hover:text-white`}
-            onClick={handleFollowToggle}
-            disabled={loading}
-          >
-            {!loading ? (
-              <span>{music.isFollowing ? 'Unfollow' : 'Follow'}</span>
-            ) : (
-              <span>Loading ..</span>
-            )}
-          </Button>
-        </div>
+        {Number(user.id) !== music.artistId && (
+          <div className="flex items-center gap-4 mb-8">
+            <Button
+              variant="outline"
+              className={`text-black border-white hover:bg-black hover:text-white`}
+              onClick={handleFollowToggle}
+              disabled={loading}
+            >
+              {!loading ? (
+                <span>{music.isFollowing ? 'Unfollow' : 'Follow'}</span>
+              ) : (
+                <span>Loading ..</span>
+              )}
+            </Button>
+          </div>
+        )}
       </div>
     </section>
   );

@@ -1,6 +1,7 @@
 import { Separator } from '@/components/ui/separator';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { ReactNode } from 'react';
+import { Link } from 'react-router-dom';
 
 interface AlbumSectionProps {
   title: string;
@@ -34,10 +35,10 @@ export default function AlbumSection({
           {albums.map((album) => (
             <div
               key={album.id}
-              className="cursor-pointer group"
+              className="group w-48"
               onClick={() => handleAlbumClick(album)}
             >
-              <div className="relative">
+              <div className="cursor-pointer aspect-square overflow-hidden rounded-lg bg-transparent">
                 <img
                   src={
                     import.meta.env.VITE_APP_API_URL +
@@ -45,15 +46,19 @@ export default function AlbumSection({
                       album.cover || '/default-cover.jpg'
                   }
                   alt={album.title}
-                  className="w-48 h-48 object-cover rounded-lg transition-transform transform group-hover:scale-105"
+                  className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-110"
                 />
-                <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-30 transition-opacity rounded-lg" />
               </div>
-              <div className="mt-2 text-center">
-                <h3 className="text-lg font-semibold">{album.title}</h3>
-                <p className="text-sm text-muted-foreground">
+              <div className="mt-2 relative">
+                <h3 className="text-lg font-semibold text-black truncate">
+                  {album.title}
+                </h3>
+                <Link
+                  to={`/user/${album.id}`}
+                  className="text-muted-foreground underline-offset-4 hover:underline"
+                >
                   {album.artist.username}
-                </p>
+                </Link>
               </div>
             </div>
           ))}

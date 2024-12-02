@@ -18,7 +18,7 @@ const app: Express = express();
 const port = env.BACKEND_API_PORT ?? 3001;
 
 app.use(cors(corsOptions));
-app.options('*', cors())
+app.options('*', cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.json());

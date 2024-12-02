@@ -38,7 +38,7 @@ export function AppSidebar({ className }: SidebarProps) {
   const navigate = useNavigate();
   const { user, setUser, clearUser } = useUserStore();
   const { clearNotification } = useNotificationStore();
-  const { clearMusic } = useMusicStore();
+  const {clearMusic} = useMusicStore()
 
   useEffect(() => {
     //Todo: Convert this to a custom auth hook
@@ -66,6 +66,7 @@ export function AppSidebar({ className }: SidebarProps) {
         clearUser();
         clearNotification();
         clearMusic();
+
       })
 
       .catch((error) => {
@@ -117,7 +118,7 @@ export function AppSidebar({ className }: SidebarProps) {
             <h2 className="relative px-7 text-lg font-semibold tracking-tight mb-1">
               Playlists
             </h2>
-            <ScrollArea className="px-1 h-[350px]">
+            <ScrollArea className="px-1 h-[300px]">
               <div className="space-y-1 p-2">
                 {playlists?.map((playlist, i) => (
                   <Button
@@ -230,6 +231,7 @@ export function AppSidebar({ className }: SidebarProps) {
               </Button>
             </div>
           </div>
+        </div>
         <div className="h-16 border-y">
           <DropdownMenu>
             <DropdownMenuTrigger className="h-full w-full flex justify-center p-3">
@@ -263,7 +265,6 @@ export function AppSidebar({ className }: SidebarProps) {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-        </div>
         </div>
       </div>
     </Sidebar>

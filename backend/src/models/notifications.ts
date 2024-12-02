@@ -2,7 +2,6 @@ import { users } from '@/models/user';
 import { relations } from 'drizzle-orm';
 import {
   boolean,
-  decimal,
   integer,
   pgTable,
   timestamp,

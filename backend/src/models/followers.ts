@@ -1,12 +1,9 @@
 import { users } from '@/models/user';
 import { relations } from 'drizzle-orm';
 import {
-  boolean,
-  decimal,
   integer,
   pgTable,
   timestamp,
-  varchar,
 } from 'drizzle-orm/pg-core';
 
 export const followers = pgTable('followers', {

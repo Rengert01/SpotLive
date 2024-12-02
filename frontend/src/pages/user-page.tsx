@@ -16,14 +16,14 @@ const UserProfile = () => {
   const { toast } = useToast();
 
   const fetchSession = async (isload: boolean) => {
-    isload && setIsLoading(true);
+    if (isload) setIsLoading(true);
     try {
       const res = await axios.get(`/api/music/info/${id}`);
       setMusic(res.data.music);
-      isload && setIsLoading(false);
     } catch (err) {
-      console.error(err);
-      isload && setIsLoading(false);
+      console.error('Error fetching music info:', err);
+    } finally {
+      if (isload) setIsLoading(false); // Ensure setLoading is called after try-catch
     }
   };
   useEffect(() => {

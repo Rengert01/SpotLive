@@ -19,23 +19,28 @@ export default function MusicPlayer() {
     handleVolumeChange,
     handleSeek,
     updatePlaybackPosition,
+    pushToQueue,
+    addToPrevious
   } = useAudioStore();
 
   const handleSkipBack = async () => {
-    // random ID between 4 and 7
-    let randomId = Math.floor(Math.random() * (7 - 4) + 4);
-    while (randomId === Number(audio.audioSrc)) {
-      randomId = Math.floor(Math.random() * (7 - 4) + 4);
+    if (!audio.previous.length) {
+      addToPrevious([audio.audioSrc])
     }
 
-    const music = await axios.get(`/api/music/info/${randomId}`);
+    const previousMusicId = audio.previous.pop()
 
-    console.log(music.data.music);
+    if (!previousMusicId) {
+      console.log("no previous music id")
+      return
+    }
+
+    const music = await axios.get(`/api/music/info/${previousMusicId}`);
 
     setAudio({
       ...audio,
       isPlaying: false,
-      audioSrc: randomId.toString(),
+      audioSrc: previousMusicId,
       audioTitle: music.data.music.title,
       audioArtist: music.data.music.artist.username,
       audioCoverSrc: music.data.music.cover,
@@ -47,20 +52,29 @@ export default function MusicPlayer() {
   };
 
   const handleSkipForward = async () => {
-    // random ID between 4 and 7
-    let randomId = Math.floor(Math.random() * (7 - 4) + 4);
-    while (randomId === Number(audio.audioSrc)) {
-      randomId = Math.floor(Math.random() * (7 - 4) + 4);
+    if (!audio.queue.length) {
+      const nextIds = await axios.get("/api/music/next")
+
+      pushToQueue(nextIds.data.nextMusicIds as string[])
     }
 
-    const music = await axios.get(`/api/music/info/${randomId}`);
+    let nextMusicId = audio.queue.shift()
 
-    console.log(music.data.music);
+    while (nextMusicId === audio.audioSrc) {
+      nextMusicId = audio.queue.shift()
+    }
+
+    if (!nextMusicId) {
+      console.log("No next music id")
+      return;
+    }
+
+    const music = await axios.get(`/api/music/info/${nextMusicId}`);
 
     setAudio({
       ...audio,
       isPlaying: false,
-      audioSrc: randomId.toString(),
+      audioSrc: nextMusicId,
       audioTitle: music.data.music.title,
       audioArtist: music.data.music.artist.username,
       audioCoverSrc: music.data.music.cover,
@@ -69,6 +83,7 @@ export default function MusicPlayer() {
     });
 
     togglePlayPause();
+    addToPrevious([nextMusicId])
   };
 
   return (

@@ -53,6 +53,7 @@ const trackSchema = z.object({
 export default function UploadSongPage() {
   const [imageSrc, setImageSrc] = useState('/placeholder.svg');
   const [isDragging, setIsDragging] = useState(false);
+  const [audioDuration, setAudioDuration] = useState<number | null>(null); // For storing audio duration
 
   const { toast } = useToast();
 
@@ -72,6 +73,13 @@ export default function UploadSongPage() {
     formData.append('public', data.public === 'public' ? 'true' : 'false');
     formData.append('image', data.trackCover);
     formData.append('music', data.trackFile);
+
+    if (!audioDuration) {
+      form.setError("trackFile", { message: "Error getting audio length" })
+      return
+    }
+
+    formData.append('duration', JSON.stringify(audioDuration))
 
     axios
       .post('/api/music/upload', formData, {
@@ -113,6 +121,30 @@ export default function UploadSongPage() {
     if (files && files[0]) {
       form.setValue('trackCover', files[0]);
       setImageSrc(URL.createObjectURL(files[0]));
+    }
+  };
+
+  const onAudioFileChange = (file: File) => {
+    const audio = new Audio(URL.createObjectURL(file)); // Create an Audio object
+    audio.addEventListener('loadedmetadata', () => {
+      setAudioDuration(audio.duration); // Get the duration
+    });
+  };
+
+  const handleAudioUpload = (file: File) => {
+    form.setValue('trackFile', file);
+    onAudioFileChange(file); // Call the function to get the duration
+  };
+
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (ACCEPTED_AUDIO_TYPES.includes(file.type)) {
+        handleAudioUpload(file);
+      } else if (ACCEPTED_IMAGE_TYPES.includes(file.type)) {
+        form.setValue('trackCover', file);
+        setImageSrc(URL.createObjectURL(file));
+      }
     }
   };
 
@@ -231,11 +263,12 @@ export default function UploadSongPage() {
                               type="file"
                               accept="audio/*"
                               {...fieldProps}
-                              onChange={(e) => {
-                                if (e.target.files && e.target.files[0]) {
-                                  onChange(e.target.files[0]);
-                                }
-                              }}
+                              // onChange={(e) => {
+                              //   if (e.target.files && e.target.files[0]) {
+                              //     onChange(e.target.files[0]);
+                              //   }
+                              // }}
+                              onChange={handleFileInputChange}
                             />
                           </FormControl>
                           <FormMessage />
@@ -493,9 +526,8 @@ export default function UploadSongPage() {
                   </CardHeader>
                   <CardContent>
                     <div
-                      className={`grid gap-2 border-2 border-dashed p-2 rounded-xl cursor-pointer ${
-                        isDragging ? 'border-primary' : 'border-gray-300'
-                      }`}
+                      className={`grid gap-2 border-2 border-dashed p-2 rounded-xl cursor-pointer ${isDragging ? 'border-primary' : 'border-gray-300'
+                        }`}
                       onDragOver={handleDragOver}
                       onDragLeave={handleDragLeave}
                       onDrop={handleDrop}

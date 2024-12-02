@@ -12,6 +12,8 @@ interface Audio {
   audioArtist: string;
   audioCoverSrc: string;
   duration?: number;
+  queue: string[];
+  previous: string[];
 }
 
 interface AudioState {
@@ -21,6 +23,8 @@ interface AudioState {
   handleVolumeChange: (volume: number[]) => void;
   handleSeek: (value: number[]) => void;
   updatePlaybackPosition: () => void;
+  pushToQueue: (ids: string[]) => void;
+  addToPrevious: (ids: string[]) => void;
 }
 
 export const useAudioStore = create<AudioState>((set) => ({
@@ -70,6 +74,8 @@ export const useAudioStore = create<AudioState>((set) => ({
       /(?:(?:^|.*;\s*)audioCoverSrc\s*=\s*([^;]*).*$)|^.*$/,
       '$1'
     ),
+    queue: [],
+    previous: [],
   },
   setAudio: (audio) => {
     // Set in browser cookie the last played song
@@ -97,6 +103,7 @@ export const useAudioStore = create<AudioState>((set) => ({
           }
 
           state.audio.ref.current.currentTime = state.audio.playbackPosition;
+          state.audio.ref.current.volume = state.audio.volume;
           state.audio.ref.current.play();
         }
       }
@@ -104,6 +111,7 @@ export const useAudioStore = create<AudioState>((set) => ({
     });
   },
   handleVolumeChange: (volume) => {
+    console.log('Volume', volume);
     set((state) => {
       if (state.audio.ref.current) {
         state.audio.ref.current.volume = volume[0] / 100;
@@ -143,6 +151,18 @@ export const useAudioStore = create<AudioState>((set) => ({
       }
 
       return { audio: state.audio };
+    });
+  },
+  pushToQueue: (ids: string[]) => {
+    set((state) => {
+      state.audio.queue.push(...ids);
+      return state;
+    });
+  },
+  addToPrevious: (ids: string[]) => {
+    set((state) => {
+      state.audio.previous.push(...ids);
+      return state;
     });
   },
 }));

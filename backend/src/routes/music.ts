@@ -15,5 +15,6 @@ router.post(
   ]),
   musicController.uploadMusic
 );
+router.get('/next', musicController.getNextIds);
 
 export default router;

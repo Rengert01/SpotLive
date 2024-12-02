@@ -1,51 +1,76 @@
-import tracks from '@/data/tracks.json';
 import { useParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useEffect, useState } from 'react';
 import axios from '@/config/axios';
 import { useMusicStore } from '@/stores/music-info-store';
+import { Skeleton } from '@/components/ui/skeleton';
+import { useUserStore } from '@/stores/user-store';
 
 const UserProfile = () => {
   const { id } = useParams();
-  const curr = tracks.find((track) => track.id === id);
   const { music, setMusic, clearMusic } = useMusicStore();
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { user } = useUserStore();
+  const [loading, setLoading] = useState<boolean>(false);
 
-  console.log('music', music);
+  const fetchSession = async (isload: boolean) => {
+    isload && setIsLoading(true);
+    try {
+      const res = await axios.get(`/api/music/info/${id}`);
+      setMusic(res.data.music);
+      isload && setIsLoading(false);
+    } catch (err) {
+      console.error(err);
+      isload && setIsLoading(false);
+    }
+  };
   useEffect(() => {
-    //Todo: Convert this to a custom auth hook
-    const fetchSession = async () => {
-      setIsLoading(true);
-      try {
-        const res = await axios.get(`/api/music/info/${id}`);
-        setMusic(res.data.music);
-        setIsLoading(false);
-      } catch (err) {
-        console.error(err);
-        setIsLoading(false);
-      }
-    };
-    fetchSession();
+    fetchSession(true);
   }, [id, setMusic, clearMusic]);
   const handleFollowToggle = async () => {
     if (!music) return;
 
-    const url = music.isFollowing
-      ? `/api/unfollow/${music?.id}`
-      : `/api/follow/${music?.id}`;
+    const url = music.isFollowing ? `/api/user/unfollow/` : `/api/user/follow/`;
 
+    setLoading(true);
     try {
-      const res = await axios.post(url);
+      const res = await axios.post(url, {
+        followerId: user.id,
+        followedId: music.artistId,
+      });
       if (res.status === 200) {
         // Update the isFollowing status in the store
-        setMusic({ ...music, isFollowing: !music.isFollowing });
+
+        setLoading(false);
       }
     } catch (err) {
       console.error(err);
+      setLoading(false);
     }
+    fetchSession(false);
+    setLoading(false);
   };
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading)
+    return (
+      <section className="min-h-screen bg-gradient-to-b from-black-900 to-white text-black">
+        <div className="relative">
+          <Skeleton className="w-full h-[100px] object-cover" />
+
+          <div className="absolute bottom-0 left-0 p-8">
+            <Skeleton className="h-12 w-3/4 mb-2" />
+            <Skeleton className="h-6 w-1/3" />
+            <Skeleton className="h-6 w-1/3" />
+            <Skeleton className="h-6 w-1/3" />
+          </div>
+        </div>
+        <div className="p-8">
+          <div className="flex items-center gap-4 mb-8">
+            <Skeleton className="h-10 w-32" />
+          </div>
+        </div>
+      </section>
+    );
 
   if (!music) return <div>Music not found</div>;
   return (
@@ -71,8 +96,13 @@ const UserProfile = () => {
             variant="outline"
             className={`text-black border-white hover:bg-black hover:text-white`}
             onClick={handleFollowToggle}
+            disabled={loading}
           >
-            {music.isFollowing ? 'Unfollow' : 'Follow'}
+            {!loading ? (
+              <span>{music.isFollowing ? 'Unfollow' : 'Follow'}</span>
+            ) : (
+              <span>Loading ..</span>
+            )}
           </Button>
         </div>
       </div>

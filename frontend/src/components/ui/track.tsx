@@ -68,7 +68,7 @@ function TrackItem({
             {track.title}
           </h3>
           <Link
-            to={`/user/${track.id}`}
+            to={`/user/${track.artistId}`}
             className="text-muted-foreground underline-offset-4 hover:underline"
           >
             {track.artist.username}

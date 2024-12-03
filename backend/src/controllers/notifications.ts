@@ -1,21 +1,26 @@
 import { Request, Response } from 'express';
 import { db } from '@/db';
 import { desc, eq } from 'drizzle-orm';
-import { followers, notifications } from '@/db/schema';
+import { followers, notifications, sessions } from '@/db/schema';
 
 export const getNotifications = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  const { userId } = req.query;
+  const session = await db.query.sessions.findFirst({
+    where: eq(sessions.session_id, req.sessionID),
+    with: {
+      user: true,
+    },
+  });
 
-  if (!userId) {
-    res.status(400).json({ message: 'User ID is required' });
+  if (!session) {
+    res.status(400).json({ message: 'Unauthorized' });
     return;
   }
 
   const notificationsList = await db.query.notifications.findMany({
-    where: eq(notifications.userId, Number(userId)),
+    where: eq(notifications.userId, session.user.id),
     orderBy: desc(notifications.createdAt),
   });
 
@@ -46,7 +51,6 @@ export const markNotificationAsRead = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-
   const { id } = req.body;
 
   // Validate input
@@ -85,7 +89,7 @@ export const deleteNotification = async (
   res: Response
 ): Promise<void> => {
   const { id } = req.body;
-  console.log(' req.body.params', req.body.params);
+
   // Validate input
   if (!id) {
     res.status(400).json({ message: 'Notification ID is required' });

@@ -32,7 +32,7 @@ export default function Notifications() {
     setLoading(true);
     try {
       const res = await axios.get(
-        `/api/nofitication/notifications?userId=${user?.id}`
+        `/api/nofitication`
       ); // Replace with your API endpoint
       setNotifications(res.data.notifications);
     } catch (err) {
@@ -127,9 +127,8 @@ export default function Notifications() {
             notifications.map((notif) => (
               <div
                 key={notif.id}
-                className={`flex gap-4 justify-between p-4 rounded-lg border flex-col ${
-                  notif.read ? 'bg-gray-100' : 'bg-white'
-                }`}
+                className={`flex gap-4 justify-between p-4 rounded-lg border flex-col ${notif.read ? 'bg-gray-100' : 'bg-white'
+                  }`}
               >
                 <div>
                   <p className="text-sm font-medium">{notif.message}</p>

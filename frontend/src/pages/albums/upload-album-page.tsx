@@ -253,7 +253,7 @@ export default function UploadAlbumPage() {
                                               src={
                                                 import.meta.env
                                                   .VITE_APP_API_URL +
-                                                '/uploads/image/' +
+                                                '/api/uploads/image/' +
                                                 track.cover
                                               }
                                               className="h-10 rounded"

@@ -42,7 +42,7 @@ export default function AlbumSection({
                 <img
                   src={
                     import.meta.env.VITE_APP_API_URL +
-                      '/uploads/image/' +
+                      '/api/uploads/image/' +
                       album.cover || '/default-cover.jpg'
                   }
                   alt={album.title}

@@ -34,7 +34,7 @@ const ACCEPTED_IMAGE_TYPES = [
 ];
 const ACCEPTED_AUDIO_TYPES = ['audio/mpeg', 'audio/mp3'];
 
-const trackSchema = z.object({
+export const trackSchema = z.object({
   name: z.string().min(1, 'Track name is required.'),
   trackCover: z
     .instanceof(File, { message: 'An image file is required.' })

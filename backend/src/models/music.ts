@@ -8,6 +8,7 @@ import {
   timestamp,
   varchar,
 } from 'drizzle-orm/pg-core';
+import { musicToAlbums } from './albums';
 
 export const musics = pgTable('music', {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
@@ -23,9 +24,11 @@ export const musics = pgTable('music', {
   createdAt: timestamp().notNull().defaultNow(),
 });
 
-export const musicRelations = relations(musics, ({ one }) => ({
+export const musicRelations = relations(musics, ({ one, many }) => ({
   artist: one(users, {
     fields: [musics.artistId],
     references: [users.id],
   }),
+
+  musicToAlbums: many(musicToAlbums),
 }));

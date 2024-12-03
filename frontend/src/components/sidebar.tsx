@@ -35,7 +35,6 @@ const playlists = [
 export function AppSidebar({ className }: SidebarProps) {
   const navigate = useNavigate();
   const { user, setUser, clearUser } = useUserStore();
-
   useEffect(() => {
     //Todo: Convert this to a custom auth hook
     const fetchSession = async () => {
@@ -111,7 +110,7 @@ export function AppSidebar({ className }: SidebarProps) {
             <h2 className="relative px-7 text-lg font-semibold tracking-tight mb-1">
               Playlists
             </h2>
-            <ScrollArea className="px-1 h-[350px]">
+            <ScrollArea className="px-1 h-[calc(100vh-400px)]">
               <div className="space-y-1 p-2">
                 {playlists?.map((playlist, i) => (
                   <Button
@@ -227,7 +226,6 @@ export function AppSidebar({ className }: SidebarProps) {
             </div>
           </div>
         </div>
-
         <div className="h-16 border-y">
           <DropdownMenu>
             <DropdownMenuTrigger className="h-full w-full flex justify-center p-3">

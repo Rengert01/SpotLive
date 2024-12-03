@@ -12,6 +12,8 @@ import musicRoutes from '@/routes/music';
 import albumRouter from '@/routes/album';
 
 import FileStore from 'session-file-store';
+import followersRouter from './routes/followers';
+import notificationsRouter from './routes/notifications';
 const fileStoreOptions = {};
 
 const app: Express = express();
@@ -42,6 +44,8 @@ app.use(isAuthenticated);
 
 app.use('/api/auth', profileRouter);
 app.use('/api/music', musicRoutes);
+app.use('/api/user', followersRouter);
+app.use('/api/nofitication', notificationsRouter);
 app.use('/api/album', albumRouter);
 
 app.listen(port, async () => {

@@ -29,9 +29,7 @@ export default function Notifications() {
   const fetchNotifications = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(
-        `/api/nofitication`
-      ); // Replace with your API endpoint
+      const res = await axios.get(`/api/nofitication`); // Replace with your API endpoint
       setNotifications(res.data.notifications);
     } catch (err) {
       console.error('Failed to fetch notifications', err);
@@ -125,8 +123,9 @@ export default function Notifications() {
             notifications.map((notif) => (
               <div
                 key={notif.id}
-                className={`flex gap-4 justify-between p-4 rounded-lg border flex-col ${notif.read ? 'bg-gray-100' : 'bg-white'
-                  }`}
+                className={`flex gap-4 justify-between p-4 rounded-lg border flex-col ${
+                  notif.read ? 'bg-gray-100' : 'bg-white'
+                }`}
               >
                 <div>
                   <p className="text-sm font-medium">{notif.message}</p>

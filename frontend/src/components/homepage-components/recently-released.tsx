@@ -11,7 +11,7 @@ export default function RecentlyReleased() {
       axios
         .get('/api/music/list?orderBy=createdAt&order=DESC')
         .then((res) => {
-          console.log(res)
+          console.log(res);
           setTracks(
             res.data.musicList.map((track: TrackType) => ({
               id: track.id,
@@ -19,7 +19,7 @@ export default function RecentlyReleased() {
               artist: track.artist,
               cover: track.cover,
               duration: track.duration,
-              artistId: track.artistId
+              artistId: track.artistId,
             }))
           );
         })

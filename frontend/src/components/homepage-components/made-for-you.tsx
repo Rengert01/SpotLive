@@ -18,7 +18,7 @@ export default function MadeForYou() {
               artist: track.artist,
               cover: track.cover,
               duration: track.duration,
-              artistId: track.artistId
+              artistId: track.artistId,
             }))
           );
         })

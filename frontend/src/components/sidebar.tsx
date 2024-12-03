@@ -59,7 +59,6 @@ export function AppSidebar({ className }: SidebarProps) {
           description: 'You have successfully logged out!',
         });
         clearUser();
-
       })
 
       .catch((error) => {

@@ -42,16 +42,13 @@ export default function CreatePlaylist() {
   });
 
   const onSubmit = async (data: z.infer<typeof playlistSchema>) => {
-    const formData = new FormData();
-    formData.append('title', data.title);
-    formData.append('public', data.public === 'public' ? 'true' : 'false');
+    const requestData = {
+      title: data.title,
+      public: data.public === 'public' ? 'true' : 'false',
+  };
 
     axios
-      .post('/api/playlist', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      })
+      .post('/api/playlist/upload', requestData)
       .then((res) => {
         console.log(res.data);
         toast({
@@ -121,7 +118,7 @@ export default function CreatePlaylist() {
                               <FormControl>
                                 <Input
                                   disabled={form.formState.isSubmitting}
-                                  id="name"
+                                  id="title"
                                   type="text"
                                   className="w-full"
                                   {...field}

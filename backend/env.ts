@@ -31,13 +31,9 @@ if (!parsedEnv.success) {
 
 parsedEnv.data = {
   ...parsedEnv.data,
-<<<<<<< HEAD
   POSTGRES_URL:
     parsedEnv.data.POSTGRES_URL ??
     `postgresql://${parsedEnv.data.POSTGRES_USER}:${parsedEnv.data.POSTGRES_PASSWORD}@${parsedEnv.data.POSTGRES_HOST}:${parsedEnv.data.POSTGRES_PORT}/${parsedEnv.data.POSTGRES_DB}`,
-=======
-  POSTGRES_URL: `postgresql://${parsedEnv.data.POSTGRES_USER}:${parsedEnv.data.POSTGRES_PASSWORD}@${parsedEnv.data.POSTGRES_HOST}:${parsedEnv.data.POSTGRES_PORT}/${parsedEnv.data.POSTGRES_DB}`,
->>>>>>> 9f0b866 (Revert "fixed merge conflicts")
 };
 
 console.log('✅ Environment variables are valid');

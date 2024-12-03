@@ -29,7 +29,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import TestArea from '@/components/test-area';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useUserStore } from '@/stores/user-store';
 import { useBlocker, useNavigate } from 'react-router';
 import { MicOff, Radio } from 'lucide-react';
@@ -47,6 +47,7 @@ export default function StartLivestreamPage() {
   const [mediaStream, setMediaStream] = useState<MediaStream | null>(null);
   const [workletNode, setWorkletNode] = useState<AudioWorkletNode | null>(null)
   const [livestreamID, setLivestreamID] = useState<string | null>(null);
+  const [micLevel, setMicLevel] = useState(0);
 
   const [nextLocation, setNextLocation] = useState<string | null>(null);
   const [isLivestreamActive, setIsLivestreamActive] = useState(false);
@@ -74,7 +75,7 @@ export default function StartLivestreamPage() {
     }
   };
 
-  const startMicrophone = async (): Promise<void> => {
+  const startMicrophone = useCallback(async (id: string): Promise<void> => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -94,8 +95,10 @@ export default function StartLivestreamPage() {
       // Listen for messages from the worklet
       worklet.port.onmessage = (event: MessageEvent) => {
         const audioData = event.data.volume[0].data as Float32Array;
-        if (livestreamID)
-          socket.emit('audio-data', livestreamID, audioData.buffer);
+        if (id) {
+          socket.emit('audio-data', id, audioData.buffer);
+          setMicLevel(event.data.volume[0].value * 100)
+        }
       };
 
       source.connect(worklet);
@@ -109,9 +112,9 @@ export default function StartLivestreamPage() {
     } catch (err) {
       console.error('Error accessing microphone: ', err);
     }
-  };
+  }, []);
 
-  const stopMicrophone = (): void => {
+  const stopMicrophone = useCallback((): void => {
     if (workletNode) {
       workletNode.disconnect();
       setWorkletNode(null);
@@ -125,7 +128,7 @@ export default function StartLivestreamPage() {
       setAudioContext(null);
     }
     console.log('Microphone audio capture stopped');
-  };
+  }, [audioContext, mediaStream, workletNode]);
 
   const startLivestream = (title: string, userId: string): void => {
     socket.emit('start-livestream', title, userId);
@@ -133,7 +136,7 @@ export default function StartLivestreamPage() {
     socket.on('success-start-livestream', (id: string) => {
       setLivestreamID(id);
       setIsLivestreamActive(true);
-      startMicrophone();
+      startMicrophone(id);
 
       toast({
         title: "Livestream started successfully!",
@@ -149,7 +152,9 @@ export default function StartLivestreamPage() {
     });
   };
 
-  const endLivestream = (): void => {
+  const endLivestream = useCallback((): void => {
+    console.log("ended livestream")
+    console.log("livestream", livestreamID)
     if (livestreamID) {
       socket.emit('end-livestream', livestreamID);
       setIsLivestreamActive(false);
@@ -169,7 +174,7 @@ export default function StartLivestreamPage() {
         })
       })
     }
-  };
+  }, [livestreamID, stopMicrophone, toast]);
 
   useEffect(() => {
     if (blocker.state === 'blocked') {
@@ -177,11 +182,15 @@ export default function StartLivestreamPage() {
       setIsPromptOpen(true);
       setNextLocation(blocker.location.pathname);
     }
+  }, [blocker]);
+
+  useEffect(() => {
+    window.addEventListener('beforeunload', endLivestream)
 
     return () => {
-      endLivestream()
+      window.removeEventListener('beforeunload', endLivestream)
     }
-  }, [blocker]);
+  }, [endLivestream])
 
   const handleConfirmLeave = () => {
     setIsPromptOpen(false);
@@ -219,7 +228,7 @@ export default function StartLivestreamPage() {
             <Label className="ml-1 text-muted-foreground leading-6">
               Microphone Level
             </Label>
-            <Progress value={50} className="transition-none" />
+            <Progress value={micLevel} className="transition-none" />
           </div>
 
           <Button onClick={() => setIsConfirmEndOpen(!isConfirmEndOpen)}>

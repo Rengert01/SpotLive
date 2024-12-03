@@ -3,8 +3,8 @@ import path from 'path';
 import fs from 'fs';
 import bcrypt from 'bcryptjs';
 import { db } from '@/db';
-import { sessions, users } from '@/db/schema';
-import { eq } from 'drizzle-orm';
+import { followers, sessions, users } from '@/db/schema';
+import { eq, and } from 'drizzle-orm';
 import { calculateCompletionPercentage, updateChecklist } from '@/models/user';
 import { z } from 'zod';
 
@@ -158,7 +158,77 @@ const updateProfile = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
+const getUserDetails = async (req: Request, res: Response): Promise<void> => {
+  const userId = Number(req.params.id); // Ensure the ID is parsed as a number
+
+  if (!userId) {
+    res.status(400).json({ message: 'User Id is required' });
+    return;
+  }
+
+  try {
+    // Fetch user data from the database
+    const user = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, userId))
+      .limit(1);
+
+    if (!user || user.length === 0) {
+      res.status(404).json({ message: 'User not found' });
+      return;
+    }
+
+    const userDetails = user[0];
+
+    const session = await db.query.sessions.findFirst({
+      where: eq(sessions.session_id, req.sessionID),
+      with: {
+        user: true,
+      },
+    });
+
+    // Prepare the response
+    const response = {
+      id: userDetails.id,
+      email: userDetails.email,
+      username: userDetails.username,
+      phone: userDetails.phone,
+      country: userDetails.country,
+      state: userDetails.state,
+      city: userDetails.city,
+      street: userDetails.street,
+      image: userDetails.image,
+      gender: userDetails.gender,
+      dateOfBirth: userDetails.date_of_birth,
+    };
+    if (session) {
+      // Check if the requesting user is following this user
+      const isFollowing = await db.query.followers.findFirst({
+        where: and(
+          eq(followers.followerId, session.user.id),
+          eq(followers.followedId, userId)
+        ),
+      });
+
+      res.status(200).json({
+        ...response,
+        isFollowing: !!isFollowing, // Convert to boolean
+      });
+      return;
+    }
+
+    res.status(200).json(response);
+    return;
+  } catch (error) {
+    console.error('Error fetching user details:', error);
+    res.status(500).json({ message: 'Internal server error' });
+    return;
+  }
+};
+
 export default {
   deleteAccount,
   updateProfile,
+  getUserDetails,
 };

@@ -8,17 +8,23 @@ import {
 } from '@/components/ui/sheet';
 import { Bell } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { useNotificationStore } from '@/stores/notification-store';
 import { Skeleton } from '@/components/ui/skeleton';
 import axios from '@/config/axios';
 import { useUserStore } from '@/stores/user-store';
 import { useToast } from '@/hooks/use-toast';
 
+type Notification = {
+  id: number;
+  message: string;
+  createdAt: string;
+  read: boolean;
+};
+
 export default function Notifications() {
   const [loading, setLoading] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { user } = useUserStore();
-  const { notifications, setNotifications } = useNotificationStore();
+  const [notifications, setNotifications] = useState<Notification[]>([]);
 
   const { toast } = useToast();
 

@@ -14,8 +14,6 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { toast } from '@/hooks/use-toast';
 import { useUserStore } from '@/stores/user-store';
 import { Sidebar } from '@/components/ui/sidebar';
-import { useNotificationStore } from '@/stores/notification-store';
-import { useMusicStore } from '@/stores/music-info-store';
 
 type SidebarProps = React.HTMLAttributes<HTMLDivElement>;
 
@@ -37,9 +35,6 @@ const playlists = [
 export function AppSidebar({ className }: SidebarProps) {
   const navigate = useNavigate();
   const { user, setUser, clearUser } = useUserStore();
-  const { clearNotification } = useNotificationStore();
-  const {clearMusic} = useMusicStore()
-
   useEffect(() => {
     //Todo: Convert this to a custom auth hook
     const fetchSession = async () => {
@@ -64,8 +59,6 @@ export function AppSidebar({ className }: SidebarProps) {
           description: 'You have successfully logged out!',
         });
         clearUser();
-        clearNotification();
-        clearMusic();
 
       })
 

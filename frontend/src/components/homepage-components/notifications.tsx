@@ -10,7 +10,6 @@ import { Bell } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import axios from '@/config/axios';
-import { useUserStore } from '@/stores/user-store';
 import { useToast } from '@/hooks/use-toast';
 
 type Notification = {
@@ -23,7 +22,6 @@ type Notification = {
 export default function Notifications() {
   const [loading, setLoading] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { user } = useUserStore();
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
   const { toast } = useToast();

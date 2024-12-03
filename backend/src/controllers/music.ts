@@ -4,7 +4,7 @@ import fs from 'fs';
 import { z } from 'zod';
 import getAudioDurationInSeconds from 'get-audio-duration';
 import { and, asc, desc, ilike, SQLWrapper, eq } from 'drizzle-orm';
-import { followers, musics, sessions } from '@/db/schema';
+import { musics, sessions } from '@/db/schema';
 import { db } from '@/db';
 import { notifyAllFollowers } from '@/controllers/notifications';
 
@@ -15,13 +15,6 @@ const getMusicInfo = async (req: Request, res: Response): Promise<void> => {
     res.status(400).json({ message: 'Music Id is required' });
     return;
   }
-
-  const session = await db.query.sessions.findFirst({
-    where: eq(sessions.session_id, req.sessionID),
-    with: {
-      user: true,
-    },
-  });
 
   const music = await db.query.musics.findFirst({
     where: eq(musics.id, Number(id)),
@@ -38,21 +31,6 @@ const getMusicInfo = async (req: Request, res: Response): Promise<void> => {
 
   if (!music) {
     res.status(404).json({ message: 'Music not found' });
-    return;
-  }
-  if (session) {
-    const isFollowing = await db.query.followers.findFirst({
-      where: and(
-        eq(followers.followerId, session.user.id),
-        eq(followers.followedId, music.artistId)
-      ),
-    });
-    res.status(200).json({
-      music: {
-        ...music,
-        isFollowing: !!isFollowing, // Include `isFollowing` directly in the `music` object
-      },
-    });
     return;
   }
   res.status(200).json({ music });

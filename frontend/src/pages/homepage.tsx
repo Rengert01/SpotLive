@@ -36,12 +36,12 @@ export default function HomePage() {
           <TabsTrigger value="Live">Live</TabsTrigger>
         </TabsList>
         <div className="ml-auto">
-            <Input
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder="Search..."
-            />
+          <Input
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="Search..."
+          />
         </div>
         <div className="ml-auto">
           <Link to="/songs/upload">

@@ -131,6 +131,7 @@ export function AppSidebar({ className }: SidebarProps) {
             <ScrollArea className="px-1 h-[350px]">
               <div className="space-y-1 p-2">
                 {playlists?.map((playlist, i) => (
+                  <div className='flex'>
                   <Button
                     key={`${playlist}-${i}`}
                     variant={
@@ -158,6 +159,42 @@ export function AppSidebar({ className }: SidebarProps) {
                     </svg>
                     {playlist.title}
                   </Button>
+                  <Button
+                  variant="ghost"
+                  className="ml-auto"
+                  onClick={() => {
+                    axios
+                      .delete(`/api/playlist/delete/${playlist.id}`)
+                      .then(() => {
+                        setPlaylists(playlists.filter((p) => p.id !== playlist.id));
+                        toast({
+                          title: 'Playlist Deleted',
+                          description: `Playlist "${playlist.title}" has been deleted.`,
+                        });
+                      })
+                      .catch((error) => {
+                        toast({
+                          title: 'Operation Failed',
+                          description: error.response.data.message,
+                        });
+                      });
+                  }}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="h-4 w-4"
+                  >
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                  </svg>
+                </Button>
+                </div>
                 ))}
               </div>
             </ScrollArea>

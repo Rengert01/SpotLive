@@ -83,4 +83,9 @@ const uploadPlaylist = async (req: Request, res: Response): Promise<void> => {
   res.status(200).json({ message: 'Playlist uploaded successfully' });
 };
 
-export default { uploadPlaylist, getPlaylistInfo, getList };
+const deletePlaylist = async (req: Request, res: Response): Promise<void> => {
+    await db.delete(playlists).where(eq(playlists.id, Number(req.params.id)));
+    res.status(200).json({ message: 'Playlist deleted' });
+};
+
+export default { uploadPlaylist, getPlaylistInfo, getList, deletePlaylist };

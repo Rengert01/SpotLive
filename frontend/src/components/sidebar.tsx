@@ -8,7 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import axios from '@/config/axios';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { toast } from '@/hooks/use-toast';
@@ -18,28 +18,36 @@ import { Plus } from 'lucide-react';
 
 type SidebarProps = React.HTMLAttributes<HTMLDivElement>;
 
-const playlists = [
-  'Recently Added',
-  'Recently Played',
-  'Top Songs',
-  'Top Albums',
-  'Top Artists',
-  'Logic Discography',
-  'Bedtime Beats',
-  'Feeling Happy',
-  'I miss Y2K Pop',
-  'Runtober',
-  'Mellow Days',
-  'Eminem Essentials',
-];
-
 export function AppSidebar({ className }: SidebarProps) {
+
+  const [playlists, setPlaylists] = useState<PlaylistType[]>([]);
+
+  useEffect(() => {
+    const fetchPlaylists = async () => {
+      axios
+        .get('/api/playlist/list')
+        .then((res) => {
+          setPlaylists(
+            res.data.playlists.map((playlist: PlaylistType) => ({
+              id: playlist.id,
+              title: playlist.title,
+              user: playlist.user,
+            }))
+          );
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    };
+
+    fetchPlaylists();
+  }, []);
+
   const navigate = useNavigate();
   const { user, setUser, clearUser } = useUserStore();
   const port = 'http://localhost:3001';
 
   useEffect(() => {
-    //Todo: Convert this to a custom auth hook
     const fetchSession = async () => {
       try {
         const res = await axios.get('/api/auth/session');
@@ -148,7 +156,7 @@ export function AppSidebar({ className }: SidebarProps) {
                       <path d="M16 6H3" />
                       <path d="M12 18H3" />
                     </svg>
-                    {playlist}
+                    {playlist.title}
                   </Button>
                 ))}
               </div>

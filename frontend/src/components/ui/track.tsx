@@ -13,21 +13,6 @@ import {
 } from '@/components/ui/context-menu';
 import { useAudioStore } from '@/stores/audio-store';
 
-const playlists = [
-  'Recently Added',
-  'Recently Played',
-  'Top Songs',
-  'Top Albums',
-  'Top Artists',
-  'Logic Discography',
-  'Bedtime Beats',
-  'Feeling Happy',
-  'I miss Y2K Pop',
-  'Runtober',
-  'Mellow Days',
-  'Eminem Essentials',
-];
-
 function TrackItem({
   track,
   onClick,

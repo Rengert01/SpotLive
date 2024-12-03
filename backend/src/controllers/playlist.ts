@@ -4,6 +4,12 @@ import { eq } from 'drizzle-orm';
 import { playlists, sessions } from '@/db/schema';
 import { db } from '@/db';
 
+const getList = async (req: Request, res: Response): Promise<void> => {
+    const playlists = await db.query.playlists.findMany();
+    
+    res.status(200).json({ playlists });
+}
+
 const getPlaylistInfo = async (req: Request, res: Response): Promise<void> => {
   const { id } = req.params;
 
@@ -77,4 +83,4 @@ const uploadPlaylist = async (req: Request, res: Response): Promise<void> => {
   res.status(200).json({ message: 'Playlist uploaded successfully' });
 };
 
-export default { uploadPlaylist, getPlaylistInfo };
+export default { uploadPlaylist, getPlaylistInfo, getList };

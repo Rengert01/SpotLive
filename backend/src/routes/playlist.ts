@@ -3,9 +3,7 @@ import playlistController from '@/controllers/playlist';
 
 const router = express.Router();
 
-router.post(
-  '/upload',
-  playlistController.uploadPlaylist
-);
+router.get('/list', playlistController.getList);
+router.post('/upload', playlistController.uploadPlaylist);
 
 export default router;

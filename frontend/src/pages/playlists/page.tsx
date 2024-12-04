@@ -126,13 +126,11 @@ export default function CreatePlaylist() {
                           )}
                         />
                       </div>
-
                     </div>
                   </CardContent>
                 </Card>
               </div>
               <div className="grid auto-rows-max items-start gap-4 lg:gap-8">
-
                 {/* Public Status */}
                 <Card>
                   <CardHeader>
@@ -177,7 +175,6 @@ export default function CreatePlaylist() {
                     />
                   </CardContent>
                 </Card>
-
               </div>
             </div>
             <div className="flex items-center justify-center gap-2 md:hidden">

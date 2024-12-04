@@ -19,7 +19,6 @@ import { usePlaylistsStore } from '@/stores/playlist-store';
 type SidebarProps = React.HTMLAttributes<HTMLDivElement>;
 
 export function AppSidebar({ className }: SidebarProps) {
-
   const { playlists, setPlaylists } = usePlaylistsStore();
 
   const navigate = useNavigate();
@@ -103,7 +102,7 @@ export function AppSidebar({ className }: SidebarProps) {
             <ScrollArea className="px-1 h-[350px]">
               <div className="space-y-1 p-2">
                 {playlists?.map((playlist, i) => (
-                  <div className='flex' key={playlist.id}>
+                  <div className="flex" key={playlist.id}>
                     <Button
                       key={`${playlist}-${i}`}
                       variant={
@@ -138,7 +137,9 @@ export function AppSidebar({ className }: SidebarProps) {
                         axios
                           .delete(`/api/playlist/delete/${playlist.id}`)
                           .then(() => {
-                            setPlaylists(playlists.filter((p) => p.id !== playlist.id));
+                            setPlaylists(
+                              playlists.filter((p) => p.id !== playlist.id)
+                            );
                             toast({
                               title: 'Playlist Deleted',
                               description: `Playlist "${playlist.title}" has been deleted.`,

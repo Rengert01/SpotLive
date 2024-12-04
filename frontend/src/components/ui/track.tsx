@@ -13,14 +13,28 @@ import {
 } from '@/components/ui/context-menu';
 import { useAudioStore } from '@/stores/audio-store';
 import { usePlaylistsStore } from '@/stores/playlist-store';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import axios from '@/config/axios';
 import { useToast } from '@/hooks/use-toast';
-import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useState } from 'react';
 
@@ -36,7 +50,7 @@ function TrackItem({
   onClick: (track: TrackType) => void;
 }) {
   const { toast } = useToast();
-  const [dialogOpen, setDialogOpen] = useState(false)
+  const [dialogOpen, setDialogOpen] = useState(false);
   const { playlists, setPlaylists } = usePlaylistsStore();
 
   const form = useForm<z.infer<typeof playlistSchema>>({
@@ -55,22 +69,26 @@ function TrackItem({
       .post('/api/playlist/upload', requestData)
       .then((res) => {
         console.log(res.data);
-        setDialogOpen(false)
+        setDialogOpen(false);
         toast({
           title: 'Playlist created successfully!',
         });
 
-        axios.get('/api/playlist/list')
+        axios
+          .get('/api/playlist/list')
           .then((res) => {
-            setPlaylists(res.data.playlistList.map((playlist: PlaylistType) => ({
-              id: playlist.id,
-              title: playlist.title,
-              userId: playlist.userId,
-              user: playlist.user
-            })))
-          }).catch((e) => {
-            console.error(e)
+            setPlaylists(
+              res.data.playlistList.map((playlist: PlaylistType) => ({
+                id: playlist.id,
+                title: playlist.title,
+                userId: playlist.userId,
+                user: playlist.user,
+              }))
+            );
           })
+          .catch((e) => {
+            console.error(e);
+          });
       })
       .catch((err) => {
         console.error(err);
@@ -127,7 +145,7 @@ function TrackItem({
             <ContextMenuSub>
               <ContextMenuSubTrigger>Add to Playlist</ContextMenuSubTrigger>
               <ContextMenuSubContent className="w-48">
-                <DialogTrigger className='w-full'>
+                <DialogTrigger className="w-full">
                   <ContextMenuItem>
                     <PlusCircle className="mr-2 h-4 w-4" />
                     New Playlist
@@ -165,12 +183,8 @@ function TrackItem({
 
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>
-              New Playlist
-            </DialogTitle>
-            <DialogDescription>
-              Create a new playlist!
-            </DialogDescription>
+            <DialogTitle>New Playlist</DialogTitle>
+            <DialogDescription>Create a new playlist!</DialogDescription>
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(onSubmit)}
@@ -194,7 +208,7 @@ function TrackItem({
                     </FormItem>
                   )}
                 />
-                <DialogFooter className=''>
+                <DialogFooter className="">
                   <Button type="submit">Create</Button>
                 </DialogFooter>
               </form>
@@ -202,7 +216,6 @@ function TrackItem({
           </DialogHeader>
         </DialogContent>
       </Dialog>
-
     </div>
   );
 }

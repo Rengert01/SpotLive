@@ -29,7 +29,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import TestArea from '@/components/test-area';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useUserStore } from '@/stores/user-store';
 import { useBlocker, useNavigate } from 'react-router';
 import { MicOff, Radio } from 'lucide-react';
@@ -43,16 +43,12 @@ const startLivestreamSchema = z.object({
 });
 
 export default function StartLivestreamPage() {
-  const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
-  const [mediaStream, setMediaStream] = useState<MediaStream | null>(null);
-  const [workletNode, setWorkletNode] = useState<AudioWorkletNode | null>(null)
   const [livestreamID, setLivestreamID] = useState<string | null>(null);
-  const [micLevel, setMicLevel] = useState(0);
 
-  const [nextLocation, setNextLocation] = useState<string | null>(null);
   const [isLivestreamActive, setIsLivestreamActive] = useState(false);
   const [isConfirmEndOpen, setIsConfirmEndOpen] = useState(false)
   const [isPromptOpen, setIsPromptOpen] = useState(false)
+  const [nextLocation, setNextLocation] = useState<string | null>(null);
 
   const { toast } = useToast()
 
@@ -75,60 +71,108 @@ export default function StartLivestreamPage() {
     }
   };
 
-  const startMicrophone = useCallback(async (id: string): Promise<void> => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  const [micLevel, setMicLevel] = useState(0);
+  const audioCtx = useRef<AudioContext | null>(null);
+  const mediaStreamRef = useRef<MediaStream | null>(null)
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null)
+  const analyserRef = useRef<AnalyserNode | null>(null)
 
-      // Load the worklet
-      await audioCtx.audioWorklet.addModule('/processor/mic-meter-processor.ts');
+  useEffect(() => {
+    audioCtx.current = new AudioContext();
 
-      const source = audioCtx.createMediaStreamSource(stream);
-      const worklet = new AudioWorkletNode(audioCtx, 'mic-meter-processor', {
-        parameterData: {
-          clipLevel: 0.98,
-          averaging: 0.9,
-          clipLag: 750
-        }
-      });
-
-      // Listen for messages from the worklet
-      worklet.port.onmessage = (event: MessageEvent) => {
-        const audioData = event.data.volume[0].data as Float32Array;
-        if (id) {
-          socket.emit('audio-data', id, audioData.buffer);
-          setMicLevel(event.data.volume[0].value * 100)
-        }
-      };
-
-      source.connect(worklet);
-      worklet.connect(audioCtx.destination);
-
-      setAudioContext(audioCtx);
-      setMediaStream(stream);
-      setWorkletNode(worklet);
-
-      console.log('Microphone audio capture started');
-    } catch (err) {
-      console.error('Error accessing microphone: ', err);
+    return () => {
+      audioCtx.current = null;
     }
   }, []);
 
+  const startMicrophone = useCallback(async (id: string): Promise<void> => {
+    if (!audioCtx.current) return
+
+    if (audioCtx.current.state === "suspended") {
+      audioCtx.current.resume();
+    }
+
+    const dest = audioCtx.current.createMediaStreamDestination();
+    analyserRef.current = audioCtx.current.createAnalyser();
+    analyserRef.current.fftSize = 256;
+
+    navigator.mediaDevices.getUserMedia({ audio: true })
+
+      .then((micStream: MediaStream) => {
+        mediaStreamRef.current = micStream
+
+        if (!MediaRecorder.isTypeSupported("audio/webm")) {
+          alert("Browser not supported");
+          return;
+        }
+
+        const src = audioCtx.current?.createMediaStreamSource(micStream);
+        src?.connect(dest);
+
+        // @ts-expect-error - this works
+        src?.connect(analyserRef.current)
+
+        // @ts-expect-error - this works
+        const dataArray = new Uint8Array(analyserRef.current?.fftSize)
+
+        const updateMicLevel = () => {
+          if (analyserRef.current) {
+            analyserRef.current.getByteTimeDomainData(dataArray);
+
+            const rms = Math.sqrt(
+              dataArray.reduce((sum, value) => sum + (value - 128) ** 2, 0) /
+              dataArray.length
+            );
+
+            const normalizedMicLevel = Math.min(1, rms / 128);
+            setMicLevel(normalizedMicLevel * 100); // Update mic level in percentage
+          }
+
+          requestAnimationFrame(updateMicLevel);
+        }
+
+        requestAnimationFrame(updateMicLevel)
+
+        if (!mediaRecorderRef.current) {
+          mediaRecorderRef.current = new MediaRecorder(dest.stream, {
+            mimeType: "audio/webm",
+          });
+        }
+
+        if (mediaRecorderRef.current.state === "inactive") {
+          mediaRecorderRef.current.addEventListener("dataavailable", async (event) => {
+            console.log(event.data)
+            if (event.data.size > 0) {
+              socket.emit('audio-data-to-server', id, event.data);
+            }
+          });
+
+          mediaRecorderRef.current.start(250);
+        } else {
+          mediaRecorderRef.current.resume();
+        }
+
+        socket.on('error-audio-data', (message: string) => {
+          console.log(message);
+        });
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  }, []);
+
   const stopMicrophone = useCallback((): void => {
-    if (workletNode) {
-      workletNode.disconnect();
-      setWorkletNode(null);
+    if (analyserRef.current) {
+      analyserRef.current.disconnect();
+      analyserRef.current = null;
     }
-    if (mediaStream) {
-      mediaStream.getTracks().forEach((track) => track.stop());
-      setMediaStream(null);
+
+    if (mediaRecorderRef.current) {
+      mediaRecorderRef.current.pause();
     }
-    if (audioContext) {
-      audioContext.close();
-      setAudioContext(null);
-    }
+
     console.log('Microphone audio capture stopped');
-  }, [audioContext, mediaStream, workletNode]);
+  }, []);
 
   const startLivestream = (title: string, userId: string): void => {
     socket.emit('start-livestream', title, userId);
@@ -155,6 +199,7 @@ export default function StartLivestreamPage() {
   const endLivestream = useCallback((): void => {
     console.log("ended livestream")
     console.log("livestream", livestreamID)
+
     if (livestreamID) {
       socket.emit('end-livestream', livestreamID);
       setIsLivestreamActive(false);

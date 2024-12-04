@@ -6,4 +6,6 @@ type Livestream = {
     image: string;
     username: string | null;
   };
+  roomId: string;
+  artistId: string;
 };

@@ -13,7 +13,7 @@ interface PersonalInformationProps {
   image?: string;
   email?: string;
   gender?: string;
-  username?: string;
+  username: string;
   phone?: string;
   country?: string;
   state?: string;

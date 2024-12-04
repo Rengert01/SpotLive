@@ -86,8 +86,8 @@ const initializeSocketIO = (
         return;
       }
 
-      socket.to(livestreamId).emit('end-livestream');
-      socket.leave(livestreamId);
+      socket.to(livestreamId.toString()).emit('end-livestream');
+      socket.leave(livestreamId.toString());
       socket.emit('success-end-livestream');
 
       console.log(`User ended livestream ${livestreamId}`);
@@ -108,10 +108,10 @@ const initializeSocketIO = (
         return;
       }
 
-      socket.join(livestreamId);
-      socket.emit('sucess-join-livestream', live.id, live.title);
+      socket.join(livestreamId.toString());
+      socket.emit('success-join-livestream', live.id, live.title);
 
-      console.log(`User joined livestream ${livestreamId}`);
+      console.log(`User ${socket.id} joined livestream ${livestreamId}`);
     });
 
     socket.on('leave-livestream', (livestreamId: string) => {
@@ -120,26 +120,29 @@ const initializeSocketIO = (
         return;
       }
 
-      socket.leave(livestreamId);
+      socket.leave(livestreamId.toString());
       socket.emit('success-leave-livestream');
-      console.log(`User left livestream ${livestreamId}`);
+
+      console.log(`User ${socket.id} left livestream ${livestreamId}`);
     });
 
-    socket.on('audio-data', (livestreamId: string, audioData: ArrayBuffer) => {
-      if (!audioData) {
-        socket.emit('error-audio-data', 'Missing audio data');
-        return;
-      }
+    socket.on(
+      'audio-data-to-server',
+      (livestreamId: string, audioData: Float32Array) => {
+        if (!audioData) {
+          socket.emit('error-audio-data', 'Missing audio data');
+          return;
+        }
 
-      if (!livestreamId) {
-        socket.emit('error-audio-data', 'Missing Livestream ID');
-        return;
+        if (!livestreamId) {
+          socket.emit('error-audio-data', 'Missing Livestream ID');
+          return;
+        }
+        console.log('Received data type:', audioData.constructor.name);
+        socket.to(livestreamId.toString()).emit('audio-data', audioData);
+        socket.emit('success-audio-data');
       }
-
-      socket.to(livestreamId).emit('audio-data', audioData);
-      socket.emit('success-audio-data');
-      console.log('received audio data');
-    });
+    );
   });
 };
 

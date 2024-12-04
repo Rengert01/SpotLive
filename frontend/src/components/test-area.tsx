@@ -3,7 +3,7 @@ import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
 import { Mic } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 type TestAreaProps = {
   type: 'microphone' | 'obs';
@@ -11,78 +11,94 @@ type TestAreaProps = {
 
 const TestMic: React.FC = () => {
   const [micLevel, setMicLevel] = useState(0);
-  const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
-  const [workletNode, setWorkletNode] = useState<AudioWorkletNode | null>(null);
   const [isTesting, setIsTesting] = useState(false);
 
+  const audioCtx = useRef<AudioContext | null>(null);
+  const mediaStreamRef = useRef<MediaStream | null>(null)
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null)
+  const analyserRef = useRef<AnalyserNode | null>(null)
+
   useEffect(() => {
-    return () => {
-      stopMicTesting(); // Cleanup resources on unmount
-    };
+    audioCtx.current = new AudioContext();
   }, []);
-
-  const setupMicrophone = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-
-      const context = new AudioContext();
-
-      await context.audioWorklet.addModule('/processor/mic-meter-processor.ts'); // Path to your processor
-
-      const source = context.createMediaStreamSource(stream);
-      const worklet = new AudioWorkletNode(context, 'mic-meter-processor', {
-        parameterData: {
-          clipLevel: 0.98,
-          averaging: 0.9,
-          clipLag: 750
-        }
-      });
-
-      // Listen for volume updates from the processor
-      worklet.port.onmessage = (event: MessageEvent) => {
-        const volumes = event.data; // Volume is RMS value (0 to 1)
-        setMicLevel(volumes.volume[0].value * 100); // Convert to percentage
-      };
-
-      source.connect(worklet); // Connect the source to the worklet
-      setAudioContext(context);
-      setWorkletNode(worklet);
-
-      console.log('Microphone audio capture started with Audio Worklet');
-    } catch (err) {
-      console.error('Error accessing microphone:', err);
-    }
-  };
-
-  const startMicTesting = async () => {
-    if (!audioContext) {
-      await setupMicrophone();
-    }
-    setIsTesting(true);
-  };
-
-  const stopMicTesting = () => {
-    setIsTesting(false);
-    setMicLevel(0);
-
-    if (workletNode) {
-      workletNode.disconnect();
-      setWorkletNode(null);
-    }
-
-    if (audioContext) {
-      audioContext.close();
-      setAudioContext(null);
-    }
-  };
 
   const toggleMicTesting = async () => {
     if (isTesting) {
-      stopMicTesting();
+      setIsTesting(false)
+      stopMicrophone();
+      setMicLevel(0)
     } else {
-      await startMicTesting();
+      setIsTesting(true)
+      startMicrophone();
     }
   };
+
+  const startMicrophone = useCallback(async (): Promise<void> => {
+    if (!audioCtx.current) return
+
+    if (audioCtx.current.state === "suspended") {
+      audioCtx.current.resume();
+    }
+
+    const dest = audioCtx.current.createMediaStreamDestination();
+    analyserRef.current = audioCtx.current.createAnalyser();
+    analyserRef.current.fftSize = 256;
+
+    navigator.mediaDevices.getUserMedia({ audio: true })
+
+      .then((micStream: MediaStream) => {
+        mediaStreamRef.current = micStream
+
+        if (!MediaRecorder.isTypeSupported("audio/webm")) {
+          alert("Browser not supported");
+          return;
+        }
+
+        const src = audioCtx.current?.createMediaStreamSource(micStream);
+        src?.connect(dest);
+
+        // @ts-expect-error - this works
+        src?.connect(analyserRef.current)
+
+        // @ts-expect-error - this works
+        const dataArray = new Uint8Array(analyserRef.current?.fftSize)
+
+        const updateMicLevel = () => {
+          if (analyserRef.current) {
+            analyserRef.current.getByteTimeDomainData(dataArray);
+
+            const rms = Math.sqrt(
+              dataArray.reduce((sum, value) => sum + (value - 128) ** 2, 0) /
+              dataArray.length
+            );
+
+            const normalizedMicLevel = Math.min(1, rms / 128);
+            setMicLevel(normalizedMicLevel * 100); // Update mic level in percentage
+          }
+
+          requestAnimationFrame(updateMicLevel);
+        }
+
+        requestAnimationFrame(updateMicLevel)
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  }, []);
+
+  const stopMicrophone = useCallback((): void => {
+    if (analyserRef.current) {
+      analyserRef.current.disconnect();
+      analyserRef.current = null;
+    }
+
+    if (mediaRecorderRef.current) {
+      mediaRecorderRef.current.pause();
+    }
+
+    console.log('Microphone audio capture stopped');
+  }, []);
+
 
   return (
     <>

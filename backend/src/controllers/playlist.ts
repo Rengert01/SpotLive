@@ -158,4 +158,42 @@ const addMusicToPlaylist = async (req: Request, res: Response): Promise<void> =>
   }
 };
 
-export default { uploadPlaylist, getPlaylistInfo, getList, deletePlaylist, listMusicsFromPlaylist, deleteMusicFromPlaylist, addMusicToPlaylist };
+const bookmarkMusic = async (req: Request, res: Response): Promise<void> => {
+  const { musicId } = req.params;
+  const session = await db.query.sessions.findFirst({
+    where: eq(sessions.session_id, req.sessionID),
+    with: {
+      user: true,
+    },
+  });
+  if (!session) {
+    res.status(401).json({ message: 'Unauthorized' });
+    return;
+  }
+  if (!session.user) {
+    res.status(401).json({ message: 'Unauthorized' });
+    return;
+  }
+  const playlist = await db.query.playlists.findFirst({
+    where: and(eq(playlists.title, 'Liked Songs'), eq(playlists.userId, session.user.id)),
+  });
+  if (!playlist || !playlist.id || !musicId) {
+    res.status(400).json({ message: 'Playlist ID and Music ID are required' });
+    return;
+  }
+  try {
+    await db
+      .insert(musicsPlaylists)
+      .values({
+        musicId: Number(musicId),
+        playlistId: Number(playlist.id),
+      });
+    res.status(200).json({ message: 'Music bookmarked' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'An error occurred while bookmarking music' });
+  }
+}
+
+
+export default { uploadPlaylist, getPlaylistInfo, getList, deletePlaylist, listMusicsFromPlaylist, deleteMusicFromPlaylist, addMusicToPlaylist, bookmarkMusic };

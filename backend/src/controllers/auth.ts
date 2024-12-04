@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 import { z } from 'zod';
 import { db } from '@/db';
 import { eq } from 'drizzle-orm';
-import { sessions, users } from '@/db/schema';
+import { sessions, users, playlists } from '@/db/schema';
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -114,9 +114,21 @@ const signUp = async (req: Request, res: Response): Promise<void> => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const newUser = await db.insert(users).values({
+    await db.insert(users).values({
       email: email,
       password: hashedPassword,
+    });
+
+    const newUser = await db.query.users.findFirst({
+      where: eq(users.email, email),
+    });
+    if (!newUser) {
+      res.status(500).json({ message: 'User creation failed.' });
+      return;
+    }
+    await db.insert(playlists).values({
+      title: 'Liked Songs',
+      userId: newUser.id,
     });
 
     res.status(201).json({ message: 'User created', user: newUser });

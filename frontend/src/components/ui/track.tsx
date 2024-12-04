@@ -191,7 +191,24 @@ function TrackItem({
             <ContextMenuItem>Play Later</ContextMenuItem>
             <ContextMenuItem>Create Station</ContextMenuItem>
             <ContextMenuSeparator />
-            <ContextMenuItem>Like</ContextMenuItem>
+            <ContextMenuItem
+              onClick={() => {
+                axios
+                .post(`/api/playlist/bookmark/${track.id}`)
+                .then(() => {
+                    toast({
+                    title: 'Music liked',
+                    });
+                })
+                .catch((error) => {
+                    toast({
+                    title: 'Operation Failed',
+                    description: error.response.data.message,
+                    });
+                });
+              }}>
+              Like
+            </ContextMenuItem>
             <ContextMenuItem>Share</ContextMenuItem>
           </ContextMenuContent>
         </ContextMenu>

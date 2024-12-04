@@ -11,10 +11,42 @@ import { useEffect, useState } from 'react';
 import { toast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { usePlaylistsStore } from '@/stores/playlist-store';
+
+type Musics = {
+    musicId: number;
+    playlistId: number;
+    music: {
+        title: string;
+        path: string;
+        id: number;
+        cover: string;
+        public: boolean | null;
+        duration: string;
+        artistId: number;
+        createdAt: Date;
+        artist: {
+            id: number;
+            email: string;
+            password: string;
+            image: string;
+            gender: string | null;
+            username: string | null;
+            phone: string | null;
+            country: string | null;
+            state: string | null;
+            date_of_birth: string | null;
+            city: string | null;
+            street: string | null;
+            completionPercentage: number | null;
+            checklist: unknown;
+        };
+    };
+};
+
 export default function PlaylistPage() {
   const { id } = useParams<{ id: string }>();
 
-  const [musics, setMusics] = useState<TrackType[]>([]);
+  const [musics, setMusics] = useState<Musics[]>([]);
   const { playlists } = usePlaylistsStore();
   const playlist = playlists.find((playlist) => playlist.id === Number(id));
 
@@ -58,8 +90,14 @@ export default function PlaylistPage() {
                     className="h-10 rounded"
                   />
                   <div className="grow flex items-center justify-between">
-                    <div className="flex">
-                      <p className="font-medium">{track.music.title}</p>
+                    <div>
+                        <p className="font-medium">
+                            {track.music.title}
+                        </p>
+                        <p className="text-sm text-gray-500">
+                            {track.music.artist.username}
+                        </p>
+                        </div>
                       <Button
                         variant="ghost"
                         className="ml-auto"
@@ -69,6 +107,11 @@ export default function PlaylistPage() {
                               `/api/playlist/${playlist.id}/musics/${track.music.id}`
                             )
                             .then(() => {
+                                setMusics((prev) =>
+                                    prev.filter(
+                                    (music) => music.music.id !== track.music.id
+                                    )
+                                );
                               toast({
                                 title: 'Music deleted from playlist',
                               });
@@ -95,7 +138,6 @@ export default function PlaylistPage() {
                           <line x1="6" y1="6" x2="18" y2="18" />
                         </svg>
                       </Button>
-                    </div>
                   </div>
                 </li>
               ))}

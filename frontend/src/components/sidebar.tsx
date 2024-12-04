@@ -58,8 +58,6 @@ export function AppSidebar({ className }: SidebarProps) {
 
   const location = useLocation();
 
-  console.log(location.pathname);
-
   return (
     <Sidebar className={cn('', className)}>
       <div className="h-full space-y-4 pt-4 flex flex-col justify-between">
@@ -103,7 +101,7 @@ export function AppSidebar({ className }: SidebarProps) {
               <div className="space-y-1 p-2">
                 {playlists?.map((playlist, i) => (
                   <div className="flex" key={playlist.id}>
-                    <div>
+                    <div className="w-full">
                       <Link to={`/playlist/${playlist.id}`}>
                         <Button
                           key={`${playlist}-${i}`}

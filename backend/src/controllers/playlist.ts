@@ -112,7 +112,11 @@ const listMusicsFromPlaylist = async (
   const musics = await db.query.musicsPlaylists.findMany({
     where: eq(musicsPlaylists.playlistId, Number(req.params.id)),
     with: {
-      music: true,
+      music: {
+        with: {
+          artist:true,
+        }
+      },
     },
   });
   res.status(200).json({ musics });

@@ -104,7 +104,6 @@ export default function UploadAlbumPage() {
     formData.append('image', data.albumCover);
     formData.append('tracks', data.tracks.join(','));
 
-    console.log();
     axios
       .post('/api/album/upload', formData, {
         headers: {
@@ -112,7 +111,6 @@ export default function UploadAlbumPage() {
         },
       })
       .then((res) => {
-        console.log(res.data);
         toast({
           title: 'Album uploaded successfully!',
         });

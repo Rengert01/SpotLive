@@ -30,8 +30,6 @@ export default function MusicPlayer() {
 
     const music = await axios.get(`/api/music/info/${randomId}`);
 
-    console.log(music.data.music);
-
     setAudio({
       ...audio,
       isPlaying: false,
@@ -54,8 +52,6 @@ export default function MusicPlayer() {
     }
 
     const music = await axios.get(`/api/music/info/${randomId}`);
-
-    console.log(music.data.music);
 
     setAudio({
       ...audio,

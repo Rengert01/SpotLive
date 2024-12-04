@@ -19,6 +19,7 @@ import { useEffect } from 'react';
 import CreatePlaylist from './pages/playlists/page';
 import Search from '@/pages/search';
 import UploadAlbumPage from '@/pages/albums/upload-album-page';
+import PlaylistPage from './pages/playlists/playlist';
 
 const PAUSE_KEY = 'Space';
 
@@ -62,6 +63,10 @@ const router = createBrowserRouter([
       {
         path: '/playlists',
         element: <CreatePlaylist />,
+      },
+      {
+        path: '/playlist/:id',
+        element: <PlaylistPage />,
       },
     ],
     loader: async () => {

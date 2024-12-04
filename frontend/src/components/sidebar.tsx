@@ -103,6 +103,8 @@ export function AppSidebar({ className }: SidebarProps) {
               <div className="space-y-1 p-2">
                 {playlists?.map((playlist, i) => (
                   <div className="flex" key={playlist.id}>
+                    <div>
+                    <Link to={`/playlist/${playlist.id}`}>
                     <Button
                       key={`${playlist}-${i}`}
                       variant={
@@ -130,6 +132,8 @@ export function AppSidebar({ className }: SidebarProps) {
                       </svg>
                       {playlist.title}
                     </Button>
+                    </Link>
+                    </div>
                     <Button
                       variant="ghost"
                       className="ml-auto"

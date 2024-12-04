@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { z } from 'zod';
-import { eq } from 'drizzle-orm';
-import { playlists, sessions } from '@/db/schema';
+import { and, eq } from 'drizzle-orm';
+import { playlists, sessions, musicsPlaylists } from '@/db/schema';
 import { db } from '@/db';
 
 const getList = async (req: Request, res: Response): Promise<void> => {
@@ -105,4 +105,35 @@ const deletePlaylist = async (req: Request, res: Response): Promise<void> => {
   res.status(200).json({ message: 'Playlist deleted' });
 };
 
-export default { uploadPlaylist, getPlaylistInfo, getList, deletePlaylist };
+const listMusicsFromPlaylist = async (req: Request, res: Response): Promise<void> => {
+  const musics = await db.query.musicsPlaylists.findMany({
+      where: eq(musicsPlaylists.playlistId, Number(req.params.id)),
+      with: {
+          music: true,
+      },
+  });
+  res.status(200).json({ musics });
+};
+
+const deleteMusicFromPlaylist = async (req: Request, res: Response): Promise<void> => {
+  const { playlistId, musicId } = req.params;
+  if (!playlistId || !musicId) {
+    res.status(400).json({ message: 'Playlist ID and Music ID are required' });
+    return;
+  }
+  try {
+    await db
+      .delete(musicsPlaylists)
+      .where(
+        and(
+          eq(musicsPlaylists.musicId, Number(musicId)),
+          eq(musicsPlaylists.playlistId, Number(playlistId))
+        )
+      );
+    res.status(200).json({ message: 'Music deleted from playlist' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'An error occurred while deleting music from playlist' });
+  }
+};
+export default { uploadPlaylist, getPlaylistInfo, getList, deletePlaylist, listMusicsFromPlaylist, deleteMusicFromPlaylist };

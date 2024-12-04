@@ -1,9 +1,36 @@
 import MusicPlayer from '@/components/music-player';
 import { AppSidebar } from '@/components/sidebar';
 import { SidebarProvider } from '@/components/ui/sidebar';
+import axios from '@/config/axios';
+import { usePlaylistsStore } from '@/stores/playlist-store';
+import { useCallback, useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 
 export default function Layout() {
+  const { setPlaylists } = usePlaylistsStore();
+
+  const loadPlaylists = useCallback(() => {
+    axios
+      .get('/api/playlist/list')
+      .then((res) => {
+        setPlaylists(
+          res.data.playlistList.map((playlist: PlaylistType) => ({
+            id: playlist.id,
+            title: playlist.title,
+            userId: playlist.userId,
+            user: playlist.user,
+          }))
+        );
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+  }, [setPlaylists]);
+
+  useEffect(() => {
+    loadPlaylists();
+  }, [loadPlaylists]);
+
   return (
     <SidebarProvider>
       <AppSidebar />

@@ -9,6 +9,7 @@ import authRoutes from '@/routes/auth';
 import isAuthenticated from '@/middleware/auth';
 import profileRouter from '@/routes/profile';
 import musicRoutes from '@/routes/music';
+import playlistRoutes from '@/routes/playlist';
 import albumRouter from '@/routes/album';
 
 import FileStore from 'session-file-store';
@@ -47,6 +48,8 @@ app.use('/api/music', musicRoutes);
 app.use('/api/user', followersRouter);
 app.use('/api/nofitication', notificationsRouter);
 app.use('/api/album', albumRouter);
+
+app.use('/api/playlist', playlistRoutes);
 
 app.listen(port, async () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);

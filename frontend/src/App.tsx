@@ -16,6 +16,7 @@ import ProfileSongs from '@/pages/profile/profile-songs';
 import ProfileAlbums from '@/pages/profile/profile-albums';
 import { useAudioStore } from '@/stores/audio-store';
 import { useEffect } from 'react';
+import CreatePlaylist from './pages/playlists/page';
 import Search from '@/pages/search';
 import UploadAlbumPage from '@/pages/albums/upload-album-page';
 
@@ -57,6 +58,10 @@ const router = createBrowserRouter([
       {
         path: '/albums/upload',
         element: <UploadAlbumPage />,
+      },
+      {
+        path: '/playlists',
+        element: <CreatePlaylist />,
       },
     ],
     loader: async () => {

@@ -7,4 +7,5 @@ type TrackType = {
   };
   cover: string;
   duration: number;
+  artistId: number;
 };

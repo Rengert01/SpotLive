@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -75,7 +75,6 @@ const PasswordInfoBox = () => {
       .then(() => {
         toast({
           title: 'Account Deleted Successfully',
-          description: 'You have successfully logged in!',
         });
 
         navigate('/login');

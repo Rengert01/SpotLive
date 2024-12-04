@@ -4,15 +4,9 @@ import path from 'path';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
-  process.env = {
-    ...process.env,
-    ...loadEnv(mode, path.resolve(__dirname, '../')),
-  };
-
-  const VITE_APP_PORT = process.env.VITE_APP_PORT;
+  const env = loadEnv(mode, process.cwd());
 
   return {
-    envDir: '..',
     plugins: [react()],
     resolve: {
       alias: {
@@ -21,10 +15,13 @@ export default defineConfig(({ mode }) => {
     },
     server: {
       host: true,
-      port: parseInt(VITE_APP_PORT ?? '3000'),
+      port: parseInt(env.VITE_APP_PORT ?? '3000'),
       watch: {
         usePolling: true,
       },
+    },
+    preview: {
+      port: parseInt(env.VITE_APP_PORT ?? '80'),
     },
   };
 });

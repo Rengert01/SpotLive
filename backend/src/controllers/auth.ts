@@ -1,73 +1,60 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
-import passport from 'passport';
-import { Strategy as LocalStrategy } from 'passport-local';
 import { z } from 'zod';
 import { db } from '@/db';
 import { eq } from 'drizzle-orm';
-import { users } from '@/db/schema';
+import { sessions, users, playlists } from '@/db/schema';
 
 const loginSchema = z.object({
   email: z.string().email(),
   password: z.string(),
 });
 
-passport.use(
-  new LocalStrategy(
-    {
-      usernameField: 'email',
-      passwordField: 'password',
-    },
-    async (email, password, done) => {
-      try {
-        const result = loginSchema.safeParse({ email, password });
-
-        if (!result.success) {
-          return done(null, false, { message: result.error.errors[0].message });
-        }
-
-        const user = await db.query.users.findFirst({
-          where: eq(users.email, email),
-        });
-
-        if (!user) {
-          return done(null, false, { message: 'Email not found.' });
-        }
-
-        const validPassword = await bcrypt.compare(password, user.password);
-
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { password: omitted, ...userWithoutPassword } = user;
-
-        if (!validPassword) {
-          return done(null, false, { message: 'Password is incorrect.' });
-        }
-
-        return done(null, userWithoutPassword);
-      } catch (err) {
-        console.error(err);
-        return done(err);
-      }
-    }
-  )
-);
-
-passport.serializeUser((user: Express.User, done) => {
-  done(null, user);
-});
-
-passport.deserializeUser((user: Express.User, done) => {
-  done(null, user);
-});
-
 const signIn = async (req: Request, res: Response): Promise<void> => {
-  passport.authenticate('local')(req, res, () => {
-    res.cookie('email', req.body.email, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+  try {
+    const result = loginSchema.safeParse(req.body);
+
+    if (!result.success) {
+      res.status(400).json({ message: result.error });
+      return;
+    }
+
+    const { email, password } = result.data;
+
+    const user = await db.query.users.findFirst({
+      where: eq(users.email, email),
     });
-    res.status(200).json({ message: 'Sign in' });
-  });
+
+    if (!user) {
+      res.status(400).json({ message: 'Email not found.' });
+      return;
+    }
+
+    const validPassword = await bcrypt.compare(password, user.password);
+
+    if (!validPassword) {
+      res.status(400).json({ message: 'Password is incorrect.' });
+      return;
+    }
+
+    // Delete any existing sessions for the user
+    await db.delete(sessions).where(eq(sessions.user_id, user.id));
+
+    // Create a session for the user
+    await db.insert(sessions).values({
+      user_id: user.id,
+      expires_at: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7), // 1 week
+      session_id: req.sessionID,
+    });
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password: _unused, ...userWithoutPassword } = user;
+
+    res.status(200).json({ message: 'Sign in', user: userWithoutPassword });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Internal server error' });
+  }
 };
 
 const signUpSchema = z
@@ -127,9 +114,21 @@ const signUp = async (req: Request, res: Response): Promise<void> => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const newUser = await db.insert(users).values({
+    await db.insert(users).values({
       email: email,
       password: hashedPassword,
+    });
+
+    const newUser = await db.query.users.findFirst({
+      where: eq(users.email, email),
+    });
+    if (!newUser) {
+      res.status(500).json({ message: 'User creation failed.' });
+      return;
+    }
+    await db.insert(playlists).values({
+      title: 'Liked Songs',
+      userId: newUser.id,
     });
 
     res.status(201).json({ message: 'User created', user: newUser });
@@ -140,17 +139,40 @@ const signUp = async (req: Request, res: Response): Promise<void> => {
 };
 
 const signOut = async (req: Request, res: Response): Promise<void> => {
-  req.logOut(function (err) {
-    if (err) {
-      console.error(err);
-      res.status(500).json({ message: 'Internal server error' });
-    }
-  });
+  await db.delete(sessions).where(eq(sessions.session_id, req.sessionID));
   res.status(200).json({ message: 'Sign out' });
 };
 
 const getSession = async (req: Request, res: Response): Promise<void> => {
-  res.status(200).json({ user: req.user });
+  const session = await db.query.sessions.findFirst({
+    where: eq(sessions.session_id, req.sessionID),
+    with: {
+      user: {
+        columns: {
+          id: true,
+          email: true,
+          image: true,
+          gender: true,
+          username: true,
+          phone: true,
+          country: true,
+          state: true,
+          date_of_birth: true,
+          city: true,
+          street: true,
+          completionPercentage: true,
+          checklist: true,
+        },
+      },
+    },
+  });
+
+  if (!session) {
+    res.redirect('/login');
+    return;
+  }
+
+  res.status(200).json({ user: session.user });
 };
 
 export default {

@@ -3,9 +3,10 @@ import path from 'path';
 import fs from 'fs';
 import { z } from 'zod';
 import getAudioDurationInSeconds from 'get-audio-duration';
-import { and, asc, desc, eq, ilike, SQLWrapper } from 'drizzle-orm';
-import { musics, users } from '@/db/schema';
+import { and, asc, desc, ilike, SQLWrapper, eq } from 'drizzle-orm';
+import { musics, sessions } from '@/db/schema';
 import { db } from '@/db';
+import { notifyAllFollowers } from '@/controllers/notifications';
 
 const getMusicInfo = async (req: Request, res: Response): Promise<void> => {
   const { id } = req.params;
@@ -17,13 +18,21 @@ const getMusicInfo = async (req: Request, res: Response): Promise<void> => {
 
   const music = await db.query.musics.findFirst({
     where: eq(musics.id, Number(id)),
+    with: {
+      artist: {
+        columns: {
+          email: true,
+          username: true,
+          image: true,
+        },
+      },
+    },
   });
 
   if (!music) {
     res.status(404).json({ message: 'Music not found' });
     return;
   }
-
   res.status(200).json({ music });
 };
 
@@ -128,24 +137,20 @@ const getMusicList = async (req: Request, res: Response): Promise<void> => {
   }
 
   if (isPersonal === 'true') {
-    const email = req.cookies.email;
-
-    if (!email) {
-      res.status(401).json({ message: 'Unauthorized' });
-      return;
-    }
-
-    const user = await db.query.users.findFirst({
-      where: eq(users.email, email),
+    const session = await db.query.sessions.findFirst({
+      where: eq(sessions.session_id, req.sessionID),
+      with: {
+        user: true,
+      },
     });
 
-    if (!user) {
+    if (!session) {
       res.status(401).json({ message: 'Unauthorized' });
       return;
     }
 
     // whereClause.artistId = user.id;
-    whereClauses.push(eq(musics.artistId, user.id));
+    whereClauses.push(eq(musics.artistId, session.user.id));
   }
 
   const musicList = await db.query.musics.findMany({
@@ -182,18 +187,19 @@ const uploadMusic = async (req: Request, res: Response): Promise<void> => {
 
   const { name, public: isPublic } = params.data;
 
-  const email = req.cookies.email;
+  const session = await db.query.sessions.findFirst({
+    where: eq(sessions.session_id, req.sessionID),
+    with: {
+      user: true,
+    },
+  });
 
-  if (!email) {
+  if (!session) {
     res.status(401).json({ message: 'Unauthorized' });
     return;
   }
 
-  const user = await db.query.users.findFirst({
-    where: eq(users.email, email),
-  });
-
-  if (!user) {
+  if (!session.user) {
     res.status(401).json({ message: 'Unauthorized' });
     return;
   }
@@ -225,7 +231,7 @@ const uploadMusic = async (req: Request, res: Response): Promise<void> => {
     .values({
       title: name,
       public: isPublic === 'true',
-      artistId: user.id,
+      artistId: session.user.id,
       cover: imageFile.filename,
       path: musicFile.filename,
       duration: duration.toString(),
@@ -236,7 +242,8 @@ const uploadMusic = async (req: Request, res: Response): Promise<void> => {
     res.status(500).json({ message: 'Failed to upload music' });
     return;
   }
-
+  // Notify followers
+  await notifyAllFollowers(session.user.id, name);
   res.status(200).json({ message: 'Music uploaded successfully' });
 };
 

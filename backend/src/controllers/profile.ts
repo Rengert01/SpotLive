@@ -3,8 +3,8 @@ import path from 'path';
 import fs from 'fs';
 import bcrypt from 'bcryptjs';
 import { db } from '@/db';
-import { users } from '@/db/schema';
-import { eq } from 'drizzle-orm';
+import { followers, sessions, users } from '@/db/schema';
+import { eq, and } from 'drizzle-orm';
 import { calculateCompletionPercentage, updateChecklist } from '@/models/user';
 import { z } from 'zod';
 
@@ -50,8 +50,17 @@ const updateProfileSchema = z.object({
 });
 
 const updateProfile = async (req: Request, res: Response): Promise<void> => {
-  // Extract email from cookie
-  const email = req.cookies.email;
+  const session = await db.query.sessions.findFirst({
+    where: eq(sessions.session_id, req.sessionID),
+    with: {
+      user: true,
+    },
+  });
+
+  if (!session) {
+    res.status(401).json({ message: 'Unauthorized' });
+    return;
+  }
 
   try {
     const {
@@ -66,12 +75,7 @@ const updateProfile = async (req: Request, res: Response): Promise<void> => {
       new_password,
     } = updateProfileSchema.parse(req.body);
 
-    // Find the user in the database by email
-    const user = await db.query.users.findFirst({
-      where: eq(users.email, email),
-    });
-
-    if (!user) {
+    if (!session.user) {
       res.status(404).json({ message: 'User not found' });
       return;
     }
@@ -80,11 +84,11 @@ const updateProfile = async (req: Request, res: Response): Promise<void> => {
     let newImage = null;
     if (req.file) {
       // If the user has an old profile image, delete it from the server
-      if (user.image) {
+      if (session.user.image) {
         const oldImagePath = path.join(
           __dirname,
           '../uploads/image',
-          path.basename(user.image)
+          path.basename(session.user.image)
         );
         fs.unlink(oldImagePath, (err) => {
           if (err) console.error('Error deleting old image:', err);
@@ -92,11 +96,11 @@ const updateProfile = async (req: Request, res: Response): Promise<void> => {
       }
 
       // Set the new image path
-      newImage = `/uploads/image/${req.file.filename}`;
+      newImage = `/api/uploads/image/${req.file.filename}`;
     }
 
     // Prepare the updated fields, only including provided values
-    const updatedFields: Partial<typeof user> = {
+    const updatedFields: Partial<typeof session.user> = {
       ...(gender && { gender }),
       ...(username && { username }),
       ...(phone && { phone }),
@@ -113,7 +117,7 @@ const updateProfile = async (req: Request, res: Response): Promise<void> => {
     }
 
     // Set the image if a new one is uploaded; otherwise, keep the existing image
-    updatedFields.image = newImage || user.image;
+    updatedFields.image = newImage || session.user.image;
 
     // // Update the user with the specified fields
     // await user.update(updatedFields);
@@ -125,25 +129,27 @@ const updateProfile = async (req: Request, res: Response): Promise<void> => {
 
     // Update the user with the specified fields
     console.log(updatedFields);
-    updateChecklist(user);
-    user.completionPercentage = calculateCompletionPercentage(user);
+    updateChecklist(session.user);
+    session.user.completionPercentage = calculateCompletionPercentage(
+      session.user
+    );
 
     // Send the updated user details and profile completion
     await db
       .update(users)
       .set({
         ...updatedFields,
-        completionPercentage: user.completionPercentage,
-        checklist: user.checklist,
+        completionPercentage: session.user.completionPercentage,
+        checklist: session.user.checklist,
       })
-      .where(eq(users.email, email));
+      .where(eq(users.email, session.user.email));
 
     res.status(201).json({
       message: 'User details updated successfully',
-      user,
+      user: session.user,
       profileCompletion: {
-        percentage: user.completionPercentage,
-        checklist: user.checklist,
+        percentage: session.user.completionPercentage,
+        checklist: session.user.checklist,
       },
     });
   } catch (err) {
@@ -152,7 +158,77 @@ const updateProfile = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
+const getUserDetails = async (req: Request, res: Response): Promise<void> => {
+  const userId = Number(req.params.id); // Ensure the ID is parsed as a number
+
+  if (!userId) {
+    res.status(400).json({ message: 'User Id is required' });
+    return;
+  }
+
+  try {
+    // Fetch user data from the database
+    const user = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, userId))
+      .limit(1);
+
+    if (!user || user.length === 0) {
+      res.status(404).json({ message: 'User not found' });
+      return;
+    }
+
+    const userDetails = user[0];
+
+    const session = await db.query.sessions.findFirst({
+      where: eq(sessions.session_id, req.sessionID),
+      with: {
+        user: true,
+      },
+    });
+
+    // Prepare the response
+    const response = {
+      id: userDetails.id,
+      email: userDetails.email,
+      username: userDetails.username,
+      phone: userDetails.phone,
+      country: userDetails.country,
+      state: userDetails.state,
+      city: userDetails.city,
+      street: userDetails.street,
+      image: userDetails.image,
+      gender: userDetails.gender,
+      dateOfBirth: userDetails.date_of_birth,
+    };
+    if (session) {
+      // Check if the requesting user is following this user
+      const isFollowing = await db.query.followers.findFirst({
+        where: and(
+          eq(followers.followerId, session.user.id),
+          eq(followers.followedId, userId)
+        ),
+      });
+
+      res.status(200).json({
+        ...response,
+        isFollowing: !!isFollowing, // Convert to boolean
+      });
+      return;
+    }
+
+    res.status(200).json(response);
+    return;
+  } catch (error) {
+    console.error('Error fetching user details:', error);
+    res.status(500).json({ message: 'Internal server error' });
+    return;
+  }
+};
+
 export default {
   deleteAccount,
   updateProfile,
+  getUserDetails,
 };

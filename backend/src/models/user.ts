@@ -1,12 +1,19 @@
 import { musics } from '@/db/schema';
 import { relations } from 'drizzle-orm';
-import { date, integer, json, pgTable, varchar } from 'drizzle-orm/pg-core';
+import {
+  date,
+  integer,
+  json,
+  pgTable,
+  serial,
+  varchar,
+} from 'drizzle-orm/pg-core';
 
 export const users = pgTable('user', {
-  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  id: serial().primaryKey(),
   email: varchar().notNull(),
   password: varchar().notNull(),
-  image: varchar().notNull().default('/uploads/image/profile.jpg'),
+  image: varchar().notNull().default('/api/uploads/image/profile.jpg'),
   gender: varchar().default(''),
   username: varchar().default(''),
   phone: varchar().default(''),

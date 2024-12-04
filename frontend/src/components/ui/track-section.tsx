@@ -2,29 +2,33 @@ import Track from '@/components/ui/track';
 import { Separator } from '@/components/ui/separator';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { useAudioStore } from '@/stores/audio-store';
+import { ReactNode } from 'react';
 
 interface TrackSectionProps {
   title: string;
   subtitle: string;
   tracks: TrackType[];
+  children?: ReactNode;
 }
 
 export default function TrackSection({
   title,
   subtitle,
   tracks,
+  children,
 }: TrackSectionProps) {
   const { audio, setAudio, togglePlayPause } = useAudioStore();
 
   const handleTrackClick = (track: TrackType) => {
     setAudio({
       ...audio,
-      isPlaying: false,
+      isPlaying: audio.audioSrc === track.id && audio.isPlaying,
       audioSrc: track.id,
       audioTitle: track.title,
       audioArtist: track.artist.username,
       audioCoverSrc: track.cover,
       duration: track.duration,
+      playbackPosition: 0,
     });
 
     togglePlayPause();
@@ -33,7 +37,10 @@ export default function TrackSection({
   return (
     <div>
       <div className="space-y-1">
-        <h2 className="text-3xl font-bold text-black">{title}</h2>
+        <div className="flex justify-between">
+          <h2 className="text-3xl font-bold text-black">{title}</h2>
+          {children}
+        </div>
         <p className="text-sm text-muted-foreground">{subtitle}</p>
       </div>
       <Separator className="my-4" />

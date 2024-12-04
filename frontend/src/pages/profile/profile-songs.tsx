@@ -1,6 +1,9 @@
 import TrackSection from '@/components/ui/track-section';
 import { useEffect, useState } from 'react';
 import axios from '@/config/axios';
+import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
+import { PlusCircle } from 'lucide-react';
 
 export default function ProfileSongs() {
   const [releasedTracks, setReleasedTracks] = useState<TrackType[]>([]);
@@ -55,7 +58,15 @@ export default function ProfileSongs() {
         title="Your Released Songs"
         subtitle="Tracks that you have released"
         tracks={releasedTracks}
-      />
+      >
+        <Link to="/songs/upload">
+          <Button>
+            <PlusCircle className="h-4 w-4 mr-2" />
+            Upload Track
+          </Button>
+        </Link>
+      </TrackSection>
+
       <TrackSection
         title="Your Private Songs"
         subtitle="Tracks that you have set to private"

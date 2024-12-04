@@ -24,6 +24,7 @@ import { useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 
 import { z } from 'zod';
+import { useToast } from '@/hooks/use-toast';
 
 const ACCEPTED_IMAGE_TYPES = [
   'image/jpeg',
@@ -33,7 +34,7 @@ const ACCEPTED_IMAGE_TYPES = [
 ];
 const ACCEPTED_AUDIO_TYPES = ['audio/mpeg', 'audio/mp3'];
 
-const trackSchema = z.object({
+export const trackSchema = z.object({
   name: z.string().min(1, 'Track name is required.'),
   trackCover: z
     .instanceof(File, { message: 'An image file is required.' })
@@ -53,6 +54,8 @@ export default function UploadSongPage() {
   const [imageSrc, setImageSrc] = useState('/placeholder.svg');
   const [isDragging, setIsDragging] = useState(false);
 
+  const { toast } = useToast();
+
   const form = useForm<z.infer<typeof trackSchema>>({
     resolver: zodResolver(trackSchema),
     defaultValues: {
@@ -64,8 +67,6 @@ export default function UploadSongPage() {
   const imageRef = form.register('trackCover');
 
   const onSubmit = async (data: z.infer<typeof trackSchema>) => {
-    console.log('data', data);
-
     const formData = new FormData();
     formData.append('name', data.name);
     formData.append('public', data.public === 'public' ? 'true' : 'false');
@@ -79,10 +80,18 @@ export default function UploadSongPage() {
         },
       })
       .then((res) => {
-        console.log(res);
+        console.log(res.data);
+        toast({
+          title: 'Track uploaded successfully!',
+        });
       })
       .catch((err) => {
         console.error(err);
+        toast({
+          title: 'Something went wrong',
+          description:
+            'There was an error uploading your track. Please try again.',
+        });
       });
   };
 

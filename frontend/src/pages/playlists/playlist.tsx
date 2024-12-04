@@ -45,7 +45,7 @@ import { usePlaylistsStore } from '@/stores/playlist-store';
           <CardContent>
             <div className="grid gap-4">
               {musics.length > 0 ? (
-                <ul className="divide-y divide-gray-200">
+                <ul className="divide-y divide-gray-200" >
                   {musics.map((track) => (
                     <li
                       key={track.id}

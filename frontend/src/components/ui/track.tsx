@@ -164,7 +164,7 @@ function TrackItem({
                       })
                       .catch((error) => {
                           toast({
-                          title: 'Operation Failed',
+                          title: 'Oh, no!',
                           description: error.response.data.message,
                           });
                       });
@@ -186,11 +186,6 @@ function TrackItem({
                 ))}
               </ContextMenuSubContent>
             </ContextMenuSub>
-            <ContextMenuSeparator />
-            <ContextMenuItem>Play Next</ContextMenuItem>
-            <ContextMenuItem>Play Later</ContextMenuItem>
-            <ContextMenuItem>Create Station</ContextMenuItem>
-            <ContextMenuSeparator />
             <ContextMenuItem
               onClick={() => {
                 axios
@@ -201,15 +196,15 @@ function TrackItem({
                     });
                 })
                 .catch((error) => {
+                  console.error(error);
                     toast({
-                    title: 'Operation Failed',
+                    title: 'Oh, no!',
                     description: error.response.data.message,
                     });
                 });
               }}>
               Like
             </ContextMenuItem>
-            <ContextMenuItem>Share</ContextMenuItem>
           </ContextMenuContent>
         </ContextMenu>
 

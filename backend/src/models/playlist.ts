@@ -1,7 +1,7 @@
 import { users } from '@/models/user';
 import { musics } from '@/models/music';
 import { relations } from 'drizzle-orm';
-import { integer, pgTable, varchar } from 'drizzle-orm/pg-core';
+import { integer, pgTable, primaryKey, varchar } from 'drizzle-orm/pg-core';
 
 export const playlists = pgTable('playlist', {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
@@ -18,7 +18,11 @@ export const musicsPlaylists = pgTable('music_playlist', {
   playlistId: integer()
     .notNull()
     .references(() => playlists.id, { onDelete: 'cascade' }),
-});
+    
+},
+(t) => ({
+  pk: primaryKey({ columns: [t.musicId, t.playlistId] }),
+}));
 
 export const playlistRelations = relations(playlists, ({ one }) => ({
   user: one(users, {

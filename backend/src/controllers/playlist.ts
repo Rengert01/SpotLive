@@ -181,17 +181,18 @@ const bookmarkMusic = async (req: Request, res: Response): Promise<void> => {
     res.status(400).json({ message: 'Playlist ID and Music ID are required' });
     return;
   }
+  
   try {
     await db
       .insert(musicsPlaylists)
       .values({
         musicId: Number(musicId),
         playlistId: Number(playlist.id),
-      });
+      }).returning();
     res.status(200).json({ message: 'Music bookmarked' });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'An error occurred while bookmarking music' });
+    res.status(500).json({ message: 'This music is already in your playlist!' });
   }
 }
 

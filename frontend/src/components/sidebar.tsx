@@ -58,8 +58,6 @@ export function AppSidebar({ className }: SidebarProps) {
 
   const location = useLocation();
 
-  console.log(location.pathname);
-
   return (
     <Sidebar className={cn('', className)}>
       <div className="h-full space-y-4 pt-4 flex flex-col justify-between">
@@ -103,33 +101,37 @@ export function AppSidebar({ className }: SidebarProps) {
               <div className="space-y-1 p-2">
                 {playlists?.map((playlist, i) => (
                   <div className="flex" key={playlist.id}>
-                    <Button
-                      key={`${playlist}-${i}`}
-                      variant={
-                        location.pathname === `/playlist/${playlist}`
-                          ? 'secondary'
-                          : 'ghost'
-                      }
-                      className="w-full justify-start font-normal"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className="mr-2 h-4 w-4"
-                      >
-                        <path d="M21 15V6" />
-                        <path d="M18.5 18a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" />
-                        <path d="M12 12H3" />
-                        <path d="M16 6H3" />
-                        <path d="M12 18H3" />
-                      </svg>
-                      {playlist.title}
-                    </Button>
+                    <div className="w-full">
+                      <Link to={`/playlist/${playlist.id}`}>
+                        <Button
+                          key={`${playlist}-${i}`}
+                          variant={
+                            location.pathname === `/playlist/${playlist}`
+                              ? 'secondary'
+                              : 'ghost'
+                          }
+                          className="w-full justify-start font-normal"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            className="mr-2 h-4 w-4"
+                          >
+                            <path d="M21 15V6" />
+                            <path d="M18.5 18a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" />
+                            <path d="M12 12H3" />
+                            <path d="M16 6H3" />
+                            <path d="M12 18H3" />
+                          </svg>
+                          {playlist.title}
+                        </Button>
+                      </Link>
+                    </div>
                     <Button
                       variant="ghost"
                       className="ml-auto"

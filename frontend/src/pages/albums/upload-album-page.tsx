@@ -104,15 +104,13 @@ export default function UploadAlbumPage() {
     formData.append('image', data.albumCover);
     formData.append('tracks', data.tracks.join(','));
 
-    console.log();
     axios
       .post('/api/album/upload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       })
-      .then((res) => {
-        console.log(res.data);
+      .then(() => {
         toast({
           title: 'Album uploaded successfully!',
         });
@@ -274,16 +272,16 @@ export default function UploadAlbumPage() {
                                                 onCheckedChange={(checked) => {
                                                   return checked
                                                     ? field.onChange([
-                                                        ...field.value,
-                                                        track.id,
-                                                      ])
+                                                      ...field.value,
+                                                      track.id,
+                                                    ])
                                                     : field.onChange(
-                                                        field.value?.filter(
-                                                          (value) =>
-                                                            value !=
-                                                            Number(track.id)
-                                                        )
-                                                      );
+                                                      field.value?.filter(
+                                                        (value) =>
+                                                          value !=
+                                                          Number(track.id)
+                                                      )
+                                                    );
                                                 }}
                                               />
                                             </div>
@@ -319,9 +317,8 @@ export default function UploadAlbumPage() {
                   </CardHeader>
                   <CardContent>
                     <div
-                      className={`grid gap-2 border-2 border-dashed p-2 rounded-xl cursor-pointer ${
-                        isDragging ? 'border-primary' : 'border-gray-300'
-                      }`}
+                      className={`grid gap-2 border-2 border-dashed p-2 rounded-xl cursor-pointer ${isDragging ? 'border-primary' : 'border-gray-300'
+                        }`}
                       onDragOver={handleDragOver}
                       onDragLeave={handleDragLeave}
                       onDrop={handleDrop}

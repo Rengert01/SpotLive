@@ -153,7 +153,24 @@ function TrackItem({
                 </DialogTrigger>
                 <ContextMenuSeparator />
                 {playlists.map((playlist) => (
-                  <ContextMenuItem key={playlist.id}>
+                  <ContextMenuItem
+                    key={playlist.id}
+                    onClick={() => {
+                      axios
+                        .post(`/api/playlist/${playlist.id}/musics/${track.id}`)
+                        .then(() => {
+                          toast({
+                            title: 'Music added to playlist',
+                          });
+                        })
+                        .catch((error) => {
+                          toast({
+                            title: 'Oh, no!',
+                            description: error.response.data.message,
+                          });
+                        });
+                    }}
+                  >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
@@ -171,13 +188,26 @@ function TrackItem({
                 ))}
               </ContextMenuSubContent>
             </ContextMenuSub>
-            <ContextMenuSeparator />
-            <ContextMenuItem>Play Next</ContextMenuItem>
-            <ContextMenuItem>Play Later</ContextMenuItem>
-            <ContextMenuItem>Create Station</ContextMenuItem>
-            <ContextMenuSeparator />
-            <ContextMenuItem>Like</ContextMenuItem>
-            <ContextMenuItem>Share</ContextMenuItem>
+            <ContextMenuItem
+              onClick={() => {
+                axios
+                  .post(`/api/playlist/bookmark/${track.id}`)
+                  .then(() => {
+                    toast({
+                      title: 'Music liked',
+                    });
+                  })
+                  .catch((error) => {
+                    console.error(error);
+                    toast({
+                      title: 'Oh, no!',
+                      description: error.response.data.message,
+                    });
+                  });
+              }}
+            >
+              Like
+            </ContextMenuItem>
           </ContextMenuContent>
         </ContextMenu>
 

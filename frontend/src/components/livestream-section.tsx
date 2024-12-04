@@ -6,7 +6,14 @@ import socket from '@/config/socket';
 import { useToast } from '@/hooks/use-toast';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useBlocker, useNavigate } from 'react-router';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 
 interface LivestreamSectionProps {
@@ -21,17 +28,17 @@ export default function LivestreamSection({
   livestreams,
 }: LivestreamSectionProps) {
   const { toast } = useToast();
-  const [listening, setListening] = useState(false)
+  const [listening, setListening] = useState(false);
   const blocker = useBlocker(listening);
   const navigate = useNavigate();
-  const [isPromptOpen, setIsPromptOpen] = useState(false)
+  const [isPromptOpen, setIsPromptOpen] = useState(false);
   const [nextLocation, setNextLocation] = useState<string | null>(null);
 
   const audioContextRef = useRef<AudioContext | null>(null);
   const audioQueueRef = useRef<AudioBuffer[]>([]); // Queue to handle continuous playback
   const isPlayingRef = useRef(false);
 
-  const [currLivestream, setCurrLivestream] = useState<Livestream | null>(null)
+  const [currLivestream, setCurrLivestream] = useState<Livestream | null>(null);
 
   const playFromQueue = useCallback(() => {
     if (!audioContextRef.current || audioQueueRef.current.length === 0) return;
@@ -66,10 +73,11 @@ export default function LivestreamSection({
     socket.on('audio-data', async (audioData: ArrayBuffer) => {
       try {
         if (!audioContextRef.current) return;
-        console.log(audioData)
+        console.log(audioData);
 
         // Decode the audio data
-        const decodedAudio = await audioContextRef.current.decodeAudioData(audioData);
+        const decodedAudio =
+          await audioContextRef.current.decodeAudioData(audioData);
         audioQueueRef.current.push(decodedAudio);
 
         // If not already playing, start playback
@@ -89,62 +97,65 @@ export default function LivestreamSection({
   }, [playFromQueue]);
 
   const joinLivestream = (livestream: Livestream) => {
-    socket.emit('join-livestream', livestream.id)
+    socket.emit('join-livestream', livestream.id);
 
     socket.on('success-join-livestream', (id: string, title: string) => {
       setListening(true);
-      setCurrLivestream(livestream)
+      setCurrLivestream(livestream);
       toast({
-        title: "Joined Livestream!",
-        description: "You are now listening to " + title + " " + id
-      })
-    })
+        title: 'Joined Livestream!',
+        description: 'You are now listening to ' + title + ' ' + id,
+      });
+    });
 
     socket.on('error-join-livestream', (message: string) => {
       toast({
-        title: "Something went wrong!",
+        title: 'Something went wrong!',
         description: message,
-      })
-    })
-  }
+      });
+    });
+  };
 
-  const leaveLivestream = useCallback((livestream: Livestream) => {
-    socket.emit('leave-livestream', livestream.id)
+  const leaveLivestream = useCallback(
+    (livestream: Livestream) => {
+      socket.emit('leave-livestream', livestream.id);
 
-    socket.on('success-leave-livestream', () => {
-      setListening(false)
-      setCurrLivestream(null)
-      toast({
-        title: "Stopped Listening to Livestream!",
-        description: "We are sad to see you go :("
-      })
-    })
+      socket.on('success-leave-livestream', () => {
+        setListening(false);
+        setCurrLivestream(null);
+        toast({
+          title: 'Stopped Listening to Livestream!',
+          description: 'We are sad to see you go :(',
+        });
+      });
 
-    socket.on('error-leave-livestream', (message: string) => {
-      toast({
-        title: "Something went wrong!",
-        description: message,
-      })
-    })
-  }, [toast])
+      socket.on('error-leave-livestream', (message: string) => {
+        toast({
+          title: 'Something went wrong!',
+          description: message,
+        });
+      });
+    },
+    [toast]
+  );
 
   const handleLivestreamClick = (livestream: Livestream) => {
-    console.log(livestream)
+    console.log(livestream);
 
     if (!listening) {
-      joinLivestream(livestream)
+      joinLivestream(livestream);
     } else {
-      leaveLivestream(livestream)
+      leaveLivestream(livestream);
     }
 
     socket.on('end-livestream', () => {
-      setListening(false)
-      setCurrLivestream(null)
+      setListening(false);
+      setCurrLivestream(null);
       toast({
-        title: "Livestream Ended!",
-        description: "Hope you enjoyed it!"
-      })
-    })
+        title: 'Livestream Ended!',
+        description: 'Hope you enjoyed it!',
+      });
+    });
   };
 
   useEffect(() => {
@@ -157,28 +168,26 @@ export default function LivestreamSection({
 
   useEffect(() => {
     window.addEventListener('beforeunload', () => {
-      if (currLivestream) leaveLivestream(currLivestream)
-    })
+      if (currLivestream) leaveLivestream(currLivestream);
+    });
 
     return () => {
       window.removeEventListener('beforeunload', () => {
-        if (currLivestream) leaveLivestream(currLivestream)
-      })
-    }
-  }, [leaveLivestream, currLivestream])
+        if (currLivestream) leaveLivestream(currLivestream);
+      });
+    };
+  }, [leaveLivestream, currLivestream]);
 
   const handleConfirmLeave = () => {
     setIsPromptOpen(false);
 
-    if (currLivestream)
-      leaveLivestream(currLivestream)
+    if (currLivestream) leaveLivestream(currLivestream);
 
     if (nextLocation) {
       navigate(nextLocation); // Navigate to the stored location
     }
 
-    if (blocker.state === 'blocked')
-      blocker.proceed()
+    if (blocker.state === 'blocked') blocker.proceed();
   };
 
   const handleCancelLeave = () => {
@@ -195,7 +204,11 @@ export default function LivestreamSection({
       <ScrollArea className="w-full">
         <div className="flex w-max space-x-4 mb-4">
           {livestreams.map((livestream) => (
-            <LivestreamCard key={livestream.id} livestream={livestream} onClick={handleLivestreamClick} />
+            <LivestreamCard
+              key={livestream.id}
+              livestream={livestream}
+              onClick={handleLivestreamClick}
+            />
           ))}
           <ScrollBar orientation="horizontal" />
         </div>

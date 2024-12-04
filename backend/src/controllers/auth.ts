@@ -37,6 +37,9 @@ const signIn = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
+    // Delete any existing sessions for the user
+    await db.delete(sessions).where(eq(sessions.user_id, user.id));
+
     // Create a session for the user
     await db.insert(sessions).values({
       user_id: user.id,

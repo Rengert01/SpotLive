@@ -27,7 +27,7 @@ function TrackItem({
         <ContextMenuTrigger>
           <div className="aspect-square overflow-hidden rounded-lg bg-transparent">
             <img
-              src={`http://localhost:3001/uploads/image/${track.cover}`}
+              src={`${import.meta.env.VITE_APP_API_URL}/api/uploads/image/${track.cover}`}
               alt={`${track.title} by ${track.artist.username}`}
               className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-110"
             />
@@ -53,7 +53,7 @@ function TrackItem({
             {track.title}
           </h3>
           <Link
-            to={`/user/${track.id}`}
+            to={`/user/${track.artistId}`}
             className="text-muted-foreground underline-offset-4 hover:underline"
           >
             {track.artist.username}

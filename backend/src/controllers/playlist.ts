@@ -136,4 +136,26 @@ const deleteMusicFromPlaylist = async (req: Request, res: Response): Promise<voi
     res.status(500).json({ message: 'An error occurred while deleting music from playlist' });
   }
 };
-export default { uploadPlaylist, getPlaylistInfo, getList, deletePlaylist, listMusicsFromPlaylist, deleteMusicFromPlaylist };
+
+const addMusicToPlaylist = async (req: Request, res: Response): Promise<void> => {
+  const { playlistId, musicId } = req.params;
+  if (!playlistId || !musicId) {
+    res.status(400).json({ message: 'Playlist ID and Music ID are required' });
+    return;
+  }
+  try {
+    await db
+      .insert(musicsPlaylists)
+      .values({
+        musicId: Number(musicId),
+        playlistId: Number(playlistId),
+      })
+      .returning();
+    res.status(200).json({ message: 'Music added to playlist' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'An error occurred while adding music to playlist' });
+  }
+};
+
+export default { uploadPlaylist, getPlaylistInfo, getList, deletePlaylist, listMusicsFromPlaylist, deleteMusicFromPlaylist, addMusicToPlaylist };

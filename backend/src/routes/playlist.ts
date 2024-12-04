@@ -8,5 +8,6 @@ router.post('/upload', playlistController.uploadPlaylist);
 router.delete('/delete/:id', playlistController.deletePlaylist);
 router.get('/:id/musics', playlistController.listMusicsFromPlaylist);
 router.delete('/:playlistId/musics/:musicId', playlistController.deleteMusicFromPlaylist);
+router.post('/:playlistId/musics/:musicId', playlistController.addMusicToPlaylist);
 
 export default router;

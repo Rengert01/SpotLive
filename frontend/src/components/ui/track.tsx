@@ -153,7 +153,22 @@ function TrackItem({
                 </DialogTrigger>
                 <ContextMenuSeparator />
                 {playlists.map((playlist) => (
-                  <ContextMenuItem key={playlist.id}>
+                  <ContextMenuItem key={playlist.id}
+                    onClick={() => {
+                      axios
+                      .post(`/api/playlist/${playlist.id}/musics/${track.id}`)
+                      .then(() => {
+                          toast({
+                          title: 'Music added to playlist',
+                          });
+                      })
+                      .catch((error) => {
+                          toast({
+                          title: 'Operation Failed',
+                          description: error.response.data.message,
+                          });
+                      });
+                  }}>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"

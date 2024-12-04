@@ -153,22 +153,24 @@ function TrackItem({
                 </DialogTrigger>
                 <ContextMenuSeparator />
                 {playlists.map((playlist) => (
-                  <ContextMenuItem key={playlist.id}
+                  <ContextMenuItem
+                    key={playlist.id}
                     onClick={() => {
                       axios
-                      .post(`/api/playlist/${playlist.id}/musics/${track.id}`)
-                      .then(() => {
+                        .post(`/api/playlist/${playlist.id}/musics/${track.id}`)
+                        .then(() => {
                           toast({
-                          title: 'Music added to playlist',
+                            title: 'Music added to playlist',
                           });
-                      })
-                      .catch((error) => {
+                        })
+                        .catch((error) => {
                           toast({
-                          title: 'Oh, no!',
-                          description: error.response.data.message,
+                            title: 'Oh, no!',
+                            description: error.response.data.message,
                           });
-                      });
-                  }}>
+                        });
+                    }}
+                  >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
@@ -189,20 +191,21 @@ function TrackItem({
             <ContextMenuItem
               onClick={() => {
                 axios
-                .post(`/api/playlist/bookmark/${track.id}`)
-                .then(() => {
+                  .post(`/api/playlist/bookmark/${track.id}`)
+                  .then(() => {
                     toast({
-                    title: 'Music liked',
+                      title: 'Music liked',
                     });
-                })
-                .catch((error) => {
-                  console.error(error);
+                  })
+                  .catch((error) => {
+                    console.error(error);
                     toast({
-                    title: 'Oh, no!',
-                    description: error.response.data.message,
+                      title: 'Oh, no!',
+                      description: error.response.data.message,
                     });
-                });
-              }}>
+                  });
+              }}
+            >
               Like
             </ContextMenuItem>
           </ContextMenuContent>

@@ -8,40 +8,19 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import axios from '@/config/axios';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { toast } from '@/hooks/use-toast';
 import { useUserStore } from '@/stores/user-store';
 import { Sidebar } from '@/components/ui/sidebar';
-import { Plus } from 'lucide-react';
+import { usePlaylistsStore } from '@/stores/playlist-store';
 
 type SidebarProps = React.HTMLAttributes<HTMLDivElement>;
 
 export function AppSidebar({ className }: SidebarProps) {
 
-  const [playlists, setPlaylists] = useState<PlaylistType[]>([]);
-
-  useEffect(() => {
-    const fetchPlaylists = async () => {
-      axios
-        .get('/api/playlist/list')
-        .then((res) => {
-          setPlaylists(
-            res.data.playlists.map((playlist: PlaylistType) => ({
-              id: playlist.id,
-              title: playlist.title,
-              user: playlist.user,
-            }))
-          );
-        })
-        .catch((err) => {
-          console.error(err);
-        });
-    };
-
-    fetchPlaylists();
-  }, []);
+  const { playlists, setPlaylists } = usePlaylistsStore();
 
   const navigate = useNavigate();
   const { user, setUser, clearUser } = useUserStore();
@@ -120,79 +99,74 @@ export function AppSidebar({ className }: SidebarProps) {
               <h2 className="relative px-7 text-lg font-semibold tracking-tight mb-1">
                 Playlists
               </h2>
-              <Link to="/playlists">
-                <Button>
-                  <Plus />
-                </Button>
-              </Link>
             </div>
             <ScrollArea className="px-1 h-[350px]">
               <div className="space-y-1 p-2">
                 {playlists?.map((playlist, i) => (
-                  <div className='flex'>
-                  <Button
-                    key={`${playlist}-${i}`}
-                    variant={
-                      location.pathname === `/playlist/${playlist}`
-                        ? 'secondary'
-                        : 'ghost'
-                    }
-                    className="w-full justify-start font-normal"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="mr-2 h-4 w-4"
+                  <div className='flex' key={playlist.id}>
+                    <Button
+                      key={`${playlist}-${i}`}
+                      variant={
+                        location.pathname === `/playlist/${playlist}`
+                          ? 'secondary'
+                          : 'ghost'
+                      }
+                      className="w-full justify-start font-normal"
                     >
-                      <path d="M21 15V6" />
-                      <path d="M18.5 18a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" />
-                      <path d="M12 12H3" />
-                      <path d="M16 6H3" />
-                      <path d="M12 18H3" />
-                    </svg>
-                    {playlist.title}
-                  </Button>
-                  <Button
-                  variant="ghost"
-                  className="ml-auto"
-                  onClick={() => {
-                    axios
-                      .delete(`/api/playlist/delete/${playlist.id}`)
-                      .then(() => {
-                        setPlaylists(playlists.filter((p) => p.id !== playlist.id));
-                        toast({
-                          title: 'Playlist Deleted',
-                          description: `Playlist "${playlist.title}" has been deleted.`,
-                        });
-                      })
-                      .catch((error) => {
-                        toast({
-                          title: 'Operation Failed',
-                          description: error.response.data.message,
-                        });
-                      });
-                  }}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="h-4 w-4"
-                  >
-                    <line x1="18" y1="6" x2="6" y2="18" />
-                    <line x1="6" y1="6" x2="18" y2="18" />
-                  </svg>
-                </Button>
-                </div>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="mr-2 h-4 w-4"
+                      >
+                        <path d="M21 15V6" />
+                        <path d="M18.5 18a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" />
+                        <path d="M12 12H3" />
+                        <path d="M16 6H3" />
+                        <path d="M12 18H3" />
+                      </svg>
+                      {playlist.title}
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      className="ml-auto"
+                      onClick={() => {
+                        axios
+                          .delete(`/api/playlist/delete/${playlist.id}`)
+                          .then(() => {
+                            setPlaylists(playlists.filter((p) => p.id !== playlist.id));
+                            toast({
+                              title: 'Playlist Deleted',
+                              description: `Playlist "${playlist.title}" has been deleted.`,
+                            });
+                          })
+                          .catch((error) => {
+                            toast({
+                              title: 'Operation Failed',
+                              description: error.response.data.message,
+                            });
+                          });
+                      }}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="h-4 w-4"
+                      >
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                      </svg>
+                    </Button>
+                  </div>
                 ))}
               </div>
             </ScrollArea>

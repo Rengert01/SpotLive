@@ -5,10 +5,29 @@ import { playlists, sessions } from '@/db/schema';
 import { db } from '@/db';
 
 const getList = async (req: Request, res: Response): Promise<void> => {
-    const playlists = await db.query.playlists.findMany();
-    
-    res.status(200).json({ playlists });
-}
+  const session = await db.query.sessions.findFirst({
+    where: eq(sessions.session_id, req.sessionID),
+  });
+
+  if (!session) {
+    res.status(304).json({ message: 'Unauthorized' });
+    return;
+  }
+
+  const playlistList = await db.query.playlists.findMany({
+    where: eq(playlists.userId, session.user_id),
+    with: {
+      user: {
+        columns: {
+          id: true,
+          username: true,
+        },
+      },
+    },
+  });
+
+  res.status(200).json({ playlistList });
+};
 
 const getPlaylistInfo = async (req: Request, res: Response): Promise<void> => {
   const { id } = req.params;
@@ -41,7 +60,6 @@ const getPlaylistInfo = async (req: Request, res: Response): Promise<void> => {
 
 const uploadPlaylistBodySchema = z.object({
   title: z.string(),
-  public: z.enum(['true', 'false']),
 });
 
 const uploadPlaylist = async (req: Request, res: Response): Promise<void> => {
@@ -52,7 +70,7 @@ const uploadPlaylist = async (req: Request, res: Response): Promise<void> => {
     return;
   }
 
-  const { title, public: isPublic } = params.data;
+  const { title } = params.data;
 
   const session = await db.query.sessions.findFirst({
     where: eq(sessions.session_id, req.sessionID),
@@ -75,7 +93,6 @@ const uploadPlaylist = async (req: Request, res: Response): Promise<void> => {
     .insert(playlists)
     .values({
       title: title,
-      public: isPublic === 'true',
       userId: session.user.id,
     })
     .returning();
@@ -84,8 +101,8 @@ const uploadPlaylist = async (req: Request, res: Response): Promise<void> => {
 };
 
 const deletePlaylist = async (req: Request, res: Response): Promise<void> => {
-    await db.delete(playlists).where(eq(playlists.id, Number(req.params.id)));
-    res.status(200).json({ message: 'Playlist deleted' });
+  await db.delete(playlists).where(eq(playlists.id, Number(req.params.id)));
+  res.status(200).json({ message: 'Playlist deleted' });
 };
 
 export default { uploadPlaylist, getPlaylistInfo, getList, deletePlaylist };

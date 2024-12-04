@@ -27,7 +27,6 @@ import { useToast } from '@/hooks/use-toast';
 
 const playlistSchema = z.object({
   title: z.string().min(1, 'Playlist name is required.'),
-  public: z.enum(['public', 'private']).default('private'),
 });
 
 export default function CreatePlaylist() {
@@ -37,15 +36,13 @@ export default function CreatePlaylist() {
     resolver: zodResolver(playlistSchema),
     defaultValues: {
       title: '',
-      public: 'private',
     },
   });
 
   const onSubmit = async (data: z.infer<typeof playlistSchema>) => {
     const requestData = {
       title: data.title,
-      public: data.public === 'public' ? 'true' : 'false',
-  };
+    };
 
     axios
       .post('/api/playlist/upload', requestData)

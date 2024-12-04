@@ -1,9 +1,9 @@
 type PlaylistType = {
-    id: string;
-    title: string;
-    user: {
-      id: string;
-      username: string;
-    };
+  title: string;
+  id: number;
+  userId: number;
+  user: {
+    id: number;
+    username: string | null;
   };
-  
+};

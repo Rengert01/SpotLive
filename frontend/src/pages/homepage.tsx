@@ -15,6 +15,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { Separator } from '@/components/ui/separator';
 import { Input } from '@/components/ui/input';
+import Notifications from '@/components/homepage-components/notifications';
 
 export default function HomePage() {
   const [activeTab, setActiveTab] = useState('Music');
@@ -44,13 +45,14 @@ export default function HomePage() {
             placeholder="Search..."
           />
         </div>
-        <div className="ml-auto">
+        <div className="ml-auto flex gap-2">
           <Link to="/songs/upload">
             <Button>
               <PlusCircle className="h-4 w-4 mr-2" />
               Upload Track
             </Button>
           </Link>
+          <Notifications />
         </div>
       </div>
       <TabsContent value="Music" className="space-y-6">

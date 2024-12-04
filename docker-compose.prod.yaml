@@ -19,40 +19,6 @@ services:
       - letsencrypt:/letsencrypt
       - /var/run/docker.sock:/var/run/docker.sock
 
-  db:
-    image: postgres
-    restart: always
-    volumes:
-      - postgres-data:/var/lib/postgresql/data
-    env_file:
-      - ./backend/.env
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -d $$POSTGRES_DB -U $$POSTGRES_USER"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  api:
-    build:
-      context: ./backend/
-      dockerfile: Dockerfile.prod
-    restart: unless-stopped
-    depends_on:
-      db:
-        condition: service_healthy
-    volumes:
-      - ./backend:/app/backend
-    command: npm run start
-    deploy:
-      mode: replicated
-      replicas: 3
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.api.rule=PathPrefix(`/api`)"
-      - "traefik.http.routers.api.entrypoints=websecure"
-      - "traefik.http.routers.api.tls.certresolver=myresolver"
-      - "traefik.http.services.api.loadbalancer.server.port=80"
-
   spotlive:
     build:
       context: ./frontend/
@@ -67,13 +33,33 @@ services:
       - "traefik.http.routers.spotlive.rule=Host(`les-test.francecentral.cloudapp.azure.com`)"
       - "traefik.http.routers.spotlive.entrypoints=websecure"
       - "traefik.http.routers.spotlive.tls.certresolver=myresolver"
-    command: npm run preview
+      - "traefik.http.services.spotlive.loadbalancer.server.port=80"
     deploy:
       mode: replicated
       replicas: 3
-    expose:
-      - "80"
+    env_file:
+      - ./frontend/.env
+    command: npm run preview
+
+  api:
+    build:
+      context: ./backend/
+      dockerfile: Dockerfile.prod
+    restart: unless-stopped
+    volumes:
+      - ./backend:/app/backend
+      - ./backend/src:/app/backend/src
+      - ./backend/package.json:/app/backend/package.json
+      - ./backend/package-lock.json:/app/frontend/package-lock.json
+    command: npm run start
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.api.rule=Host(`les-test.francecentral.cloudapp.azure.com`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.api.entrypoints=websecure"
+      - "traefik.http.routers.api.tls.certresolver=myresolver"
+      - "traefik.http.services.api.loadbalancer.server.port=9000"
+    env_file:
+      - ./backend/.env
 
 volumes:
-  postgres-data:
   letsencrypt:

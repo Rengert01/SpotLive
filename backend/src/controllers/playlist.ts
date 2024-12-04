@@ -114,8 +114,8 @@ const listMusicsFromPlaylist = async (
     with: {
       music: {
         with: {
-          artist:true,
-        }
+          artist: true,
+        },
       },
     },
   });

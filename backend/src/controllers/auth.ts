@@ -131,7 +131,12 @@ const signUp = async (req: Request, res: Response): Promise<void> => {
       userId: newUser.id,
     });
 
-    res.status(201).json({ message: 'User created', user: newUser });
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password: _unused, ...userWithoutPassword } = newUser;
+
+    res
+      .status(201)
+      .json({ message: 'User created', user: userWithoutPassword });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Internal server error' });
@@ -144,35 +149,40 @@ const signOut = async (req: Request, res: Response): Promise<void> => {
 };
 
 const getSession = async (req: Request, res: Response): Promise<void> => {
-  const session = await db.query.sessions.findFirst({
-    where: eq(sessions.session_id, req.sessionID),
-    with: {
-      user: {
-        columns: {
-          id: true,
-          email: true,
-          image: true,
-          gender: true,
-          username: true,
-          phone: true,
-          country: true,
-          state: true,
-          date_of_birth: true,
-          city: true,
-          street: true,
-          completionPercentage: true,
-          checklist: true,
+  try {
+    const session = await db.query.sessions.findFirst({
+      where: eq(sessions.session_id, req.sessionID),
+      with: {
+        user: {
+          columns: {
+            id: true,
+            email: true,
+            image: true,
+            gender: true,
+            username: true,
+            phone: true,
+            country: true,
+            state: true,
+            date_of_birth: true,
+            city: true,
+            street: true,
+            completionPercentage: true,
+            checklist: true,
+          },
         },
       },
-    },
-  });
+    });
 
-  if (!session) {
-    res.redirect('/login');
-    return;
+    if (!session) {
+      res.redirect('/login');
+      return;
+    }
+
+    res.status(200).json({ user: session.user });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Internal server error' });
   }
-
-  res.status(200).json({ user: session.user });
 };
 
 export default {

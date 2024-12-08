@@ -19,7 +19,7 @@
     "start": "node -r tsconfig-paths/register -r ts-node/register src/index.ts",
     "build": "npx tsc",
     "dev": "nodemon src/index.ts",
-    "tests": "jest --setupFiles=dotenv/config",
+    "tests": "cross-env POSTGRES_HOST=localhost npx jest --detectOpenHandles",
     "prettier:write": "npx prettier --write .",
     "prettier:check": "npx prettier --check .",
     "lint": "eslint .",

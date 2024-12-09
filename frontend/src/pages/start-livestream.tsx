@@ -38,7 +38,7 @@ import {
   useJoin,
   useLocalMicrophoneTrack,
   usePublish,
-  useRTCClient
+  useRTCClient,
 } from 'agora-rtc-react';
 import axios from '@/config/axios';
 
@@ -48,16 +48,16 @@ const startLivestreamSchema = z.object({
 });
 
 export default function StartLivestreamPage() {
-  const { toast } = useToast()
+  const { toast } = useToast();
 
   const navigate = useNavigate();
-  const [isPromptOpen, setIsPromptOpen] = useState(false)
+  const [isPromptOpen, setIsPromptOpen] = useState(false);
   const [nextLocation, setNextLocation] = useState<string | null>(null);
 
   const [isLivestreamActive, setIsLivestreamActive] = useState(false);
   const [channel, setChannel] = useState<string>('');
 
-  const [isConfirmEndOpen, setIsConfirmEndOpen] = useState(false)
+  const [isConfirmEndOpen, setIsConfirmEndOpen] = useState(false);
 
   const blocker = useBlocker(isLivestreamActive);
 
@@ -73,56 +73,59 @@ export default function StartLivestreamPage() {
     client.setClientRole('host');
   }, [client]);
 
-  useJoin({ appid: import.meta.env.VITE_AGORA_APP_ID, channel: channel, token: null }, isLivestreamActive);
+  useJoin(
+    { appid: import.meta.env.VITE_AGORA_APP_ID, channel: channel, token: null },
+    isLivestreamActive
+  );
 
   const onSubmit = (data: z.infer<typeof startLivestreamSchema>) => {
     console.log(data);
 
-    axios.post('/api/livestream', {
-      channel: data.title
-    })
-      .then((response) => {
-        console.log(response.data)
-        setChannel(data.title)
-        startLivestream()
-        toast({
-          title: "Livestream started successfully!",
-          description: "Your Livestream: " + data.title
-        })
-      }).catch((error) => {
-        console.error(error)
-        toast({
-          title: "Error",
-          description: "An error occurred while starting your livestream."
-        })
+    axios
+      .post('/api/livestream', {
+        channel: data.title,
       })
-
+      .then((response) => {
+        console.log(response.data);
+        setChannel(data.title);
+        startLivestream();
+        toast({
+          title: 'Livestream started successfully!',
+          description: 'Your Livestream: ' + data.title,
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+        toast({
+          title: 'Error',
+          description: 'An error occurred while starting your livestream.',
+        });
+      });
   };
 
   const [micOn, setMicOn] = useState(false);
   const { localMicrophoneTrack } = useLocalMicrophoneTrack(micOn);
   const [micLevel, setMicLevel] = useState(0);
   const audioCtx = useRef<AudioContext | null>(null);
-  const mediaStreamRef = useRef<MediaStream | null>(null)
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null)
-  const analyserRef = useRef<AnalyserNode | null>(null)
+  const mediaStreamRef = useRef<MediaStream | null>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const analyserRef = useRef<AnalyserNode | null>(null);
 
-
-  usePublish([localMicrophoneTrack])
+  usePublish([localMicrophoneTrack]);
 
   useEffect(() => {
     audioCtx.current = new AudioContext();
 
     return () => {
       audioCtx.current = null;
-    }
+    };
   }, []);
 
   const startMicrophone = useCallback(async (): Promise<void> => {
     setMicOn(true);
-    if (!audioCtx.current) return
+    if (!audioCtx.current) return;
 
-    if (audioCtx.current.state === "suspended") {
+    if (audioCtx.current.state === 'suspended') {
       audioCtx.current.resume();
     }
 
@@ -130,19 +133,20 @@ export default function StartLivestreamPage() {
     analyserRef.current = audioCtx.current.createAnalyser();
     analyserRef.current.fftSize = 256;
 
-    navigator.mediaDevices.getUserMedia({ audio: true })
+    navigator.mediaDevices
+      .getUserMedia({ audio: true })
 
       .then((micStream: MediaStream) => {
-        mediaStreamRef.current = micStream
+        mediaStreamRef.current = micStream;
 
         const src = audioCtx.current?.createMediaStreamSource(micStream);
         src?.connect(dest);
 
         // @ts-expect-error - this works
-        src?.connect(analyserRef.current)
+        src?.connect(analyserRef.current);
 
         // @ts-expect-error - this works
-        const dataArray = new Uint8Array(analyserRef.current?.fftSize)
+        const dataArray = new Uint8Array(analyserRef.current?.fftSize);
 
         const updateMicLevel = () => {
           if (analyserRef.current) {
@@ -150,7 +154,7 @@ export default function StartLivestreamPage() {
 
             const rms = Math.sqrt(
               dataArray.reduce((sum, value) => sum + (value - 128) ** 2, 0) /
-              dataArray.length
+                dataArray.length
             );
 
             const normalizedMicLevel = Math.min(1, rms / 128);
@@ -158,12 +162,12 @@ export default function StartLivestreamPage() {
           }
 
           requestAnimationFrame(updateMicLevel);
-        }
+        };
 
         requestAnimationFrame(updateMicLevel);
       })
       .catch((error) => {
-        console.error("Error:", error);
+        console.error('Error:', error);
       });
   }, []);
 
@@ -187,25 +191,27 @@ export default function StartLivestreamPage() {
   };
 
   const endLivestream = useCallback((): void => {
-    console.log("ended livestream")
+    console.log('ended livestream');
 
     setIsLivestreamActive(false);
     stopMicrophone();
-    setIsConfirmEndOpen(false)
+    setIsConfirmEndOpen(false);
 
-    axios.delete(`/api/livestream/${channel}`)
+    axios
+      .delete(`/api/livestream/${channel}`)
       .then((response) => {
-        console.log(response.data)
+        console.log(response.data);
 
         toast({
-          title: "Livestream ended successfully!",
-          description: "Your Livestream has ended."
-        })
-      }).catch((error) => {
-        console.error(error)
+          title: 'Livestream ended successfully!',
+          description: 'Your Livestream has ended.',
+        });
+      })
+      .catch((error) => {
+        console.error(error);
         toast({
-          title: "Error",
-          description: "An error occurred while ending your livestream."
+          title: 'Error',
+          description: 'An error occurred while ending your livestream.',
         });
       });
   }, [stopMicrophone, toast, channel]);
@@ -219,24 +225,23 @@ export default function StartLivestreamPage() {
   }, [blocker]);
 
   useEffect(() => {
-    window.addEventListener('beforeunload', endLivestream)
+    window.addEventListener('beforeunload', endLivestream);
 
     return () => {
-      window.removeEventListener('beforeunload', endLivestream)
-    }
-  }, [endLivestream])
+      window.removeEventListener('beforeunload', endLivestream);
+    };
+  }, [endLivestream]);
 
   const handleConfirmLeave = () => {
     setIsPromptOpen(false);
 
-    endLivestream()
+    endLivestream();
 
     if (nextLocation) {
       navigate(nextLocation); // Navigate to the stored location
     }
 
-    if (blocker.state === 'blocked')
-      blocker.proceed()
+    if (blocker.state === 'blocked') blocker.proceed();
   };
 
   const handleCancelLeave = () => {
@@ -250,11 +255,9 @@ export default function StartLivestreamPage() {
           <Radio className="w-24 h-24 animate-[spin_2s_linear_infinite]" />
 
           <div>
-            <h3 className="text-lg font-semibold">
-              You are currently live!
-            </h3>
+            <h3 className="text-lg font-semibold">You are currently live!</h3>
             <h3 className="text-lg font-semibold text-wrap text-muted-foreground">
-              {form.getValues("title")}
+              {form.getValues('title')}
             </h3>
           </div>
 
@@ -266,16 +269,18 @@ export default function StartLivestreamPage() {
           </div>
 
           <Button onClick={() => setIsConfirmEndOpen(!isConfirmEndOpen)}>
-            <MicOff className='w-4 h-4 mr-2' />
+            <MicOff className="w-4 h-4 mr-2" />
             End Livestream
           </Button>
 
           <Dialog open={isConfirmEndOpen} onOpenChange={setIsConfirmEndOpen}>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Are you sure you want to end your livestream?</DialogTitle>
+                <DialogTitle>
+                  Are you sure you want to end your livestream?
+                </DialogTitle>
                 <DialogDescription>
-                  {"We are sad you are leaving :("}
+                  {'We are sad you are leaving :('}
                 </DialogDescription>
               </DialogHeader>
               <DialogFooter>
@@ -312,7 +317,8 @@ export default function StartLivestreamPage() {
             <DialogTrigger asChild>
               <Button className="relative">
                 <Radio className="w-4 h-4 mr-2" />
-                Go Live</Button>
+                Go Live
+              </Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>

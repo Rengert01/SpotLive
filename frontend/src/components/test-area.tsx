@@ -14,9 +14,9 @@ const TestMic: React.FC = () => {
   const [isTesting, setIsTesting] = useState(false);
 
   const audioCtx = useRef<AudioContext | null>(null);
-  const mediaStreamRef = useRef<MediaStream | null>(null)
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null)
-  const analyserRef = useRef<AnalyserNode | null>(null)
+  const mediaStreamRef = useRef<MediaStream | null>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const analyserRef = useRef<AnalyserNode | null>(null);
 
   useEffect(() => {
     audioCtx.current = new AudioContext();
@@ -24,19 +24,19 @@ const TestMic: React.FC = () => {
 
   const toggleMicTesting = async () => {
     if (isTesting) {
-      setIsTesting(false)
+      setIsTesting(false);
       stopMicrophone();
-      setMicLevel(0)
+      setMicLevel(0);
     } else {
-      setIsTesting(true)
+      setIsTesting(true);
       startMicrophone();
     }
   };
 
   const startMicrophone = useCallback(async (): Promise<void> => {
-    if (!audioCtx.current) return
+    if (!audioCtx.current) return;
 
-    if (audioCtx.current.state === "suspended") {
+    if (audioCtx.current.state === 'suspended') {
       audioCtx.current.resume();
     }
 
@@ -44,13 +44,14 @@ const TestMic: React.FC = () => {
     analyserRef.current = audioCtx.current.createAnalyser();
     analyserRef.current.fftSize = 256;
 
-    navigator.mediaDevices.getUserMedia({ audio: true })
+    navigator.mediaDevices
+      .getUserMedia({ audio: true })
 
       .then((micStream: MediaStream) => {
-        mediaStreamRef.current = micStream
+        mediaStreamRef.current = micStream;
 
-        if (!MediaRecorder.isTypeSupported("audio/webm")) {
-          alert("Browser not supported");
+        if (!MediaRecorder.isTypeSupported('audio/webm')) {
+          alert('Browser not supported');
           return;
         }
 
@@ -58,10 +59,10 @@ const TestMic: React.FC = () => {
         src?.connect(dest);
 
         // @ts-expect-error - this works
-        src?.connect(analyserRef.current)
+        src?.connect(analyserRef.current);
 
         // @ts-expect-error - this works
-        const dataArray = new Uint8Array(analyserRef.current?.fftSize)
+        const dataArray = new Uint8Array(analyserRef.current?.fftSize);
 
         const updateMicLevel = () => {
           if (analyserRef.current) {
@@ -69,7 +70,7 @@ const TestMic: React.FC = () => {
 
             const rms = Math.sqrt(
               dataArray.reduce((sum, value) => sum + (value - 128) ** 2, 0) /
-              dataArray.length
+                dataArray.length
             );
 
             const normalizedMicLevel = Math.min(1, rms / 128);
@@ -77,12 +78,12 @@ const TestMic: React.FC = () => {
           }
 
           requestAnimationFrame(updateMicLevel);
-        }
+        };
 
-        requestAnimationFrame(updateMicLevel)
+        requestAnimationFrame(updateMicLevel);
       })
       .catch((error) => {
-        console.error("Error:", error);
+        console.error('Error:', error);
       });
   }, []);
 
@@ -98,7 +99,6 @@ const TestMic: React.FC = () => {
 
     console.log('Microphone audio capture stopped');
   }, []);
-
 
   return (
     <>

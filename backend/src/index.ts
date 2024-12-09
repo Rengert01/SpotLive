@@ -10,7 +10,6 @@ import isAuthenticated from '@/middleware/auth';
 import profileRouter from '@/routes/profile';
 import musicRoutes from '@/routes/music';
 import livestreamRoutes from '@/routes/livestream';
-import livestreamController from '@/controllers/livestream';
 
 import { createServer } from 'http';
 

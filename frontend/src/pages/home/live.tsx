@@ -4,30 +4,33 @@ import { useCallback, useEffect, useState } from 'react';
 import LivestreamSection from '@/components/livestream-section';
 
 export function Live() {
-  const { toast } = useToast()
-  const [livestreams, setLivestreams] = useState<Livestream[]>([])
+  const { toast } = useToast();
+  const [livestreams, setLivestreams] = useState<Livestream[]>([]);
 
   const fetchLivestreams = useCallback(async () => {
-    axios.get('/api/livestream')
+    axios
+      .get('/api/livestream')
       .then((res) => {
-        setLivestreams(res.data.livestreamList.map((livestream: Livestream) => ({
-          id: livestream.id,
-          channel: livestream.channel,
-          artist: livestream.artist
-        })))
+        setLivestreams(
+          res.data.livestreamList.map((livestream: Livestream) => ({
+            id: livestream.id,
+            channel: livestream.channel,
+            artist: livestream.artist,
+          }))
+        );
       })
       .catch((err) => {
-        console.error(err)
+        console.error(err);
         toast({
-          title: "Something went wrong!",
-          description: "Failed to get livestreams."
-        })
-      })
-  }, [toast])
+          title: 'Something went wrong!',
+          description: 'Failed to get livestreams.',
+        });
+      });
+  }, [toast]);
 
   useEffect(() => {
-    fetchLivestreams()
-  }, [fetchLivestreams])
+    fetchLivestreams();
+  }, [fetchLivestreams]);
 
   if (!livestreams.length)
     return (
@@ -58,8 +61,8 @@ export function Live() {
   return (
     <LivestreamSection
       title="Live Performances"
-      subtitle='Listen to live performances from your favorite artists'
+      subtitle="Listen to live performances from your favorite artists"
       livestreams={livestreams}
     />
-  )
+  );
 }

@@ -1,0 +1,42 @@
+name: Unit and Accepting Test
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  unit-and-accepting-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install dependencies - Backend
+        run: npm install
+        working-directory: backend
+      
+      - name: Start Postgres
+        run: docker run -d --name postgres -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=localhost -p 5432:5432 postgres
+
+      - name: Wait for Postgres to start
+        run: docker exec postgres pg_isready -U postgres -d localhost
+
+      - name: Update database schema
+        run: npm run db:push
+        working-directory: backend
+
+      - name: Run Unit Test - Backend
+        run: npm run tests
+        working-directory: backend

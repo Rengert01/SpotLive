@@ -11,15 +11,19 @@ import profileRouter from '@/routes/profile';
 import musicRoutes from '@/routes/music';
 import livestreamRoutes from '@/routes/livestream';
 
-import { createServer } from 'http';
+import playlistRoutes from '@/routes/playlist';
+import albumRouter from '@/routes/album';
 
 import FileStore from 'session-file-store';
+import followersRouter from './routes/followers';
+import notificationsRouter from './routes/notifications';
 const fileStoreOptions = {};
 
 const app: Express = express();
 const port = env.BACKEND_API_PORT ?? 3001;
 
 app.use(cors(corsOptions));
+app.options('*', cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.json());
@@ -36,7 +40,7 @@ app.use(sessionMiddleware);
 app.use('/api/auth', authRoutes);
 
 // Static images folder
-app.use('/uploads/image', express.static('src/uploads/image'));
+app.use('/api/uploads/image', express.static('src/uploads/image'));
 
 // Everything below this line will require authentication
 app.use(isAuthenticated);
@@ -44,12 +48,15 @@ app.use(isAuthenticated);
 app.use('/api/auth', profileRouter);
 app.use('/api/music', musicRoutes);
 app.use('/api/livestream', livestreamRoutes);
+app.use('/api/user', followersRouter);
+app.use('/api/nofitication', notificationsRouter);
+app.use('/api/album', albumRouter);
 
-const server = createServer(app);
+app.use('/api/playlist', playlistRoutes);
 
 // livestreamController.initializeSocketIO(server, sessionMiddleware);
 // livestreamController.initializeSocketIO(server);
 
-server.listen(port, () => {
+app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);
 });

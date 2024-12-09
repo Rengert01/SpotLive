@@ -13,7 +13,7 @@ export const users = pgTable('user', {
   id: serial().primaryKey(),
   email: varchar().notNull(),
   password: varchar().notNull(),
-  image: varchar().notNull().default('/uploads/image/profile.jpg'),
+  image: varchar().notNull().default('/api/uploads/image/profile.jpg'),
   gender: varchar().default(''),
   username: varchar().default(''),
   phone: varchar().default(''),

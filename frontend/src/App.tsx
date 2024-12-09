@@ -10,9 +10,14 @@ import UserProfile from '@/pages/user-page';
 import ProfilePage from '@/pages/profile/profile-page';
 import UploadSongPage from '@/pages/songs/upload-song-page';
 import ProfileSongs from '@/pages/profile/profile-songs';
+import ProfileAlbums from '@/pages/profile/profile-albums';
 import { useAudioStore } from '@/stores/audio-store';
 import { useEffect } from 'react';
 import StartLivestreamPage from '@/pages/start-livestream';
+import CreatePlaylist from './pages/playlists/page';
+import Search from '@/pages/search';
+import UploadAlbumPage from '@/pages/albums/upload-album-page';
+import PlaylistPage from './pages/playlists/playlist';
 
 const PAUSE_KEY = 'Space';
 
@@ -34,6 +39,10 @@ const router = createBrowserRouter([
         element: <ProfileSongs />,
       },
       {
+        path: '/profile/albums',
+        element: <ProfileAlbums />,
+      },
+      {
         path: `/user/:id`,
         element: <UserProfile />,
       },
@@ -45,9 +54,24 @@ const router = createBrowserRouter([
         path: '/live',
         element: <StartLivestreamPage />,
       },
+      {
+        path: '/search',
+        element: <Search />,
+      },
+      {
+        path: '/albums/upload',
+        element: <UploadAlbumPage />,
+      },
+      {
+        path: '/playlists',
+        element: <CreatePlaylist />,
+      },
+      {
+        path: '/playlist/:id',
+        element: <PlaylistPage />,
+      },
     ],
     loader: async () => {
-      // TODO: This can be a custom hook to set user information (an auth provider)
       try {
         await axios.get('/api/auth/session');
         return true;

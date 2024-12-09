@@ -14,31 +14,16 @@ import { Link, useLocation, useNavigate } from 'react-router';
 import { toast } from '@/hooks/use-toast';
 import { useUserStore } from '@/stores/user-store';
 import { Sidebar } from '@/components/ui/sidebar';
+import { usePlaylistsStore } from '@/stores/playlist-store';
 
 type SidebarProps = React.HTMLAttributes<HTMLDivElement>;
 
-const playlists = [
-  'Recently Added',
-  'Recently Played',
-  'Top Songs',
-  'Top Albums',
-  'Top Artists',
-  'Logic Discography',
-  'Bedtime Beats',
-  'Feeling Happy',
-  'I miss Y2K Pop',
-  'Runtober',
-  'Mellow Days',
-  'Eminem Essentials',
-];
-
 export function AppSidebar({ className }: SidebarProps) {
+  const { playlists, setPlaylists } = usePlaylistsStore();
+
   const navigate = useNavigate();
   const { user, setUser, clearUser } = useUserStore();
-  const port = 'http://localhost:3001';
-
   useEffect(() => {
-    //Todo: Convert this to a custom auth hook
     const fetchSession = async () => {
       try {
         const res = await axios.get('/api/auth/session');
@@ -107,39 +92,84 @@ export function AppSidebar({ className }: SidebarProps) {
           </div>
 
           <div className="py-2 flex-initial">
-            <h2 className="relative px-7 text-lg font-semibold tracking-tight mb-1">
-              Playlists
-            </h2>
+            <div className="flex">
+              <h2 className="relative px-7 text-lg font-semibold tracking-tight mb-1">
+                Playlists
+              </h2>
+            </div>
             <ScrollArea className="px-1 h-[350px]">
               <div className="space-y-1 p-2">
                 {playlists?.map((playlist, i) => (
-                  <Button
-                    key={`${playlist}-${i}`}
-                    variant={
-                      location.pathname === `/playlist/${playlist}`
-                        ? 'secondary'
-                        : 'ghost'
-                    }
-                    className="w-full justify-start font-normal"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="mr-2 h-4 w-4"
+                  <div className="flex" key={playlist.id}>
+                    <div className="w-full">
+                      <Link to={`/playlist/${playlist.id}`}>
+                        <Button
+                          key={`${playlist}-${i}`}
+                          variant={
+                            location.pathname === `/playlist/${playlist}`
+                              ? 'secondary'
+                              : 'ghost'
+                          }
+                          className="w-full justify-start font-normal"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            className="mr-2 h-4 w-4"
+                          >
+                            <path d="M21 15V6" />
+                            <path d="M18.5 18a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" />
+                            <path d="M12 12H3" />
+                            <path d="M16 6H3" />
+                            <path d="M12 18H3" />
+                          </svg>
+                          {playlist.title}
+                        </Button>
+                      </Link>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      className="ml-auto"
+                      onClick={() => {
+                        axios
+                          .delete(`/api/playlist/delete/${playlist.id}`)
+                          .then(() => {
+                            setPlaylists(
+                              playlists.filter((p) => p.id !== playlist.id)
+                            );
+                            toast({
+                              title: 'Playlist Deleted',
+                              description: `Playlist "${playlist.title}" has been deleted.`,
+                            });
+                          })
+                          .catch((error) => {
+                            toast({
+                              title: 'Operation Failed',
+                              description: error.response.data.message,
+                            });
+                          });
+                      }}
                     >
-                      <path d="M21 15V6" />
-                      <path d="M18.5 18a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" />
-                      <path d="M12 12H3" />
-                      <path d="M16 6H3" />
-                      <path d="M12 18H3" />
-                    </svg>
-                    {playlist}
-                  </Button>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="h-4 w-4"
+                      >
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                      </svg>
+                    </Button>
+                  </div>
                 ))}
               </div>
             </ScrollArea>
@@ -200,41 +230,44 @@ export function AppSidebar({ className }: SidebarProps) {
                 </Button>
               </Link>
 
-              <Button
-                variant={
-                  location.pathname === '/profile/albums'
-                    ? 'secondary'
-                    : 'ghost'
-                }
-                className="w-full justify-start"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="mr-2 h-4 w-4"
+              <Link to="/profile/albums">
+                <Button
+                  variant={
+                    location.pathname === '/profile/albums'
+                      ? 'secondary'
+                      : 'ghost'
+                  }
+                  className="w-full justify-start"
                 >
-                  <path d="m16 6 4 14" />
-                  <path d="M12 6v14" />
-                  <path d="M8 8v12" />
-                  <path d="M4 4v16" />
-                </svg>
-                My Albums
-              </Button>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="mr-2 h-4 w-4"
+                  >
+                    <path d="m16 6 4 14" />
+                    <path d="M12 6v14" />
+                    <path d="M8 8v12" />
+                    <path d="M4 4v16" />
+                  </svg>
+                  My Albums
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
-
         <div className="h-16 border-y">
           <DropdownMenu>
             <DropdownMenuTrigger className="h-full w-full flex justify-center p-3">
               <div className=" flex gap-4 items-center">
                 <Avatar>
-                  <AvatarImage src={`${port}${user?.image}`} />
+                  <AvatarImage
+                    src={`${import.meta.env.VITE_APP_API_URL}${user?.image}`}
+                  />
                   <AvatarFallback>
                     {user.username !== ''
                       ? user.username?.[0].toUpperCase()

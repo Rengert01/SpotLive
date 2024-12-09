@@ -1,8 +1,12 @@
 import env from '../../env';
-import { drizzle } from 'drizzle-orm/node-postgres';
+import { drizzle as LocalDrizzle } from 'drizzle-orm/node-postgres';
+import { drizzle as NeonDrizzle } from 'drizzle-orm/neon-http';
 
 import * as schema from './schema';
 
-const db = drizzle(env.POSTGRES_URL!, { schema });
+const db =
+  env.NODE_ENV === 'production'
+    ? NeonDrizzle(env.POSTGRES_URL!, { schema })
+    : LocalDrizzle(env.POSTGRES_URL!, { schema });
 
 export { db };

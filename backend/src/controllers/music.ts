@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { and, asc, desc, eq, ilike, SQLWrapper } from 'drizzle-orm';
 import { musics, sessions } from '@/db/schema';
 import { db } from '@/db';
+import { notifyAllFollowers } from '@/controllers/notifications';
 
 const getMusicInfo = async (req: Request, res: Response): Promise<void> => {
   const { id } = req.params;
@@ -31,7 +32,6 @@ const getMusicInfo = async (req: Request, res: Response): Promise<void> => {
     res.status(404).json({ message: 'Music not found' });
     return;
   }
-
   res.status(200).json({ music });
 };
 
@@ -240,7 +240,8 @@ const uploadMusic = async (req: Request, res: Response): Promise<void> => {
     res.status(500).json({ message: 'Failed to upload music' });
     return;
   }
-
+  // Notify followers
+  await notifyAllFollowers(session.user.id, name);
   res.status(200).json({ message: 'Music uploaded successfully' });
 };
 

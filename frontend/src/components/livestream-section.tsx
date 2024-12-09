@@ -29,9 +29,10 @@ export default function LivestreamSection({
 
   const [currLivestream, setCurrLivestream] = useState<Livestream | null>(null)
 
-  useJoin({ appid: import.meta.env.VITE_AGORA_APP_ID, channel: currLivestream?.channel ?? '', token: null }, audio.isPlaying && audio.isLivestream)
+  useJoin({ appid: import.meta.env.VITE_AGORA_APP_ID, channel: currLivestream?.channel ?? '', token: null }, audio.isPlaying && audio.isLivestream);
 
-  const remoteUsers = useRemoteUsers();
+  const client = useRTCClient();
+  const remoteUsers = useRemoteUsers(client);
   const { audioTracks } = useRemoteAudioTracks(remoteUsers);
 
   const joinLivestream = (livestream: Livestream) => {
@@ -53,6 +54,7 @@ export default function LivestreamSection({
     })
   }
 
+
   const leaveLivestream = useCallback((livestream: Livestream) => {
     setCurrLivestream(null)
 
@@ -69,8 +71,6 @@ export default function LivestreamSection({
   }, [toast, audio, setAudio])
 
   const handleLivestreamClick = (livestream: Livestream) => {
-    console.log(livestream)
-
     if (!(audio.isPlaying && audio.isLivestream)) {
       joinLivestream(livestream)
     } else {

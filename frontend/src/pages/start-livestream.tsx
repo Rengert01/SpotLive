@@ -29,19 +29,15 @@ import {
 } from '@/components/ui/select';
 import TestArea from '@/components/test-area';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useUserStore } from '@/stores/user-store';
 import { useBlocker, useNavigate } from 'react-router';
 import { MicOff, Radio } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import {
-  LocalUser,
-  RemoteUser,
   useJoin,
   useLocalMicrophoneTrack,
   usePublish,
-  useRemoteUsers,
   useRTCClient
 } from 'agora-rtc-react';
 import axios from '@/config/axios';
@@ -71,6 +67,11 @@ export default function StartLivestreamPage() {
       title: '',
     },
   });
+
+  const client = useRTCClient();
+  useEffect(() => {
+    client.setClientRole('host');
+  }, [client]);
 
   useJoin({ appid: import.meta.env.VITE_AGORA_APP_ID, channel: channel, token: null }, isLivestreamActive);
 

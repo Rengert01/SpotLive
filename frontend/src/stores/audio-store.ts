@@ -4,6 +4,7 @@ import { create } from 'zustand';
 interface Audio {
   ref: React.RefObject<HTMLAudioElement>;
   isPlaying: boolean;
+  isLivestream: boolean;
   volume: number;
   playbackPosition: number;
   progress: number;
@@ -29,6 +30,7 @@ interface AudioState {
 
 export const useAudioStore = create<AudioState>((set) => ({
   audio: {
+    isLivestream: false,
     ref: React.createRef<HTMLAudioElement>(),
     isPlaying: false,
     playbackPosition:
@@ -89,6 +91,16 @@ export const useAudioStore = create<AudioState>((set) => ({
   },
   togglePlayPause: () => {
     set((state) => {
+      if (state.audio.isLivestream) {
+        return {
+          audio: {
+            ...state.audio,
+            isPlaying: !state.audio.isPlaying,
+            progress: 100,
+          },
+        };
+      }
+
       if (state.audio.ref.current) {
         if (state.audio.isPlaying) {
           state.audio.ref.current.pause();

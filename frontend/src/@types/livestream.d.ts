@@ -1,11 +1,10 @@
 type Livestream = {
-  title: string;
   id: number;
+  channel: string;
   artist: {
     email: string;
     image: string;
     username: string | null;
   };
-  roomId: string;
   artistId: string;
 };

@@ -20,7 +20,6 @@ import { Input } from '@/components/ui/input';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import socket from '@/config/socket';
 import {
   Select,
   SelectContent,
@@ -36,6 +35,16 @@ import { MicOff, Radio } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
+import {
+  LocalUser,
+  RemoteUser,
+  useJoin,
+  useLocalMicrophoneTrack,
+  usePublish,
+  useRemoteUsers,
+  useRTCClient
+} from 'agora-rtc-react';
+import axios from '@/config/axios';
 
 const startLivestreamSchema = z.object({
   title: z.string().min(2, { message: 'A Livestream Title is Required.' }),
@@ -43,19 +52,19 @@ const startLivestreamSchema = z.object({
 });
 
 export default function StartLivestreamPage() {
-  const [livestreamID, setLivestreamID] = useState<string | null>(null);
+  const { toast } = useToast()
 
-  const [isLivestreamActive, setIsLivestreamActive] = useState(false);
-  const [isConfirmEndOpen, setIsConfirmEndOpen] = useState(false)
+  const navigate = useNavigate();
   const [isPromptOpen, setIsPromptOpen] = useState(false)
   const [nextLocation, setNextLocation] = useState<string | null>(null);
 
-  const { toast } = useToast()
+  const [isLivestreamActive, setIsLivestreamActive] = useState(false);
+  const [channel, setChannel] = useState<string>('');
 
-  const { user } = useUserStore();
-  const navigate = useNavigate();
+  const [isConfirmEndOpen, setIsConfirmEndOpen] = useState(false)
 
   const blocker = useBlocker(isLivestreamActive);
+
   const form = useForm<z.infer<typeof startLivestreamSchema>>({
     resolver: zodResolver(startLivestreamSchema),
     defaultValues: {
@@ -63,19 +72,42 @@ export default function StartLivestreamPage() {
     },
   });
 
+  useJoin({ appid: import.meta.env.VITE_AGORA_APP_ID, channel: channel, token: null }, isLivestreamActive);
+
   const onSubmit = (data: z.infer<typeof startLivestreamSchema>) => {
     console.log(data);
 
-    if (data.audioInput === 'microphone') {
-      startLivestream(data.title, user.id!)
-    }
+    axios.post('/api/livestream', {
+      channel: data.title
+    })
+      .then((response) => {
+        console.log(response.data)
+        setChannel(data.title)
+        startLivestream()
+        toast({
+          title: "Livestream started successfully!",
+          description: "Your Livestream: " + data.title
+        })
+      }).catch((error) => {
+        console.error(error)
+        toast({
+          title: "Error",
+          description: "An error occurred while starting your livestream."
+        })
+      })
+
   };
 
+  const [micOn, setMicOn] = useState(false);
+  const { localMicrophoneTrack } = useLocalMicrophoneTrack(micOn);
   const [micLevel, setMicLevel] = useState(0);
   const audioCtx = useRef<AudioContext | null>(null);
   const mediaStreamRef = useRef<MediaStream | null>(null)
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
   const analyserRef = useRef<AnalyserNode | null>(null)
+
+
+  usePublish([localMicrophoneTrack])
 
   useEffect(() => {
     audioCtx.current = new AudioContext();
@@ -85,7 +117,8 @@ export default function StartLivestreamPage() {
     }
   }, []);
 
-  const startMicrophone = useCallback(async (id: string): Promise<void> => {
+  const startMicrophone = useCallback(async (): Promise<void> => {
+    setMicOn(true);
     if (!audioCtx.current) return
 
     if (audioCtx.current.state === "suspended") {
@@ -100,11 +133,6 @@ export default function StartLivestreamPage() {
 
       .then((micStream: MediaStream) => {
         mediaStreamRef.current = micStream
-
-        if (!MediaRecorder.isTypeSupported("audio/webm")) {
-          alert("Browser not supported");
-          return;
-        }
 
         const src = audioCtx.current?.createMediaStreamSource(micStream);
         src?.connect(dest);
@@ -131,30 +159,7 @@ export default function StartLivestreamPage() {
           requestAnimationFrame(updateMicLevel);
         }
 
-        requestAnimationFrame(updateMicLevel)
-
-        if (!mediaRecorderRef.current) {
-          mediaRecorderRef.current = new MediaRecorder(dest.stream, {
-            mimeType: "audio/webm",
-          });
-        }
-
-        if (mediaRecorderRef.current.state === "inactive") {
-          mediaRecorderRef.current.addEventListener("dataavailable", async (event) => {
-            console.log(event.data)
-            if (event.data.size > 0) {
-              socket.emit('audio-data-to-server', id, event.data);
-            }
-          });
-
-          mediaRecorderRef.current.start(250);
-        } else {
-          mediaRecorderRef.current.resume();
-        }
-
-        socket.on('error-audio-data', (message: string) => {
-          console.log(message);
-        });
+        requestAnimationFrame(updateMicLevel);
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -162,6 +167,7 @@ export default function StartLivestreamPage() {
   }, []);
 
   const stopMicrophone = useCallback((): void => {
+    setMicOn(false);
     if (analyserRef.current) {
       analyserRef.current.disconnect();
       analyserRef.current = null;
@@ -174,52 +180,34 @@ export default function StartLivestreamPage() {
     console.log('Microphone audio capture stopped');
   }, []);
 
-  const startLivestream = (title: string, userId: string): void => {
-    socket.emit('start-livestream', title, userId);
-
-    socket.on('success-start-livestream', (id: string) => {
-      setLivestreamID(id);
-      setIsLivestreamActive(true);
-      startMicrophone(id);
-
-      toast({
-        title: "Livestream started successfully!",
-        description: "Your Livestream ID: " + id
-      })
-    });
-
-    socket.on('error-start-livestream', (message: string) => {
-      toast({
-        title: "Something went wrong!",
-        description: message
-      })
-    });
+  const startLivestream = (): void => {
+    setIsLivestreamActive(true);
+    startMicrophone();
   };
 
   const endLivestream = useCallback((): void => {
     console.log("ended livestream")
-    console.log("livestream", livestreamID)
 
-    if (livestreamID) {
-      socket.emit('end-livestream', livestreamID);
-      setIsLivestreamActive(false);
-      stopMicrophone(); // Stop microphone on end
-      setIsConfirmEndOpen(false)
+    setIsLivestreamActive(false);
+    stopMicrophone();
+    setIsConfirmEndOpen(false)
 
-      socket.on('error-end-livestream', (message: string) => {
+    axios.delete(`/api/livestream/${channel}`)
+      .then((response) => {
+        console.log(response.data)
+
         toast({
-          title: "Something went wrong!",
-          description: message
+          title: "Livestream ended successfully!",
+          description: "Your Livestream has ended."
         })
-      })
-
-      socket.on('success-end-livestream', () => {
+      }).catch((error) => {
+        console.error(error)
         toast({
-          title: "Livestream ended!"
-        })
-      })
-    }
-  }, [livestreamID, stopMicrophone, toast]);
+          title: "Error",
+          description: "An error occurred while ending your livestream."
+        });
+      });
+  }, [stopMicrophone, toast, channel]);
 
   useEffect(() => {
     if (blocker.state === 'blocked') {

@@ -49,7 +49,7 @@ app.use('/api/livestream', livestreamRoutes);
 const server = createServer(app);
 
 // livestreamController.initializeSocketIO(server, sessionMiddleware);
-livestreamController.initializeSocketIO(server);
+// livestreamController.initializeSocketIO(server);
 
 server.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);

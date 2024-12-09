@@ -1,13 +1,13 @@
 import LivestreamCard from '@/components/livestream-card';
 import { Separator } from '@/components/ui/separator';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
-// import { useAudioStore } from '@/stores/audio-store';
-import socket from '@/config/socket';
 import { useToast } from '@/hooks/use-toast';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useBlocker, useNavigate } from 'react-router';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { RemoteAudioTrack, useJoin, useRemoteAudioTracks, useRemoteUsers, useRTCClient } from 'agora-rtc-react';
+import { useAudioStore } from '@/stores/audio-store';
 
 interface LivestreamSectionProps {
   title: string;
@@ -20,133 +20,62 @@ export default function LivestreamSection({
   subtitle,
   livestreams,
 }: LivestreamSectionProps) {
+  const { audio, setAudio } = useAudioStore();
   const { toast } = useToast();
-  const [listening, setListening] = useState(false)
-  const blocker = useBlocker(listening);
+  const blocker = useBlocker(audio.isPlaying && audio.isLivestream);
   const navigate = useNavigate();
   const [isPromptOpen, setIsPromptOpen] = useState(false)
   const [nextLocation, setNextLocation] = useState<string | null>(null);
 
-  const audioContextRef = useRef<AudioContext | null>(null);
-  const audioQueueRef = useRef<AudioBuffer[]>([]); // Queue to handle continuous playback
-  const isPlayingRef = useRef(false);
-
   const [currLivestream, setCurrLivestream] = useState<Livestream | null>(null)
 
-  const playFromQueue = useCallback(() => {
-    if (!audioContextRef.current || audioQueueRef.current.length === 0) return;
+  useJoin({ appid: import.meta.env.VITE_AGORA_APP_ID, channel: currLivestream?.channel ?? '', token: null }, audio.isPlaying && audio.isLivestream)
 
-    isPlayingRef.current = true;
-
-    const audioBuffer = audioQueueRef.current.shift(); // Get the next buffer
-    if (!audioBuffer) {
-      isPlayingRef.current = false;
-      return;
-    }
-
-    const source = audioContextRef.current.createBufferSource();
-    source.buffer = audioBuffer;
-    source.connect(audioContextRef.current.destination);
-
-    source.onended = () => {
-      if (audioQueueRef.current.length > 0) {
-        playFromQueue(); // Continue playback
-      } else {
-        isPlayingRef.current = false; // No more buffers to play
-      }
-    };
-
-    source.start();
-  }, []);
-
-  useEffect(() => {
-    const audioContext = new AudioContext();
-    audioContextRef.current = audioContext;
-
-    socket.on('audio-data', async (audioData: ArrayBuffer) => {
-      try {
-        if (!audioContextRef.current) return;
-        console.log(audioData)
-
-        // Decode the audio data
-        const decodedAudio = await audioContextRef.current.decodeAudioData(audioData);
-        audioQueueRef.current.push(decodedAudio);
-
-        // If not already playing, start playback
-        if (!isPlayingRef.current) {
-          playFromQueue();
-        }
-      } catch (err) {
-        console.error('Error decoding audio data:', err);
-      }
-    });
-
-    return () => {
-      // Cleanup: Stop audio context and socket listener
-      audioContext.close();
-      socket.off('audio-data');
-    };
-  }, [playFromQueue]);
-
-
+  const remoteUsers = useRemoteUsers();
+  const { audioTracks } = useRemoteAudioTracks(remoteUsers);
 
   const joinLivestream = (livestream: Livestream) => {
-    socket.emit('join-livestream', livestream.id)
+    setCurrLivestream(livestream)
 
-    socket.on('success-join-livestream', (id: string, title: string) => {
-      setListening(true);
-      setCurrLivestream(livestream)
-      toast({
-        title: "Joined Livestream!",
-        description: "You are now listening to " + title + " " + id
-      })
+    setAudio({
+      ...audio,
+      isPlaying: true,
+      progress: 100,
+      audioTitle: 'Livestream: ' + livestream.channel,
+      audioCoverSrc: livestream.artist.image.replace('/uploads/image', ''),
+      audioArtist: livestream.artist.username ?? 'Unknown Artist',
+      isLivestream: true,
     })
 
-    socket.on('error-join-livestream', (message: string) => {
-      toast({
-        title: "Something went wrong!",
-        description: message,
-      })
+    toast({
+      title: 'Joined Livestream',
+      description: 'You have joined the livestream: ' + livestream.channel,
     })
   }
 
   const leaveLivestream = useCallback((livestream: Livestream) => {
-    socket.emit('leave-livestream', livestream.id)
+    setCurrLivestream(null)
 
-    socket.on('success-leave-livestream', () => {
-      setListening(false)
-      setCurrLivestream(null)
-      toast({
-        title: "Stopped Listening to Livestream!",
-        description: "We are sad to see you go :("
-      })
-    })
+    setAudio({
+      ...audio,
+      isPlaying: false,
+      isLivestream: false,
+    });
 
-    socket.on('error-leave-livestream', (message: string) => {
-      toast({
-        title: "Something went wrong!",
-        description: message,
-      })
+    toast({
+      title: 'Left Livestream',
+      description: 'You have left the livestream: ' + livestream.channel,
     })
-  }, [toast])
+  }, [toast, audio, setAudio])
 
   const handleLivestreamClick = (livestream: Livestream) => {
     console.log(livestream)
 
-    if (!listening) {
+    if (!(audio.isPlaying && audio.isLivestream)) {
       joinLivestream(livestream)
     } else {
       leaveLivestream(livestream)
     }
-
-    socket.on('end-livestream', () => {
-      setListening(false)
-      setCurrLivestream(null)
-      toast({
-        title: "Livestream Ended!",
-        description: "Hope you enjoyed it!"
-      })
-    })
   };
 
   useEffect(() => {
@@ -189,6 +118,9 @@ export default function LivestreamSection({
 
   return (
     <div>
+      {audioTracks.map(track => (
+        <RemoteAudioTrack key={track.getUserId()} play track={track} volume={audio.volume * 100} />
+      ))}
       <div className="space-y-1">
         <h2 className="text-3xl font-bold text-black">{title}</h2>
         <p className="text-sm text-muted-foreground">{subtitle}</p>

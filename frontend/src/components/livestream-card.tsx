@@ -17,7 +17,7 @@ function LivestreamCard({
       <div className="aspect-square overflow-hidden rounded-lg bg-transparent">
         <img
           src={`${import.meta.env.VITE_APP_API_URL}${livestream.artist.image}`}
-          alt={`${livestream.title} by ${livestream.artist.username}`}
+          alt={`${livestream.channel} by ${livestream.artist.username}`}
           className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-110"
         />
         <div className="absolute inset-0 flex items-center justify-center border-0 group-hover:border-black transition-all duration-300">
@@ -27,19 +27,19 @@ function LivestreamCard({
             variant="secondary"
             className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 group-hover:translate-y-0"
           >
-            {audio.isPlaying && audio.audioSrc === livestream.id.toString() ? (
+            {audio.isPlaying && audio.isLivestream ? (
               <Pause className="stroke-black" />
             ) : (
               <Play className="stroke-black" />
             )}
-            <span className="sr-only">Play {livestream.title}</span>
+            <span className="sr-only">Play {livestream.channel}</span>
           </Button>
         </div>
       </div>
 
       <div className="mt-2 relative">
         <h3 className="text-lg font-semibold text-black truncate">
-          {livestream.title}
+          {livestream.channel}
         </h3>
         <Link
           to={`/user/${livestream.id}`}

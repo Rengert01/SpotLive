@@ -1,7 +1,7 @@
 import { Separator } from '@/components/ui/separator';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { ReactNode } from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 
 interface AlbumSectionProps {
   title: string;
@@ -42,8 +42,8 @@ export default function AlbumSection({
                 <img
                   src={
                     import.meta.env.VITE_APP_API_URL +
-                      '/api/uploads/image/' +
-                      album.cover || '/default-cover.jpg'
+                    '/api/uploads/image/' +
+                    album.cover || '/default-cover.jpg'
                   }
                   alt={album.title}
                   className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-110"

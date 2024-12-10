@@ -54,9 +54,8 @@ app.use('/api/album', albumRouter);
 
 app.use('/api/playlist', playlistRoutes);
 
-// livestreamController.initializeSocketIO(server, sessionMiddleware);
-// livestreamController.initializeSocketIO(server);
-
-app.listen(port, () => {
+const server = app.listen(port, async () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);
 });
+
+export { app, server };

@@ -29,6 +29,8 @@ export default function TrackSection({
       audioCoverSrc: track.cover,
       duration: track.duration,
       playbackPosition: 0,
+      progress: 0,
+      isLivestream: false,
     });
 
     togglePlayPause();

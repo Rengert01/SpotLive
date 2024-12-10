@@ -1,10 +1,7 @@
-import HomePage from '@/pages/homepage.tsx';
+import HomePage from '@/pages/home/homepage';
 import Layout from '@/layout/layout';
-import {
-  createBrowserRouter,
-  redirect,
-  RouterProvider,
-} from 'react-router-dom';
+import { createBrowserRouter, redirect } from 'react-router';
+import { RouterProvider } from 'react-router/dom';
 import LoginPage from '@/pages/auth/login';
 import RegisterPage from '@/pages/auth/register';
 import { Toaster } from '@/components/ui/toaster';
@@ -16,6 +13,7 @@ import ProfileSongs from '@/pages/profile/profile-songs';
 import ProfileAlbums from '@/pages/profile/profile-albums';
 import { useAudioStore } from '@/stores/audio-store';
 import { useEffect } from 'react';
+import StartLivestreamPage from '@/pages/start-livestream';
 import CreatePlaylist from './pages/playlists/page';
 import Search from '@/pages/search';
 import UploadAlbumPage from '@/pages/albums/upload-album-page';
@@ -51,6 +49,10 @@ const router = createBrowserRouter([
       {
         path: '/songs/upload',
         element: <UploadSongPage />,
+      },
+      {
+        path: '/live',
+        element: <StartLivestreamPage />,
       },
       {
         path: '/search',

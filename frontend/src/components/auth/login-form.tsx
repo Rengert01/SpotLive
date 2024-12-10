@@ -20,7 +20,7 @@ import axios from '@/config/axios';
 import { Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router';
 
 import { z } from 'zod';
 import { useToast } from '@/hooks/use-toast';

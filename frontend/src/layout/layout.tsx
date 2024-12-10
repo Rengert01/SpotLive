@@ -4,7 +4,7 @@ import { SidebarProvider } from '@/components/ui/sidebar';
 import axios from '@/config/axios';
 import { usePlaylistsStore } from '@/stores/playlist-store';
 import { useCallback, useEffect } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet } from 'react-router';
 
 export default function Layout() {
   const { setPlaylists } = usePlaylistsStore();

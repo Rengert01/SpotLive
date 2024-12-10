@@ -2,8 +2,7 @@ import { Request, Response } from 'express';
 import path from 'path';
 import fs from 'fs';
 import { z } from 'zod';
-import getAudioDurationInSeconds from 'get-audio-duration';
-import { and, asc, desc, ilike, SQLWrapper, eq } from 'drizzle-orm';
+import { and, asc, desc, eq, ilike, SQLWrapper } from 'drizzle-orm';
 import { musics, sessions } from '@/db/schema';
 import { db } from '@/db';
 import { notifyAllFollowers } from '@/controllers/notifications';
@@ -175,6 +174,7 @@ const getMusicList = async (req: Request, res: Response): Promise<void> => {
 const uploadMusicBodySchema = z.object({
   name: z.string(),
   public: z.enum(['true', 'false']),
+  duration: z.string(),
 });
 
 const uploadMusic = async (req: Request, res: Response): Promise<void> => {
@@ -185,7 +185,7 @@ const uploadMusic = async (req: Request, res: Response): Promise<void> => {
     return;
   }
 
-  const { name, public: isPublic } = params.data;
+  const { name, public: isPublic, duration } = params.data;
 
   const session = await db.query.sessions.findFirst({
     where: eq(sessions.session_id, req.sessionID),
@@ -213,8 +213,6 @@ const uploadMusic = async (req: Request, res: Response): Promise<void> => {
 
   const musicFile = files.music[0];
 
-  const duration = await getAudioDurationInSeconds(musicFile.path);
-
   const imageFile = files.image[0];
 
   // const music = await Music.create({
@@ -234,7 +232,7 @@ const uploadMusic = async (req: Request, res: Response): Promise<void> => {
       artistId: session.user.id,
       cover: imageFile.filename,
       path: musicFile.filename,
-      duration: duration.toString(),
+      duration: duration,
     })
     .returning();
 
@@ -247,9 +245,22 @@ const uploadMusic = async (req: Request, res: Response): Promise<void> => {
   res.status(200).json({ message: 'Music uploaded successfully' });
 };
 
+const getNextIds = async (req: Request, res: Response): Promise<void> => {
+  const nextMusicIds = await db.query.musics.findMany({
+    where: eq(musics.public, true),
+    columns: {
+      id: true,
+    },
+    limit: 5,
+  });
+
+  res.status(200).json({ nextMusicIds: nextMusicIds.map((music) => music.id) });
+};
+
 export default {
   getMusicInfo,
   streamMusic,
   getMusicList,
   uploadMusic,
+  getNextIds,
 };

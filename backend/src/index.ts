@@ -51,6 +51,8 @@ app.use('/api/album', albumRouter);
 
 app.use('/api/playlist', playlistRoutes);
 
-app.listen(port, async () => {
+const server = app.listen(port, async () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);
 });
+
+export { app, server };

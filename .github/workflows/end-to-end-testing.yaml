@@ -70,7 +70,7 @@ jobs:
       # Run Containers
       - name: Run Containers
         run: docker compose -f docker-compose.yaml up --build -d
-        
+
       # Update Database schema
       - name: Update Database schema
         working-directory: backend
@@ -92,4 +92,5 @@ jobs:
  
       # Run End to End tests
       - name: Run End to End tests
+        working-directory: frontend
         uses: cypress-io/github-action@v6

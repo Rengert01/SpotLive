@@ -63,7 +63,7 @@ jobs:
 
       # Run Containers
       - name: Run Containers
-        run: docker compose -f docker-compose.yml up -d
+        run: docker compose -f docker-compose.yaml up --build -d
 
       # Wait for containers to start
       - name: Wait for services to start

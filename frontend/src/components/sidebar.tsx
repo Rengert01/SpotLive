@@ -97,7 +97,7 @@ export function AppSidebar({ className }: SidebarProps) {
                 Playlists
               </h2>
             </div>
-            <ScrollArea className="px-1 h-[350px]">
+            <ScrollArea className="px-1">
               <div className="space-y-1 p-2">
                 {playlists?.map((playlist, i) => (
                   <div className="flex" key={playlist.id}>

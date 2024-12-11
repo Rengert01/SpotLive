@@ -61,15 +61,46 @@ jobs:
           echo "POSTGRES_PORT=$POSTGRES_PORT" >> backend/.env
           echo "POSTGRES_HOST=$POSTGRES_HOST" >> backend/.env
 
+      # Cache Frontend dependencies
+      - name: Cache Frontend dependencies
+        uses: actions/cache@v4
+        with:
+          path: frontend/node_modules
+          key: frontend-${{ runner.os }}-${{ hashFiles('frontend/package-lock.json') }}
+          restore-keys: |
+            frontend-${{ runner.os }}-
+
+      # Cache Backend dependencies
+      - name: Cache Backend dependencies
+        uses: actions/cache@v4
+        with:
+          path: backend/node_modules
+          key: backend-${{ runner.os }}-${{ hashFiles('backend/package-lock.json') }}
+          restore-keys: |
+            backend-${{ runner.os }}-
+
+      # Cache Docker Layers
+      - name: Cache Docker Layers
+        uses: actions/cache@v4
+        with:
+          path: /tmp/docker-cache
+          key: docker-${{ runner.os }}-${{ hashFiles('**/Dockerfile', '**/docker-compose.yaml') }}
+          restore-keys: |
+            docker-${{ runner.os }}-
+
       # Install dependencies
       - name: Install dependencies
         run: |
           npm install --prefix frontend
           npm install --prefix backend
 
-      # Run Containers
+      # Run Containers with Cached Docker Layers
       - name: Run Containers
-        run: docker compose -f docker-compose.yaml up --build -d
+        run: |
+          docker compose -f docker-compose.yaml build \
+            --cache-from=type=local,src=/tmp/docker-cache \
+            --cache-to=type=local,dest=/tmp/docker-cache
+          docker compose -f docker-compose.yaml up -d
 
       # Update Database schema
       - name: Update Database schema

@@ -79,28 +79,15 @@ jobs:
           restore-keys: |
             backend-${{ runner.os }}-
 
-      # Cache Docker Layers
-      - name: Cache Docker Layers
-        uses: actions/cache@v4
-        with:
-          path: /tmp/docker-cache
-          key: docker-${{ runner.os }}-${{ hashFiles('**/Dockerfile', '**/docker-compose.yaml') }}
-          restore-keys: |
-            docker-${{ runner.os }}-
-
       # Install dependencies
       - name: Install dependencies
         run: |
           npm install --prefix frontend
           npm install --prefix backend
 
-      # Run Containers with Cached Docker Layers
+      # Run Containers
       - name: Run Containers
-        run: |
-          docker compose -f docker-compose.yaml build \
-            --cache-from=type=local,src=/tmp/docker-cache \
-            --cache-to=type=local,dest=/tmp/docker-cache
-          docker compose -f docker-compose.yaml up -d
+        run: docker compose -f docker-compose.yaml up --build -d
 
       # Update Database schema
       - name: Update Database schema

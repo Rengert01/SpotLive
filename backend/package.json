@@ -24,7 +24,8 @@
     "prettier:check": "npx prettier --check .",
     "lint": "eslint .",
     "db:push": "cross-env POSTGRES_HOST=localhost npx drizzle-kit push",
-    "db:studio": "cross-env POSTGRES_HOST=localhost npx drizzle-kit studio"
+    "db:studio": "cross-env POSTGRES_HOST=localhost npx drizzle-kit studio",
+    "db:seed": "cross-env POSTGRES_HOST=localhost tsx --env-file=.env src/db/seed.ts"
   },
   "keywords": [],
   "author": "",

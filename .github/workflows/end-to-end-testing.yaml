@@ -70,11 +70,7 @@ jobs:
       # Run Containers
       - name: Run Containers
         run: docker compose -f docker-compose.yaml up --build -d
-        with:
-          context: .
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
+        
       # Update Database schema
       - name: Update Database schema
         working-directory: backend

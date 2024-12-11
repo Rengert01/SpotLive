@@ -61,6 +61,12 @@ jobs:
           echo "POSTGRES_PORT=$POSTGRES_PORT" >> backend/.env
           echo "POSTGRES_HOST=$POSTGRES_HOST" >> backend/.env
 
+      # Install dependencies
+      - name: Install dependencies
+        run: |
+          npm install --prefix frontend
+          npm install --prefix backend
+
       # Run Containers
       - name: Run Containers
         run: docker compose -f docker-compose.yaml up --build -d
@@ -75,7 +81,6 @@ jobs:
 
           until $(curl --output /dev/null --silent --head --fail http://localhost:$BACKEND_API_PORT); do
             echo "Waiting for backend to start..."
-            docker compose logs api
             sleep 5
           done
 

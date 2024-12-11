@@ -71,6 +71,10 @@ jobs:
       - name: Run Containers
         run: docker compose -f docker-compose.yaml up --build -d
 
+      # Update Database schema
+      - name: Update Database schema
+        run: npm run db:push
+        
       # Wait for containers to start
       - name: Wait for services to start
         run: |
@@ -84,11 +88,7 @@ jobs:
             docker compose logs api
             sleep 5
           done
-
-      # Update Database schema
-      - name: Update Database schema
-        run: npm run db:push
-      
+ 
       # Run End to End tests
       - name: Run End to End tests
         uses: cypress-io/github-action@v6

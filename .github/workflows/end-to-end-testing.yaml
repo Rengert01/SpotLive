@@ -93,4 +93,4 @@ jobs:
       # Run End to End tests
       - name: Run End to End tests
         working-directory: frontend
-        uses: cypress-io/github-action@v6
+        run: npm run cy:run

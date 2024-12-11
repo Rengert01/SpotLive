@@ -1,0 +1,87 @@
+name: End To End Testing
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  e2e-testing:
+    runs-on: ubuntu-latest
+
+    env:
+      # Frontend variables
+      VITE_APP_PORT: ${{ secrets.VITE_APP_PORT }}
+      VITE_APP_API_URL: ${{ secrets.VITE_APP_API_URL }}
+      VITE_AGORA_APP_ID: ${{ secrets.VITE_AGORA_APP_ID }}
+
+      # Backend variables
+      BACKEND_API_PORT: ${{ secrets.BACKEND_API_PORT }}
+      NODE_ENV: test
+      DB_LOGGING: false
+      SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
+      CORS_WHITELIST: http://localhost:3000
+
+      # Database variables
+      POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+      POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+      POSTGRES_PORT: 5432
+      POSTGRES_HOST: localhost
+
+    steps:
+      # Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      # Create frontend .env file
+      - name: Create frontend .env file
+        run: |
+          echo "VITE_APP_PORT=$VITE_APP_PORT" >> frontend/.env
+          echo "VITE_APP_API_URL=$VITE_APP_API_URL" >> frontend/.env
+          echo "VITE_AGORA_APP_ID=$VITE_AGORA_APP_ID" >> frontend/.env
+
+      # Create backend .env file
+      - name: Create backend .env file
+        run: |
+          echo "BACKEND_API_PORT=$BACKEND_API_PORT" >> backend/.env
+          echo "NODE_ENV=$NODE_ENV" >> backend/.env
+          echo "DB_LOGGING=$DB_LOGGING" >> backend/.env
+          echo "SESSION_SECRET=$SESSION_SECRET" >> backend/.env
+          echo "CORS_WHITELIST=$CORS_WHITELIST" >> backend/.env
+
+          echo "POSTGRES_DB=$POSTGRES_DB" >> backend/.env
+          echo "POSTGRES_USER=$POSTGRES_USER" >> backend/.env
+          echo "POSTGRES_PASSWORD=$POSTGRES_PASSWORD" >> backend/.env
+          echo "POSTGRES_PORT=$POSTGRES_PORT" >> backend/.env
+          echo "POSTGRES_HOST=$POSTGRES_HOST" >> backend/.env
+
+      # Run Containers
+      - name: Run Containers
+        run: docker-compose -f docker-compose.yml up -d
+
+      # Wait for containers to start
+      - name: Wait for services to start
+        run: |
+          until $(curl --output /dev/null --silent --head --fail http://localhost:$VITE_APP_PORT); do
+            echo "Waiting for frontend to start..."
+            sleep 5
+          done
+
+          until $(curl --output /dev/null --silent --head --fail http://localhost:$BACKEND_API_PORT); do
+            echo "Waiting for backend to start..."
+            sleep 5
+          done
+
+      # Update Database schema
+      - name: Update Database schema
+        run: npm run db:push
+      
+      # Run End to End tests
+      - name: Run End to End tests
+        uses: cypress-io/github-action@v6

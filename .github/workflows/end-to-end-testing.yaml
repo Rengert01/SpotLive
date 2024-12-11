@@ -75,6 +75,7 @@ jobs:
 
           until $(curl --output /dev/null --silent --head --fail http://localhost:$BACKEND_API_PORT); do
             echo "Waiting for backend to start..."
+            docker compose -f api
             sleep 5
           done
 

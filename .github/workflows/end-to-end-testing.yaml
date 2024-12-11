@@ -126,6 +126,11 @@ jobs:
       needs: e2e-testing
 
       env:
+        # Frontend variables
+        VITE_APP_PORT: ${{ secrets.VITE_APP_PORT }}
+        VITE_APP_API_URL: ${{ secrets.VITE_APP_API_URL }}
+        VITE_AGORA_APP_ID: ${{ secrets.VITE_AGORA_APP_ID }}
+
         # Backend variables
         BACKEND_API_PORT: ${{ secrets.BACKEND_API_PORT }}
         NODE_ENV: test
@@ -144,6 +149,13 @@ jobs:
         # Checkout code
         - name: Checkout code
           uses: actions/checkout@v4
+
+        # Create frontend .env file
+        - name: Create frontend .env file
+          run: |
+            echo "VITE_APP_PORT=$VITE_APP_PORT" >> frontend/.env
+            echo "VITE_APP_API_URL=$VITE_APP_API_URL" >> frontend/.env
+            echo "VITE_AGORA_APP_ID=$VITE_AGORA_APP_ID" >> frontend/.env
 
         # Create backend .env file
         - name: Create backend .env file

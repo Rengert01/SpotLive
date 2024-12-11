@@ -79,6 +79,15 @@ jobs:
           restore-keys: |
             backend-${{ runner.os }}-
 
+      # Cache Cypress Binary
+      - name: Cache Cypress Binary
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/Cypress
+          key: cypress-cache-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            cypress-cache-${{ runner.os }}-
+
       # Install dependencies
       - name: Install dependencies
         run: |

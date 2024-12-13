@@ -9,6 +9,8 @@ import authRoutes from '@/routes/auth';
 import isAuthenticated from '@/middleware/auth';
 import profileRouter from '@/routes/profile';
 import musicRoutes from '@/routes/music';
+import livestreamRoutes from '@/routes/livestream';
+
 import playlistRoutes from '@/routes/playlist';
 import albumRouter from '@/routes/album';
 
@@ -26,14 +28,14 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.json());
 
-app.use(
-  session({
-    secret: env.SESSION_SECRET,
-    resave: true,
-    saveUninitialized: true,
-    store: new (FileStore(session))(fileStoreOptions),
-  })
-);
+const sessionMiddleware = session({
+  secret: env.SESSION_SECRET,
+  resave: true,
+  saveUninitialized: true,
+  store: new (FileStore(session))(fileStoreOptions),
+});
+
+app.use(sessionMiddleware);
 
 app.use('/api/auth', authRoutes);
 
@@ -45,12 +47,15 @@ app.use(isAuthenticated);
 
 app.use('/api/auth', profileRouter);
 app.use('/api/music', musicRoutes);
+app.use('/api/livestream', livestreamRoutes);
 app.use('/api/user', followersRouter);
 app.use('/api/nofitication', notificationsRouter);
 app.use('/api/album', albumRouter);
 
 app.use('/api/playlist', playlistRoutes);
 
-app.listen(port, async () => {
+const server = app.listen(port, async () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);
 });
+
+export { app, server };

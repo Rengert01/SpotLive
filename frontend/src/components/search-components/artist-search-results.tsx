@@ -1,7 +1,7 @@
 import TrackSection from '@/components/ui/track-section';
 import { useEffect, useState } from 'react';
 import axios from '@/config/axios';
-import { useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router';
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);

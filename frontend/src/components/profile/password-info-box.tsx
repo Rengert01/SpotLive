@@ -25,7 +25,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import TogglePassword from '../toggle-password';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { toast } from '@/hooks/use-toast';
 import { useUserStore } from '@/stores/user-store';
 

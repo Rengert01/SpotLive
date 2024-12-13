@@ -6,7 +6,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import axios from '@/config/axios';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import { useEffect, useState } from 'react';
 import { toast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';

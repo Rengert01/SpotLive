@@ -4,6 +4,7 @@ import { create } from 'zustand';
 interface Audio {
   ref: React.RefObject<HTMLAudioElement>;
   isPlaying: boolean;
+  isLivestream: boolean;
   volume: number;
   playbackPosition: number;
   progress: number;
@@ -12,6 +13,8 @@ interface Audio {
   audioArtist: string;
   audioCoverSrc: string;
   duration?: number;
+  queue: string[];
+  previous: string[];
 }
 
 interface AudioState {
@@ -21,10 +24,13 @@ interface AudioState {
   handleVolumeChange: (volume: number[]) => void;
   handleSeek: (value: number[]) => void;
   updatePlaybackPosition: () => void;
+  pushToQueue: (ids: string[]) => void;
+  addToPrevious: (ids: string[]) => void;
 }
 
 export const useAudioStore = create<AudioState>((set) => ({
   audio: {
+    isLivestream: false,
     ref: React.createRef<HTMLAudioElement>(),
     isPlaying: false,
     playbackPosition:
@@ -70,6 +76,8 @@ export const useAudioStore = create<AudioState>((set) => ({
       /(?:(?:^|.*;\s*)audioCoverSrc\s*=\s*([^;]*).*$)|^.*$/,
       '$1'
     ),
+    queue: [],
+    previous: [],
   },
   setAudio: (audio) => {
     // Set in browser cookie the last played song
@@ -83,6 +91,16 @@ export const useAudioStore = create<AudioState>((set) => ({
   },
   togglePlayPause: () => {
     set((state) => {
+      if (state.audio.isLivestream) {
+        return {
+          audio: {
+            ...state.audio,
+            isPlaying: !state.audio.isPlaying,
+            progress: 100,
+          },
+        };
+      }
+
       if (state.audio.ref.current) {
         if (state.audio.isPlaying) {
           state.audio.ref.current.pause();
@@ -101,6 +119,7 @@ export const useAudioStore = create<AudioState>((set) => ({
           }
 
           state.audio.ref.current.currentTime = state.audio.playbackPosition;
+          state.audio.ref.current.volume = state.audio.volume;
           state.audio.ref.current.play();
         }
       }
@@ -108,6 +127,7 @@ export const useAudioStore = create<AudioState>((set) => ({
     });
   },
   handleVolumeChange: (volume) => {
+    console.log('Volume', volume);
     set((state) => {
       if (state.audio.ref.current) {
         state.audio.ref.current.volume = volume[0] / 100;
@@ -147,6 +167,18 @@ export const useAudioStore = create<AudioState>((set) => ({
       }
 
       return { audio: state.audio };
+    });
+  },
+  pushToQueue: (ids: string[]) => {
+    set((state) => {
+      state.audio.queue.push(...ids);
+      return state;
+    });
+  },
+  addToPrevious: (ids: string[]) => {
+    set((state) => {
+      state.audio.previous.push(...ids);
+      return state;
     });
   },
 }));

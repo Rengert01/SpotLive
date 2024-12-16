@@ -4,7 +4,7 @@ import profile from '@/controllers/profile';
 import { db } from '@/db';
 import { users } from '@/models/user';
 import { eq } from 'drizzle-orm';
-import { sessions, sessionRelations } from '@/models/session';
+import { sessions } from '@/models/session';
 
 import multer from 'multer';
 

@@ -3,7 +3,6 @@ import {
   deleteNotification,
   getNotifications,
   markNotificationAsRead,
-  notifyAllFollowers,
 } from '@/controllers/notifications';
 import request from 'supertest';
 import { db } from '@/db'; // Adjust the import based on your project structure

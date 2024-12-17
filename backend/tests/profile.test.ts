@@ -4,6 +4,7 @@ import profileRouter from '@/routes/profile';
 import { db } from '@/db';
 import { sessions } from '@/models/session';
 import { eq } from 'drizzle-orm';
+import { users } from '@/models/user';
 
 const app = express();
 app.use(express.json());
@@ -14,8 +15,34 @@ describe('Profile Controller', () => {
   let session: typeof sessions.$inferSelect;
 
   beforeAll(async () => {
+    const testUser: typeof users.$inferInsert = {
+      email: 'test1@email.com',
+      password: 'aaaaa',
+      username: 'test',
+    };
+
+    const insertedUser = await db.insert(users).values(testUser).returning();
+
+    if (insertedUser.length === 0) {
+      throw new Error('Failed to insert user');
+    }
+
+    const insertedSession = await db
+      .insert(sessions)
+      .values({
+        user_id: insertedUser[0].id,
+        session_id: 'test1',
+        data: 'test',
+        expires_at: new Date(),
+      })
+      .returning();
+
+    if (insertedSession.length === 0) {
+      throw new Error('Failed to insert session');
+    }
+
     const query = await db.query.sessions.findFirst({
-      where: eq(sessions.session_id, 'test'),
+      where: eq(sessions.session_id, 'test1'),
     });
 
     if (!query) {
@@ -32,7 +59,7 @@ describe('Profile Controller', () => {
       .set('Cookie', [`sessionId=${sessionId}`]);
 
     expect(response.status).toBe(200);
-    expect(response.body.email).toBe('test@email.com');
+    expect(response.body.email).toBe('test1@email.com');
     expect(response.body.username).toBe('test');
   });
 
@@ -43,7 +70,7 @@ describe('Profile Controller', () => {
       user: {
         id: session.user_id,
         username: 'test',
-        email: 'test@email.com',
+        email: 'test1@email.com',
       },
     });
 
@@ -84,7 +111,7 @@ describe('Profile Controller', () => {
   it('should delete account successfully', async () => {
     const response = await request(app)
       .post('/profile/deleteAccount')
-      .send({ email: 'test@email.com' });
+      .send({ email: 'test1@email.com' });
 
     expect(response.status).toBe(200);
     expect(response.body.message).toBe('Account deleted successfully');

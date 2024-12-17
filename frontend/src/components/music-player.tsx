@@ -87,7 +87,7 @@ export default function MusicPlayer() {
   };
 
   return (
-    <div className="flex items-center justify-between text-white h-full">
+    <div id="Music Player" className="flex items-center justify-between text-white h-full">
       <audio
         ref={audio.ref}
         onTimeUpdate={updatePlaybackPosition}

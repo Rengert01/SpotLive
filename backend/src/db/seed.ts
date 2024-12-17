@@ -1,6 +1,7 @@
 import { db } from '@/db';
 import { users } from '@/models/user';
 import { musics } from '@/models/music';
+import { sessions } from '@/models/session';
 
 import bcrypt from 'bcryptjs';
 
@@ -19,6 +20,20 @@ export const seed = async () => {
 
   if (insertedUser.length === 0) {
     throw new Error('Failed to insert user');
+  }
+
+  const insertedSession = await db
+    .insert(sessions)
+    .values({
+      user_id: insertedUser[0].id,
+      session_id: 'test',
+      data: 'test',
+      expires_at: new Date(),
+    })
+    .returning();
+
+  if (insertedSession.length === 0) {
+    throw new Error('Failed to insert session');
   }
 
   const testMusic: typeof musics.$inferInsert = {

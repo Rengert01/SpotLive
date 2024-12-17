@@ -1,7 +1,5 @@
-import { faker } from '@faker-js/faker';
-
-describe('Playlist Acceptance Test', () => {
-  it('AT01: Bookmark a Song', () => {
+describe('Playlist Bookmark Acceptance Test', () => {
+  it('AT012: Bookmark a Song', () => {
     cy.visit('http://localhost:3000/login');
 
     cy.get('input[name="email"]').type('test@email.com');
@@ -17,7 +15,7 @@ describe('Playlist Acceptance Test', () => {
     cy.contains('Music liked');
   });
 
-  it('AT02: Remove a Bookmark', () => {
+  it('AT013: Remove a Bookmark', () => {
     cy.visit('http://localhost:3000/login');
 
     cy.get('input[name="email"]').type('test@email.com');

@@ -1,5 +1,3 @@
-import { faker } from '@faker-js/faker';
-
 describe('Authentication Acceptance Tests', () => {
   // Shared variables to store test data
   let email;
@@ -7,9 +5,8 @@ describe('Authentication Acceptance Tests', () => {
 
   before(() => {
     // Run seed
-    email = "test@email.com"
-    password = "aA!123456789"
-
+    email = 'test@email.com';
+    password = 'aA!123456789';
   });
 
   it('AT0152123: Search Track', () => {
@@ -21,7 +18,7 @@ describe('Authentication Acceptance Tests', () => {
 
     cy.get('input[id="search"]').type('Test{enter}');
     cy.url().should('eq', 'http://localhost:3000/search?query=Test');
-    cy.contains('Test Song')
+    cy.contains('Test Song');
     cy.log('Song found in search results');
   });
 

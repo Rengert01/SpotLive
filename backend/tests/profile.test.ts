@@ -16,12 +16,12 @@ describe('Profile Controller', () => {
 
   beforeAll(async () => {
     const testUser: typeof users.$inferInsert = {
-        email: 'test1@email.com',
-        password: 'aaaaa',
-        username: 'test',
-      };
-    
-      const insertedUser = await db.insert(users).values(testUser).returning();
+      email: 'test1@email.com',
+      password: 'aaaaa',
+      username: 'test',
+    };
+
+    const insertedUser = await db.insert(users).values(testUser).returning();
 
     if (insertedUser.length === 0) {
       throw new Error('Failed to insert user');

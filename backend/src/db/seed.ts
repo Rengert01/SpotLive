@@ -4,6 +4,7 @@ import { musics } from '@/models/music';
 import { sessions } from '@/models/session';
 
 import bcrypt from 'bcryptjs';
+import { playlists } from '@/models/playlist';
 
 export const seed = async () => {
   const password = 'aA!123456789';
@@ -49,6 +50,18 @@ export const seed = async () => {
 
   if (insertedMusic.length === 0) {
     throw new Error('Failed to insert music');
+  }
+
+  const likedSongs = await db
+    .insert(playlists)
+    .values({
+      title: 'Liked Songs',
+      userId: insertedUser[0].id,
+    })
+    .returning();
+
+  if (likedSongs.length === 0) {
+    throw new Error('Failed to insert liked songs playlist');
   }
 };
 

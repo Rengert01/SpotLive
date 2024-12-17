@@ -46,7 +46,7 @@ describe('Playlist Acceptance Test', () => {
     cy.get('div[id="Test Song"]').rightclick();
 
     cy.contains('Add to Playlist').click();
-    cy.get('div[role="menuitem"]').eq(2).click();
+    cy.get('div[role="menuitem"]').eq(3).click();
     cy.contains('Music added to playlist');
   });
 

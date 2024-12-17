@@ -39,6 +39,7 @@ export default function HomePage() {
         </TabsList>
         <div className="ml-auto">
           <Input
+            id="search"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onKeyDown={handleKeyDown}

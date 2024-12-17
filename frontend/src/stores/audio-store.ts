@@ -60,10 +60,11 @@ export const useAudioStore = create<AudioState>((set) => ({
         '$1'
       )
     ),
-    audioSrc: document.cookie.replace(
-      /(?:(?:^|.*;\s*)audioSrc\s*=\s*([^;]*).*$)|^.*$/,
-      '$1'
-    ),
+    audioSrc:
+      document.cookie.replace(
+        /(?:(?:^|.*;\s*)audioSrc\s*=\s*([^;]*).*$)|^.*$/,
+        '$1'
+      ) ?? '',
     audioTitle: document.cookie.replace(
       /(?:(?:^|.*;\s*)audioTitle\s*=\s*([^;]*).*$)|^.*$/,
       '$1'
@@ -102,15 +103,16 @@ export const useAudioStore = create<AudioState>((set) => ({
       }
 
       if (state.audio.ref.current) {
-        if (state.audio.isPlaying) {
+        if (state.audio.isPlaying && state.audio.audioSrc !== '') {
           state.audio.ref.current.pause();
           document.cookie = `playbackPosition=${state.audio.ref.current.currentTime}; SameSite=None; Secure`;
         } else {
           if (
             state.audio.ref.current.src !==
-            import.meta.env.VITE_APP_API_URL +
-              '/api/music/stream/' +
-              state.audio.audioSrc
+              import.meta.env.VITE_APP_API_URL +
+                '/api/music/stream/' +
+                state.audio.audioSrc &&
+            state.audio.audioSrc !== ''
           ) {
             state.audio.ref.current.src =
               import.meta.env.VITE_APP_API_URL +
@@ -120,7 +122,11 @@ export const useAudioStore = create<AudioState>((set) => ({
 
           state.audio.ref.current.currentTime = state.audio.playbackPosition;
           state.audio.ref.current.volume = state.audio.volume;
-          state.audio.ref.current.play();
+          if (state.audio.audioSrc !== '') {
+            state.audio.ref.current.play();
+          } else {
+            state.audio.isPlaying = true;
+          }
         }
       }
       return { audio: { ...state.audio, isPlaying: !state.audio.isPlaying } };

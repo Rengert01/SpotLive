@@ -103,6 +103,11 @@ jobs:
         working-directory: backend
         run: npm run db:push
 
+      # Seed Database
+      - name: Seed Database
+        working-directory: backend
+        run: npm run db:seed
+
       # Wait for containers to start
       - name: Wait for services to start
         run: |
@@ -193,6 +198,11 @@ jobs:
         - name: Update Database schema
           working-directory: backend
           run: npm run db:push
+
+        # Seed Database
+        - name: Seed Database
+          working-directory: backend
+          run: npm run db:seed
 
         # Wait for Database
         - name: Wait for Database

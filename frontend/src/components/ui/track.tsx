@@ -210,7 +210,7 @@ function TrackItem({
                   });
               }}
             >
-              Like
+              Like!
             </ContextMenuItem>
           </ContextMenuContent>
         </ContextMenu>

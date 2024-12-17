@@ -18,7 +18,7 @@ describe('Authentication Acceptance Tests', () => {
     });
   });
 
-  it('AT01: Sign UP', () => {
+  it('AT001: Sign UP', () => {
     cy.visit('http://localhost:3000/register');
 
     cy.get('input[name="email"]').type(email);
@@ -37,7 +37,7 @@ describe('Authentication Acceptance Tests', () => {
     cy.log('Sign-up completed in the setup step.');
   });
 
-  it('AT02: Login', () => {
+  it('AT002: Login', () => {
     // Log in using the created account
     cy.visit('http://localhost:3000/login');
 
@@ -52,7 +52,7 @@ describe('Authentication Acceptance Tests', () => {
     cy.log('Login completed in the setup step.');
   });
 
-  it('AT03: Logout', () => {
+  it('AT003: Logout', () => {
     // Log in using the created account
     cy.visit('http://localhost:3000/login');
 
@@ -70,7 +70,7 @@ describe('Authentication Acceptance Tests', () => {
     cy.log('Logout completed in the setup step.');
   });
 
-  it('AT06: Delete Account', () => {
+  it('AT006: Delete Account', () => {
     // Log in using the created account
     cy.visit('http://localhost:3000/login');
 

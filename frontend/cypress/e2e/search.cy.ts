@@ -1,4 +1,4 @@
-describe('Authentication Acceptance Tests', () => {
+describe('Search Acceptance Tests', () => {
   // Shared variables to store test data
   let email;
   let password;
@@ -9,7 +9,7 @@ describe('Authentication Acceptance Tests', () => {
     password = 'aA!123456789';
   });
 
-  it('AT0152123: Search Track', () => {
+  it('AT015: Search Track', () => {
     cy.visit('http://localhost:3000/login');
     cy.get('input[name="email"]').type(email);
     cy.get('input[name="password"]').type(password);

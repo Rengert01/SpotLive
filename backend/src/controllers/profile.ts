@@ -135,21 +135,27 @@ const updateProfile = async (req: Request, res: Response): Promise<void> => {
     );
 
     // Send the updated user details and profile completion
-    await db
+    const updatedUser = await db
       .update(users)
       .set({
         ...updatedFields,
         completionPercentage: session.user.completionPercentage,
         checklist: session.user.checklist,
       })
-      .where(eq(users.email, session.user.email));
+      .where(eq(users.email, session.user.email))
+      .returning();
+
+    if (!updatedUser.length) {
+      res.status(500).json({ message: 'Failed to update user details' });
+      return;
+    }
 
     res.status(201).json({
       message: 'User details updated successfully',
-      user: session.user,
+      user: updatedUser[0],
       profileCompletion: {
-        percentage: session.user.completionPercentage,
-        checklist: session.user.checklist,
+        percentage: updatedUser[0].completionPercentage,
+        checklist: updatedUser[0].checklist,
       },
     });
   } catch (err) {

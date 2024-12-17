@@ -103,7 +103,11 @@ function TrackItem({
   const { audio } = useAudioStore();
 
   return (
-    <div key={track.id} className="group relative flex-shrink-0 w-48">
+    <div
+      key={track.id}
+      id={track.title}
+      className="group relative flex-shrink-0 w-48"
+    >
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <ContextMenu>
           <ContextMenuTrigger>

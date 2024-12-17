@@ -73,11 +73,9 @@ describe('Profile Controller', () => {
   it('should return 401 for unauthorized access', async () => {
     db.query.sessions.findFirst = jest.fn().mockResolvedValue(null);
 
-    const response = await request(app)
-      .put('/profile/editProfile')
-      .send({
-        username: 'unauthorizedTest',
-      })
+    const response = await request(app).put('/profile/editProfile').send({
+      username: 'unauthorizedTest',
+    });
 
     expect(response.status).toBe(401);
     expect(response.body.message).toBe('Unauthorized');

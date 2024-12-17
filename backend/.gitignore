@@ -9,3 +9,5 @@ dist
 /src/uploads/*
 !/src/uploads/image/test.jpg
 !/src/uploads/music/test.mp3
+
+/coverage

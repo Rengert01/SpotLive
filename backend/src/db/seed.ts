@@ -27,7 +27,7 @@ export const seed = async () => {
     artistId: insertedUser[0].id,
     cover: 'test.jpg',
     duration: '100',
-    public: true
+    public: true,
   };
 
   const insertedMusic = await db.insert(musics).values(testMusic).returning();

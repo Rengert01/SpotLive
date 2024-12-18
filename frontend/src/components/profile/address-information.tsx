@@ -218,19 +218,19 @@ const AddressInfoBox = () => {
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="flex justify-between">
             <p className="font-medium text-gray-700 capitalize">Country</p>
-            <p className="text-gray-600" id='country_name'>
+            <p className="text-gray-600" id="country_name">
               {defaultValues?.country === '' ? '---' : defaultValues?.country}
             </p>
           </div>
           <div className="flex justify-between">
             <p className="font-medium text-gray-700 capitalize">State</p>
-            <p className="text-gray-600" id='state_name'>
+            <p className="text-gray-600" id="state_name">
               {defaultValues?.state === '' ? '---' : defaultValues?.state}
             </p>
           </div>
           <div className="flex justify-between">
             <p className="font-medium text-gray-700 capitalize">City</p>
-            <p className="text-gray-600" id='city_name'>
+            <p className="text-gray-600" id="city_name">
               {defaultValues?.city === '' ? '---' : defaultValues?.city}
             </p>
           </div>

@@ -100,6 +100,7 @@ const AddressInfoBox = () => {
           <div
             onClick={handleEdit}
             className="flex items-center cursor-pointer text-primary"
+            id="edit-address"
           >
             <p className="mr-1">Edit</p>
             <Pencil className="w-4 h-4" />
@@ -108,6 +109,7 @@ const AddressInfoBox = () => {
           <div
             onClick={() => setEditState(false)}
             className="flex items-center cursor-pointer text-primary"
+            id="view-mode"
           >
             <p className="mr-1">View Mode</p>
           </div>

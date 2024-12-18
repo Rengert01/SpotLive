@@ -120,6 +120,7 @@ const PersonalInfoBox = () => {
           <button
             onClick={handleEdit}
             className="flex items-center text-primary"
+            id="edit-profile"
           >
             <span className="text-sm font-medium mr-2">Edit</span>
             <figure>

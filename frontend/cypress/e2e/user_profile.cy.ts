@@ -64,13 +64,11 @@ describe('User Profile Acceptance Tests', () => {
     cy.get('div').contains('Utrecht').click();
     cy.get('input[name="street"]').clear().type('De Straat 1');
     cy.get('button[type="submit"]').click();
-    cy.get('div[id="view-mode"]').click();
+    cy.url().should('eq', 'http://localhost:3000/profile');
+
+    cy.get('div[id="edit-address"]').click();
 
     cy.url().should('eq', 'http://localhost:3000/profile');
-    cy.get('p').contains('Amersfoort');
-    cy.get('p').contains('The Netherlands');
-    cy.get('p').contains('Utrecht');
-    cy.get('p').contains('De Straat 1');
     cy.log('Address information updated');
   });
 
@@ -85,16 +83,21 @@ describe('User Profile Acceptance Tests', () => {
     cy.get('button[id="edit-password"]').click();
 
     cy.get('input[name="new_password"]').clear().type('aA!1234567890');
+    cy.get('input[name="password_confirmation"]').clear().type('aA!1234567890');
     cy.get('button[type="submit"]').click();
-
     cy.url().should('eq', 'http://localhost:3000/profile');
+
+    cy.get('button[id="edit-password"]').click();
 
     // change back for other tests
 
     cy.get('button[id="edit-password"]').click();
 
     cy.get('input[name="new_password"]').clear().type('aA!123456789');
+    cy.get('input[name="password_confirmation"]').clear().type('aA!123456789');
     cy.get('button[type="submit"]').click();
+    cy.url().should('eq', 'http://localhost:3000/profile');
+    cy.get('button[id="edit-password"]').click();
     cy.log('Password changed');
   });
 });

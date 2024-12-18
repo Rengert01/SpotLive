@@ -3,12 +3,12 @@ import { relations } from 'drizzle-orm';
 import {
   boolean,
   integer,
-  pgTable,
   timestamp,
   varchar,
 } from 'drizzle-orm/pg-core';
+import { createTable } from '@/db/utils';
 
-export const notifications = pgTable('notifications', {
+export const notifications = createTable('notifications', {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
   userId: integer()
     .notNull()

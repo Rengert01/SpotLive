@@ -12,11 +12,14 @@ const envSchema = z.object({
   POSTGRES_HOST: z.string(),
   POSTGRES_URL: z.string().optional(),
   NODE_ENV: z
-    .enum(['development', 'production', 'test'])
+    .enum(['development', 'production', 'preview'])
     .default('development'),
   DB_LOGGING: z.enum(['true', 'false']).default('true'),
   SESSION_SECRET: z.string(),
   CORS_WHITELIST: z.string(),
+  DATABASE_SCHEMA_SUFFIX: z
+    .string()
+    .default('_' + (process.env.NODE_ENV ?? 'development')),
 });
 
 export type Env = z.infer<typeof envSchema>;

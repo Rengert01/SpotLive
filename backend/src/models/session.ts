@@ -1,14 +1,9 @@
 import { users } from '@/models/user';
 import { relations } from 'drizzle-orm';
-import {
-  integer,
-  pgTable,
-  serial,
-  timestamp,
-  varchar,
-} from 'drizzle-orm/pg-core';
+import { integer, serial, timestamp, varchar } from 'drizzle-orm/pg-core';
+import { createTable } from '@/db/utils';
 
-export const sessions = pgTable('session', {
+export const sessions = createTable('session', {
   id: serial().primaryKey(),
   user_id: integer()
     .notNull()

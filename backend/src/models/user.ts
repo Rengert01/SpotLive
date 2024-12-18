@@ -1,15 +1,9 @@
 import { musics } from '@/db/schema';
 import { relations } from 'drizzle-orm';
-import {
-  date,
-  integer,
-  json,
-  pgTable,
-  serial,
-  varchar,
-} from 'drizzle-orm/pg-core';
+import { date, integer, json, serial, varchar } from 'drizzle-orm/pg-core';
+import { createTable } from '@/db/utils';
 
-export const users = pgTable('user', {
+export const users = createTable('user', {
   id: serial().primaryKey(),
   email: varchar().notNull(),
   password: varchar().notNull(),

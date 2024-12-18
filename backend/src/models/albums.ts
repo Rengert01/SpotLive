@@ -4,13 +4,13 @@ import { musics } from '@/models/music';
 import {
   boolean,
   integer,
-  pgTable,
   timestamp,
   varchar,
   primaryKey,
 } from 'drizzle-orm/pg-core';
+import { createTable } from '@/db/utils';
 
-export const albums = pgTable('albums', {
+export const albums = createTable('albums', {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
   title: varchar().notNull(),
   cover: varchar().notNull(),
@@ -29,7 +29,7 @@ export const albumRelations = relations(albums, ({ one, many }) => ({
   }),
 }));
 
-export const musicToAlbums = pgTable(
+export const musicToAlbums = createTable(
   'music_to_albums',
   {
     musicId: integer('music_id')

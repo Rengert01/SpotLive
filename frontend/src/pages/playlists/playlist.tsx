@@ -85,7 +85,10 @@ export default function PlaylistPage() {
             {musics.length > 0 ? (
               <ul className="divide-y divide-gray-200">
                 {musics.map((track) => (
-                  <li key={track.music.id} className="flex items-center py-2 gap-4">
+                  <li
+                    key={track.music.id}
+                    className="flex items-center py-2 gap-4"
+                  >
                     <img
                       src={
                         import.meta.env.VITE_APP_API_URL +

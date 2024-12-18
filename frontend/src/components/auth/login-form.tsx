@@ -82,7 +82,7 @@ export function LoginForm() {
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <Card className="mx-auto max-w-sm">
           <CardHeader>
-            <CardTitle className="text-2xl">Login | Test</CardTitle>
+            <CardTitle className="text-2xl">Login</CardTitle>
             <CardDescription>
               Enter your email below to login to your account
             </CardDescription>

@@ -22,7 +22,7 @@ jobs:
 
       # Backend variables
       BACKEND_API_PORT: ${{ secrets.BACKEND_API_PORT }}
-      NODE_ENV: test
+      NODE_ENV: preview
       DB_LOGGING: false
       SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
       CORS_WHITELIST: http://localhost:3000

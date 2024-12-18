@@ -1,11 +1,6 @@
 import { users } from '@/models/user';
 import { relations } from 'drizzle-orm';
-import {
-  boolean,
-  integer,
-  timestamp,
-  varchar,
-} from 'drizzle-orm/pg-core';
+import { boolean, integer, timestamp, varchar } from 'drizzle-orm/pg-core';
 import { createTable } from '@/db/utils';
 
 export const notifications = createTable('notifications', {

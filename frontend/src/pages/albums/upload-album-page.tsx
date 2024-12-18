@@ -74,6 +74,7 @@ export default function UploadAlbumPage() {
           artist: track.artist,
           cover: track.cover,
           duration: track.duration,
+          artistId: track.artistId,
         }))
       );
     } catch (err) {

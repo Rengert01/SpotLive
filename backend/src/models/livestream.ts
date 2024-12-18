@@ -1,8 +1,9 @@
 import { users } from '@/models/user';
 import { relations } from 'drizzle-orm';
-import { integer, pgTable, varchar, timestamp } from 'drizzle-orm/pg-core';
+import { integer, varchar, timestamp } from 'drizzle-orm/pg-core';
+import { createTable } from '@/db/utils';
 
-export const livestream = pgTable('livestream', {
+export const livestream = createTable('livestream', {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
   userId: integer()
     .notNull()

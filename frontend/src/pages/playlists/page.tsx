@@ -27,6 +27,7 @@ import { useToast } from '@/hooks/use-toast';
 
 const playlistSchema = z.object({
   title: z.string().min(1, 'Playlist name is required.'),
+  public: z.enum(['public', 'private']),
 });
 
 export default function CreatePlaylist() {
@@ -36,6 +37,7 @@ export default function CreatePlaylist() {
     resolver: zodResolver(playlistSchema),
     defaultValues: {
       title: '',
+      public: 'private',
     },
   });
 

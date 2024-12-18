@@ -4,13 +4,13 @@ import {
   boolean,
   decimal,
   integer,
-  pgTable,
   timestamp,
   varchar,
 } from 'drizzle-orm/pg-core';
-import { musicToAlbums } from './albums';
+import { musicToAlbums } from '@/models/albums';
+import { createTable } from '@/db/utils';
 
-export const musics = pgTable('music', {
+export const musics = createTable('music', {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
   title: varchar().notNull(),
   cover: varchar().notNull(),

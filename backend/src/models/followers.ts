@@ -1,8 +1,9 @@
 import { users } from '@/models/user';
 import { relations } from 'drizzle-orm';
-import { integer, pgTable, timestamp } from 'drizzle-orm/pg-core';
+import { integer, timestamp } from 'drizzle-orm/pg-core';
+import { createTable } from '@/db/utils';
 
-export const followers = pgTable('followers', {
+export const followers = createTable('followers', {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
   followerId: integer()
     .notNull()

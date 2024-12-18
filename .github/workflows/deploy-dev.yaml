@@ -21,5 +21,5 @@ jobs:
           docker build -t ghcr.io/speixoto12/spotlive-web:preview -f ./frontend/Dockerfile.prod ./frontend/
           docker push ghcr.io/speixoto12/spotlive-web:preview
 
-          docker build -t ghcr.io/speixoto12/spotlive-api:preview ./backend/Dockerfile.prod ./backend/
+          docker build -t ghcr.io/speixoto12/spotlive-api:preview -f ./backend/Dockerfile.prod ./backend/
           docker push ghcr.io/speixoto12/spotlive-api:preview

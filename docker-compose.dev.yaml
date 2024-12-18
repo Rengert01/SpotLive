@@ -1,10 +1,3 @@
-
-networks:
-  traefik-network: # Define a custom network
-    name: traefik-network
-    driver: bridge
-
-
 services:
   watchtower:
     image: containrrr/watchtower
@@ -16,8 +9,6 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ~/.docker/config.json:/config.json
-    networks:
-      - traefik-network
 
   reverse-proxy:
     image: traefik:v3.1
@@ -38,8 +29,6 @@ services:
     volumes:
       - letsencrypt:/letsencrypt
       - /var/run/docker.sock:/var/run/docker.sock
-    networks:
-      - traefik-network
 
   spotlive:
     image: ghcr.io/speixoto12/spotlive-web:preview
@@ -64,8 +53,6 @@ services:
     env_file:
       - ./frontend/.env
     command: npm run preview
-    networks:
-      - traefik-network
 
   api:
     image: ghcr.io/speixoto12/spotlive-api:preview
@@ -88,8 +75,6 @@ services:
       - "com.centurylinklabs.watchtower.enable=true"
     env_file:
       - ./backend/.env
-    networks:
-      - traefik-network
-      
+
 volumes:
   letsencrypt:

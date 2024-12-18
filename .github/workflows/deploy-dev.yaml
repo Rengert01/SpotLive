@@ -13,17 +13,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       
-      - name: Set up SSH
-        run: |
-          mkdir -p ~/.ssh/
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
+      - name: Log In to Registry
+        run: echo "${{ secrets.CONTAINER_REGISTRY_PASSWORD }}" | docker login "${{ secrets.CONTAINER_REGISTRY_NAME }}" --username "${{ secrets.CONTAINER_REGISTRY_USERNAME }}" --password-stdin
 
-      - name: Deploy
+      - name: Build and Push Docker Images
         run: |
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_ed25519 ${{ secrets.SSH_USER }}@${{ secrets.SSH_DEV_HOST }} << 'EOF'
-            cd ~/LES-T2D
-            git checkout feature/deployments
-            git pull
-            docker-compose -f docker-compose.dev.yaml up --build -d
-          EOF
+          docker build -t ghcr.io/speixoto12/spotlive-web:preview ./frontend/
+          docker push ghcr.io/speixoto12/spotlive-web:preview
+
+          docker build -t ghcr.io/speixoto12/spotlive-api:preview ./backend/
+          docker push ghcr.io/speixoto12/spotlive-api:preview

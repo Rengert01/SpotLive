@@ -1,4 +1,14 @@
 services:
+  watchtower:
+    image: containrrr/watchtower
+    command:
+      - "--label-enable"
+      - "--interval"
+      - "30"
+      - "--rolling-restart"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
   reverse-proxy:
     image: traefik:v3.1
     command:
@@ -20,6 +30,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
 
   spotlive:
+    image: ghcr.io/speixoto12/spotlive-web:preview
     build:
       context: ./frontend/
       dockerfile: Dockerfile.prod
@@ -34,6 +45,7 @@ services:
       - "traefik.http.routers.spotlive.entrypoints=websecure"
       - "traefik.http.routers.spotlive.tls.certresolver=myresolver"
       - "traefik.http.services.spotlive.loadbalancer.server.port=80"
+      - "com.centurylinklabs.watchtower.enable=true"
     deploy:
       mode: replicated
       replicas: 3
@@ -42,6 +54,7 @@ services:
     command: npm run preview
 
   api:
+    image: ghcr.io/speixoto12/spotlive-api:preview
     build:
       context: ./backend/
       dockerfile: Dockerfile.prod
@@ -58,6 +71,7 @@ services:
       - "traefik.http.routers.api.entrypoints=websecure"
       - "traefik.http.routers.api.tls.certresolver=myresolver"
       - "traefik.http.services.api.loadbalancer.server.port=3001"
+      - "com.centurylinklabs.watchtower.enable=true"
     env_file:
       - ./backend/.env
 

@@ -96,6 +96,7 @@ const PasswordInfoBox = () => {
           <button
             className="text-primary mr-4"
             onClick={() => setEditState((prev) => !prev)}
+            id="edit-password"
           >
             {editState ? (
               'View Mode'

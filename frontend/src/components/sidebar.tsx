@@ -262,7 +262,10 @@ export function AppSidebar({ className }: SidebarProps) {
         </div>
         <div className="h-16 border-y">
           <DropdownMenu>
-            <DropdownMenuTrigger className="h-full w-full flex justify-center p-3">
+            <DropdownMenuTrigger
+              className="h-full w-full flex justify-center p-3"
+              id="user_menu"
+            >
               <div className=" flex gap-4 items-center">
                 <Avatar>
                   <AvatarImage
